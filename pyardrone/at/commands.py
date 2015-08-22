@@ -1,4 +1,4 @@
-from pyardrone.at.base import ATCommand, Int32Arg, FloatArg, StringArg
+from pyardrone.at.arguments import ATCommand, Int32Arg, FloatArg, StringArg
 
 
 class REF(ATCommand):

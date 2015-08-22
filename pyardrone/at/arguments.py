@@ -1,4 +1,7 @@
 import collections
+import functools
+import json
+import warnings
 from pyardrone.utils import ieee754float
 
 
@@ -87,19 +90,22 @@ class FloatArg(Argument):
 class StringArg(Argument):
 
     def check(self, value):
-        if not isinstance(value, str):
-            raise TypeError('{:r} should be a str, not {}'.format(
-                value, type(value)
-            ))
-        if '"' in value:
-            raise ValueError(
-                'double quote `"` should not exist in string {:r}'.format(
-                    value
-                )
+        if not isinstance(value, (str, float, int, bool)):
+            warnings.warn(
+                '{} is of type {}, which may be unsupported py ARDrone'.format(
+                    value,
+                    type(value)
+                ),
+                stacklevel=3
             )
 
+    @functools.singledispatch
     def pack(value):
-        return b'"{}"'.format(value)
+        return json.dumps(str(value)).encode()
+
+    @pack.register(bool)
+    def pack_bool(value):
+        return b'"TRUE"' if value else b'"FALSE"'
 
 
 class ATCommandMeta(type):
