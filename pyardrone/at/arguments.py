@@ -11,34 +11,7 @@ def packer(func):
     return wrapper
 
 
-class Unset:
-    value = None
-
-
-class ArgumentMeta(type):
-
-    def __new__(cls, name, bases, namespace):
-        if 'pack' in namespace:
-            namespace['pack']
-
-            class packed_type:
-                __slots__ = 'value'
-                of = name
-
-                def __init__(self, value):
-                    self.value = value
-
-                def __repr__(self):
-                    return '<{} {!r}>'.format(self.of, self.value)
-
-                pack = packer(namespace['pack'])
-
-            namespace['packed_type'] = packed_type
-
-        return type.__new__(cls, name, bases, namespace)
-
-
-class Argument(metaclass=ArgumentMeta):
+class Argument:
 
     __slots__ = ('name', 'description')
 
@@ -47,9 +20,9 @@ class Argument(metaclass=ArgumentMeta):
 
     def __get__(self, obj, type_=None):
         try:
-            return self.packed_type(obj._args[self.name])
+            return obj._args[self.name]
         except KeyError:
-            return Unset()
+            return None
 
     def __set__(self, obj, value):
         if hasattr(self, 'check'):
@@ -71,6 +44,7 @@ class Int32Arg(Argument):
                 'value {} should be less than 4 bytes'.format(value)
             )
 
+    @staticmethod
     def pack(value):
         return str(value).encode()
 
@@ -83,6 +57,7 @@ class FloatArg(Argument):
                 value, type(value)
             ))
 
+    @staticmethod
     def pack(value):
         return str(ieee754float(value)).encode()
 
@@ -90,7 +65,7 @@ class FloatArg(Argument):
 class StringArg(Argument):
 
     def check(self, value):
-        if not isinstance(value, (str, float, int, bool)):
+        if not isinstance(value, (str, bytes, float, int, bool)):
             warnings.warn(
                 '{} is of type {}, which may be unsupported py ARDrone'.format(
                     value,
@@ -104,8 +79,14 @@ class StringArg(Argument):
         return json.dumps(str(value)).encode()
 
     @pack.register(bool)
-    def pack_bool(value):
+    def _pack_bool(value):
         return b'"TRUE"' if value else b'"FALSE"'
+
+    @pack.register(bytes)
+    def _pack_bytes(value):
+        return json.dumps(value.decode()).encode()
+
+    pack = staticmethod(pack)
 
 
 class ATCommandMeta(type):
@@ -163,4 +144,4 @@ class ATCommand(metaclass=ATCommandMeta):
 
     def _iter_packed(self):
         for par in self.parameters:
-            yield getattr(self, par.name).pack()
+            yield par.pack(getattr(self, par.name))

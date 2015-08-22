@@ -6,22 +6,22 @@ class CommandTest(unittest.TestCase):
 
     def test_init_by_arg(self):
         cmd = commands.REF(3)
-        self.assertEqual(cmd.input.value, 3)
+        self.assertEqual(cmd.input, 3)
 
     def test_init_by_kwarg(self):
         cmd = commands.REF(input=3)
-        self.assertEqual(cmd.input.value, 3)
+        self.assertEqual(cmd.input, 3)
 
     def test_defaults_to_none(self):
         cmd = commands.REF()
-        self.assertIs(cmd.input.value, None)
+        self.assertIs(cmd.input, None)
 
     def test_argument_updatable(self):
         cmd = commands.REF()
         cmd.input = 20
-        self.assertEqual(cmd.input.value, 20)
+        self.assertEqual(cmd.input, 20)
         cmd.input = 14
-        self.assertEqual(cmd.input.value, 14)
+        self.assertEqual(cmd.input, 14)
 
     def test_too_many_arguments_raises_TypeError(self):
         with self.assertRaises(TypeError):
@@ -80,6 +80,24 @@ class ArgumentTest(unittest.TestCase):
             arguments.StringArg.pack(False),
             b'"FALSE"'
         )
+
+    def test_str_pack_bytes(self):
+        self.assertEqual(
+            arguments.StringArg.pack(b'jgoi'),
+            b'"jgoi"'
+        )
+
+
+class ArgumentAPITest(unittest.TestCase):
+
+    def assert200(self, value):
+        self.assertEqual(value, b'200')
+
+    def test_pack_with_class(self):
+        self.assert200(arguments.Int32Arg.pack(200))
+
+    def test_pack_with_instance(self):
+        self.assert200(arguments.Int32Arg().pack(200))
 
 
 if __name__ == '__main__':
