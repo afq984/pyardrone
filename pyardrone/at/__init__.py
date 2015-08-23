@@ -16,7 +16,7 @@ class REF(ATCommand):
         'representing a 32 bit-wide bit-field controlling the drone')
 
     class Flags(IntEnum):
-        default = bits(18, 20, 22, 24, 28)
+        default = bits(18, 20, 22, 24, 28)  # Always on
         start = bits(9)  # Takeoff / Land
         select = bits(8)  # Switch of emergency mode
 
@@ -34,6 +34,10 @@ class PCMD(ATCommand):
     pitch = FloatArg('drone front-back tilt, [-1...1]')
     gaz = FloatArg('drone vertical speed, [-1...1]')
     yaw = FloatArg('drone angular speed, [-1...1]')
+
+    class Flags(IntEnum):
+        absolute_control = bits(2)
+        combined_yaw = bits(1)
 
 
 class PCMD_MAG(ATCommand):
