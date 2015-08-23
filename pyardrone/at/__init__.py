@@ -1,5 +1,7 @@
+from enum import IntEnum
 from pyardrone.at.base import ATCommand
 from pyardrone.at.arguments import Int32Arg, FloatArg, StringArg
+from pyardrone.utils import bits
 
 
 class REF(ATCommand):
@@ -12,6 +14,11 @@ class REF(ATCommand):
     input = Int32Arg(
         'an integer value, '
         'representing a 32 bit-wide bit-field controlling the drone')
+
+    class Flags(IntEnum):
+        default = bits(18, 20, 22, 24, 28)
+        start = bits(9)  # Takeoff / Land
+        select = bits(8)  # Switch of emergency mode
 
 
 class PCMD(ATCommand):
