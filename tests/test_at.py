@@ -110,5 +110,17 @@ class ArgumentAPITest(unittest.TestCase):
         self.assert200(arguments.Int32Arg().pack(200))
 
 
+class ConstantTest(unittest.TestCase):
+
+    def test_cfg_get_control_mode_is_4(self):
+        '''
+        Just make sure the range() enumeration is working properly
+
+        8.1.2:
+        ...with a mode parameter equaling 4 (CFG_GET_CONTROL_MODE)
+        '''
+        self.assertEqual(at.CTRL.Modes.CFG_GET_CONTROL_MODE, 4)
+
+
 if __name__ == '__main__':
     unittest.main()

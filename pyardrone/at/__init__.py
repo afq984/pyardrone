@@ -106,3 +106,29 @@ class CALIB(ATCommand):
     device_number = Int32Arg(
         'Identifier of the device to calibrate - '
         'Choose this identifier from ardrone_calibration_device_t.')
+
+
+class CTRL(ATCommand):
+
+    '''
+    Not documented, change control mode
+    '''
+
+    mode = Int32Arg()
+
+    class Modes(IntEnum):
+        (
+            NO_CONTROL_MODE,  # Doing nothing
+            ARDRONE_UPDATE_CONTROL_MODE,  # Not used
+            PIC_UPDATE_CONTROL_MODE,  # Not used
+            LOGS_GET_CONTROL_MODE,  # Not used
+
+            CFG_GET_CONTROL_MODE,
+            # Send active configuration file to a client through the
+            # 'control' socket UDP 5559 */
+
+            ACK_CONTROL_MODE,  # Reset command mask in navdata
+
+            CUSTOM_CFG_GET_CONTROL_MODE,
+            # Requests the list of custom configuration IDs
+        ) = range(7)
