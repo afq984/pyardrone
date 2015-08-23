@@ -7,3 +7,7 @@ def ieee754float(value):
 
 def bits(*args):
     return sum(1 << bit for bit in args)
+
+
+def noop(obj):
+    return obj

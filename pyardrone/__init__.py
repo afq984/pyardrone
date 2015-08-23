@@ -4,8 +4,11 @@ High level ARDrone API
 
 import socket
 import logging
+import itertools
 
 from pyardrone.config import Config
+from pyardrone import at
+from pyardrone.utils import noop
 
 
 logger = logging.getLogger(__name__)
@@ -31,15 +34,30 @@ class ARDrone:
         # DevGuide: send 1 as the sequence number of the first sent command
         self.seq_num = 0
 
-        self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self.sock.bind(('', self.at_port))
+        self.init_sockets()
 
         self.config = Config(self)
+
+    def init_sockets(self):
+
+        self.at_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self.at_sock.bind(('', self.at_port))
+
+        self.navdata_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self.navdata_sock.bind(('', self.navdata_port))
+
+        self.control_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.control_sock.bind(('', self.control_port))
+
+    def close_sockets(self):
+        self.at_sock.close()
+        self.control_sock.close()
+        self.control_sock.close()
 
     def send(self, command):
         self.seq_num += 1
         packed = command.pack(self.seq_num)
-        bytes_sent = self.sock.sendto(packed, (self.addr, self.at_port))
+        bytes_sent = self.at_sock.sendto(packed, (self.addr, self.at_port))
         logger.debug(
             'sent %d bytes to "%s:%d", %r',
             bytes_sent,
@@ -49,5 +67,7 @@ class ARDrone:
         )
 
     def get_raw_config(self):
-        with open('/home/afg/Downloads/conf_file_example.txt') as f:
-            return f.read()
+        self.send(at.CTRL(at.CTRL.Modes.CFG_GET_CONTROL_MODE))
+        return b''.join(
+            itertools.dropwhile(noop, self.control_sock.recv(4096))
+        ).encode()
