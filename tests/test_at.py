@@ -36,6 +36,15 @@ class CommandTest(unittest.TestCase):
         with self.assertRaises(TypeError):
             at.REF(0.5)
 
+    def test_repr(self):
+        self.assertEqual(repr(at.REF(3)), 'REF(input=3)')
+
+    def test_equal(self):
+        self.assertEqual(at.REF(20), at.REF(20))
+
+    def test_not_equal_to_other_type(self):
+        self.assertNotEqual(at.REF(17), 17)
+
 
 class ArgumentTest(unittest.TestCase):
 

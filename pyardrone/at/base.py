@@ -42,10 +42,15 @@ class ATCommand(metaclass=ATCommandMeta):
         return '{clsname}({argl})'.format(
             clsname=type(self).__name__,
             argl=', '.join(
-                '{}={!r}'.format(par.name, getattr(self, par.name).value)
+                '{}={!r}'.format(par.name, getattr(self, par.name))
                 for par in self.parameters
             )
         )
+
+    def __eq__(self, other):
+        if isinstance(other, ATCommand):
+            return self._args == other._args
+        return NotImplemented
 
     def pack(self, seq='SEQUNSET'):
         # should use bytes.format, fix this after python3.5 is released
