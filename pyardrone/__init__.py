@@ -18,18 +18,21 @@ class ARDrone:
         addr='192.168.1.1',
         at_port=5556,
         navdata_port=5554,
-        video_port=5559
+        video_port=5555,  # 5553?
+        control_port=5559
     ):
         self.addr = addr
         self.at_port = at_port
         self.navdata_port = navdata_port
         self.video_port = video_port
+        self.control_port = control_port
 
         # sequence number required by ATCommands
         # DevGuide: send 1 as the sequence number of the first sent command
         self.seq_num = 0
 
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self.sock.bind(('', self.at_port))
 
         self.config = Config(self)
 
