@@ -4,12 +4,6 @@ import warnings
 from pyardrone.utils import ieee754float
 
 
-def packer(func):
-    def wrapper(self):
-        return func(self.value)
-    return wrapper
-
-
 class Argument:
 
     __slots__ = ('name', 'description')
