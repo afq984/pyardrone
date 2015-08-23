@@ -1,3 +1,8 @@
+'''
+ATCommand Base Class
+'''
+
+
 import collections
 from pyardrone.at.arguments import Argument
 

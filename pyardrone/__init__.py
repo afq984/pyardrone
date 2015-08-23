@@ -1,3 +1,7 @@
+'''
+High level ARDrone API
+'''
+
 import socket
 import logging
 
