@@ -1,6 +1,8 @@
 import socket
 import logging
 
+from pyardrone.config import Config
+
 
 logger = logging.getLogger(__name__)
 
@@ -25,6 +27,8 @@ class ARDrone:
 
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
+        self.config = Config(self)
+
     def send(self, command):
         self.seq_num += 1
         packed = command.pack(self.seq_num)
@@ -36,3 +40,7 @@ class ARDrone:
             self.at_port,
             packed
         )
+
+    def get_raw_config(self):
+        with open('/home/afg/Downloads/conf_file_example.txt') as f:
+            return f.read()
