@@ -1,5 +1,5 @@
 import unittest
-from pyardrone.utils import ieee754float, bits
+from pyardrone.utils import ieee754float, bits, noop
 
 
 class IEEE754Test(unittest.TestCase):
@@ -22,3 +22,10 @@ class BitsTest(unittest.TestCase):
 
     def test_bits_accepts_multiple_arguments(self):
         self.assertEqual(bits(1) + bits(13) + bits(6), bits(1, 13, 6))
+
+
+class NoopTest(unittest.TestCase):
+
+    def test_whatever(self):
+        self.assertEqual(noop(3 + 4), 7)
+        self.assertEqual(noop(1), True)
