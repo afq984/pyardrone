@@ -51,7 +51,7 @@ class ARDrone:
 
     def close_sockets(self):
         self.at_sock.close()
-        self.control_sock.close()
+        self.navdata_sock.close()
         self.control_sock.close()
 
     def send(self, command):
