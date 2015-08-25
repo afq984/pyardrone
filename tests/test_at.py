@@ -1,3 +1,4 @@
+import enum
 import unittest
 from pyardrone import at
 from pyardrone.at import arguments
@@ -52,6 +53,15 @@ class ArgumentTest(unittest.TestCase):
         self.assertEqual(
             arguments.Int32Arg.pack(100),
             b'100'
+        )
+
+    def test_int_pack_intenum(self):
+        class SomeEnum(enum.IntEnum):
+            some_flag = 10
+
+        self.assertEqual(
+            arguments.Int32Arg.pack(10),
+            b'10'
         )
 
     def test_float_pack(self):

@@ -44,7 +44,7 @@ class Int32Arg(Argument):
 
     @staticmethod
     def pack(value):
-        return str(value).encode()
+        return str(int(value)).encode()
 
 
 class FloatArg(Argument):
