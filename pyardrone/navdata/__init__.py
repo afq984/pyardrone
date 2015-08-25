@@ -3,7 +3,7 @@ import io
 import reprlib
 
 
-header = struct.pack('<i', 0x55667788)
+header = 0x55667788
 
 
 class NavData:
