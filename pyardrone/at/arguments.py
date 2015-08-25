@@ -14,7 +14,7 @@ class Argument:
     __slots__ = ('name', 'description')
 
     def __init__(self, description=None, *, default=None):
-        self.description = None
+        self.description = description
         self.default = default
 
     def __get__(self, obj, type_=None):

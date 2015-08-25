@@ -70,6 +70,12 @@ class CommandDefaultTest(unittest.TestCase):
 
 class ArgumentTest(unittest.TestCase):
 
+    def test_description(self):
+        self.assertEqual(
+            arguments.Int32Arg('hahaha').description,
+            'hahaha'
+        )
+
     def test_int_pack(self):
         self.assertEqual(
             arguments.Int32Arg.pack(100),
