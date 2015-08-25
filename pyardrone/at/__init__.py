@@ -132,3 +132,5 @@ class CTRL(ATCommand):
             CUSTOM_CFG_GET_CONTROL_MODE,
             # Requests the list of custom configuration IDs
         ) = range(7)
+
+    zero = Int32Arg(default=0)

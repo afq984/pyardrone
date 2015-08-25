@@ -13,14 +13,15 @@ class Argument:
 
     __slots__ = ('name', 'description')
 
-    def __init__(self, description=None):
+    def __init__(self, description=None, *, default=None):
         self.description = None
+        self.default = default
 
     def __get__(self, obj, type_=None):
         try:
             return obj._args[self.name]
         except KeyError:
-            return None
+            return self.default
 
     def __set__(self, obj, value):
         if hasattr(self, 'check'):

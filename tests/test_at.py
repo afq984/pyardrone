@@ -1,7 +1,7 @@
 import enum
 import unittest
 from pyardrone import at
-from pyardrone.at import arguments
+from pyardrone.at import arguments, base
 
 
 class CommandTest(unittest.TestCase):
@@ -45,6 +45,27 @@ class CommandTest(unittest.TestCase):
 
     def test_not_equal_to_other_type(self):
         self.assertNotEqual(at.REF(17), 17)
+
+
+class CommandDefaultTest(unittest.TestCase):
+
+    def setUp(self):
+        class FOO(base.ATCommand):
+            argument = arguments.Int32Arg(default=20)
+
+        self.FOO = FOO
+
+    def test_default(self):
+        self.assertEqual(self.FOO().argument, 20)
+
+    def test_default_overwrite(self):
+        bar = self.FOO()
+        bar.argument = 9
+        self.assertEqual(bar.argument, 9)
+
+        baz = self.FOO()
+        baz.argument = 17
+        self.assertEqual(baz.argument, 17)
 
 
 class ArgumentTest(unittest.TestCase):
