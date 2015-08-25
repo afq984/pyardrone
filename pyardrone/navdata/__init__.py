@@ -41,3 +41,7 @@ class NavOption:
         return (
             '{self.__class__.__name__}'
             '(id={self.id}, size={self.size})').format(self=self)
+
+
+def compute_checksum(bytes_):
+    return sum(bytes_[:-8]) & 0xffffffff
