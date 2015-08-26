@@ -18,17 +18,20 @@ class ARDrone:
 
     def __init__(
         self,
+        *,
         addr='192.168.1.1',
         at_port=5556,
         navdata_port=5554,
         video_port=5555,  # 5553?
-        control_port=5559
+        control_port=5559,
+        interval=0.03
     ):
         self.addr = addr
         self.at_port = at_port
         self.navdata_port = navdata_port
         self.video_port = video_port
         self.control_port = control_port
+        self.interval = interval
 
         # sequence number required by ATCommands
         # DevGuide: send 1 as the sequence number of the first sent command
