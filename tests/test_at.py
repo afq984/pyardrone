@@ -50,11 +50,8 @@ class CommandTest(unittest.TestCase):
 
 class CommandDefaultTest(unittest.TestCase):
 
-    def setUp(self):
-        class FOO(base.ATCommand):
-            argument = arguments.Int32Arg(default=20)
-
-        self.FOO = FOO
+    class FOO(base.ATCommand):
+        argument = arguments.Int32Arg(default=20)
 
     def test_default(self):
         self.assertEqual(self.FOO().argument, 20)
