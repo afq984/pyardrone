@@ -6,17 +6,20 @@
 Welcome to pyardrone's documentation!
 =====================================
 
-Contents:
+..
+    Contents:
 
 .. toctree::
    :maxdepth: 2
 
+   intro
+   ardrone
+   at
+   config
 
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+..
+    Indices and tables
+    * :ref:`genindex`
+    * :ref:`modindex`
+    * :ref:`search`
 
