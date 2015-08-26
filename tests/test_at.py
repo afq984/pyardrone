@@ -2,6 +2,7 @@ import enum
 import unittest
 from pyardrone import at
 from pyardrone.at import arguments, base
+from pyardrone.utils import ieee754float
 
 
 class CommandTest(unittest.TestCase):
@@ -68,7 +69,21 @@ class CommandDefaultTest(unittest.TestCase):
         self.assertEqual(baz.argument, 17)
 
 
-class ArgumentTest(unittest.TestCase):
+class ArgumentReprTest(unittest.TestCase):
+
+    class Bar(arguments.Argument):
+        pass
+
+    def test_repr_without_name(self):
+        repr(self.Bar())
+
+    def test_repr_with_name(self):
+        bar = self.Bar()
+        bar.name = 'parn'
+        self.assertEqual(repr(bar), '<Bar:parn>')
+
+
+class ArgumentPackTest(unittest.TestCase):
 
     def test_description(self):
         self.assertEqual(
@@ -96,6 +111,12 @@ class ArgumentTest(unittest.TestCase):
         self.assertIsInstance(
             arguments.FloatArg.pack(0.5),
             bytes
+        )
+
+    def test_float_pack_int(self):
+        self.assertEqual(
+            arguments.FloatArg.pack(10),
+            str(ieee754float(10.)).encode(),
         )
 
     def test_str_pack_int(self):

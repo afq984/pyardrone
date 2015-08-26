@@ -37,7 +37,8 @@ class Argument:
 
 class Int32Arg(Argument):
 
-    def check(self, value):
+    @staticmethod
+    def check(value):
         if int.bit_length(value) > 32:
             raise ValueError(
                 'value {} should be less than 4 bytes'.format(value)
@@ -50,12 +51,6 @@ class Int32Arg(Argument):
 
 class FloatArg(Argument):
 
-    def check(self, value):
-        if not isinstance(value, float):
-            raise TypeError('{:r} should be a float, not {}'.format(
-                value, type(value)
-            ))
-
     @staticmethod
     def pack(value):
         return str(ieee754float(value)).encode()
@@ -63,7 +58,8 @@ class FloatArg(Argument):
 
 class StringArg(Argument):
 
-    def check(self, value):
+    @staticmethod
+    def check(value):
         if not isinstance(value, (str, bytes, float, int, bool)):
             warnings.warn(
                 '{} is of type {}, which may be unsupported py ARDrone'.format(
