@@ -99,9 +99,13 @@ class ARDrone:
         while not self._at_stop.isSet():
             try:
                 qcmd = self.queued_commands.get_nowait()
+                call_task_done = True
             except queue.Empty:
                 qcmd = QueuedCommand(at.COMWDG(), event=None)
+                call_task_done = False
             self.send_nowait(qcmd.command)
             if qcmd.event is not None:
                 qcmd.event.set()
+            if call_task_done:
+                self.queued_commands.task_done()
             time.sleep(self.interval)
