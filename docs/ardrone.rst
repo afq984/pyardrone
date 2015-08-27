@@ -21,13 +21,15 @@ The ARDrone object
 
         Disconnect the drone.
 
-    .. method:: takeoff(interrupt=False)
+    .. method:: takeoff(wait=False, discard=True)
 
-    .. method:: land(interrupt=False)
+    .. method:: land(wait=False, discard=True)
 
         drone takeoff / land
 
-        If *interrupt* is True, abort the queued *ATCommand*\ s and takeoff/land immediately; wait for the queued commands otherwise.
+        If *wait* is True, wait for queued commands to complete before, taking off/landing.
+
+        If *discard* is True, discard all queued commands after taking off/land.
 
     .. method:: register(command, event=None)
 
