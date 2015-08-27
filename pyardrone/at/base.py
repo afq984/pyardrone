@@ -54,7 +54,7 @@ class ATCommand(metaclass=ATCommandMeta):
 
     def __eq__(self, other):
         if isinstance(other, ATCommand):
-            return self._args == other._args
+            return type(self) == type(other) and self._args == other._args
         return NotImplemented
 
     def pack(self, seq='SEQUNSET'):

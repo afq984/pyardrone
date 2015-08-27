@@ -44,6 +44,13 @@ class CommandTest(unittest.TestCase):
     def test_equal(self):
         self.assertEqual(at.REF(20), at.REF(20))
 
+    def test_different_commands_with_same_arguments_are_different(self):
+        class REF2(base.ATCommand):
+
+            input = arguments.Int32Arg()
+
+        self.assertNotEqual(at.REF(3), REF2(3))
+
     def test_not_equal_to_other_type(self):
         self.assertNotEqual(at.REF(17), 17)
 
