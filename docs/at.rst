@@ -16,11 +16,11 @@ For example, to create an ``"AT*PCMD"`` command with the progressive flag and ve
     .. code-block:: python3
 
         >>> from pyardrone import at
-        >>> cmd = at.PCMD(at.PCMD.Flags.progressive, 0, 0.8, 0, 0)
-        PCMD(flag=<flags.progressive: 1>, roll=0, pitch=0.8, gaz=0, yaw=0)
+        >>> cmd = at.PCMD(at.PCMD.flag.progressive, 0, 0.8, 0, 0)
+        PCMD(flag=<flag.progressive: 1>, roll=0, pitch=0.8, gaz=0, yaw=0)
         >>> # or with keyword arguments, just use it like a function
         >>> at.PCMD(at.PCMD.flag.progressive, gaz=0.8)
-        PCMD(flag=<flags.progressive: 1>, roll=0, pitch=0.8, gaz=0, yaw=0)
+        PCMD(flag=<flag.progressive: 1>, roll=0, pitch=0.8, gaz=0, yaw=0)
 
 Sending an *ATCommand*
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -64,11 +64,11 @@ The created *EXAMPLE* class can then be used just like other ATCommand classes:
 
         >>> cmd = EXAMPLE(EXAMPLE.options.sleep, 3.5, 'hello')
         >>> cmd
-        EXAMPLE(number=<flags.sleep: 2>, speed=3.5, comment='hello')
+        EXAMPLE(number=<options.sleep: 2>, speed=3.5, comment='hello')
         >>> cmd.pack()
         b'AT*EXAMPLE=SEQUNSET,2,1080033280,"hello"\r'
         >>> EXAMPLE(number=EXAMPLE.options.wander, speed=6.7)
-        EXAMPLE(number=<flags.wander: 4>, speed=6.7, comment='nothing')
+        EXAMPLE(number=<options.wander: 4>, speed=6.7, comment='nothing')
 
 ATCommand API
 -------------

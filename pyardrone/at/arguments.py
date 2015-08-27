@@ -72,6 +72,8 @@ class Int32Arg(Argument):
     type_hint = int
 
     def __getattr__(self, attr):
+        if attr == '_flags':
+            raise AttributeError('{!r} has no attribute: _flags'.format(self))
         return getattr(self._flags, attr)
 
     @staticmethod
@@ -89,7 +91,7 @@ class Int32Arg(Argument):
         '''
         Set the flags of this arguments
         '''
-        self._flags = enum.IntEnum('flags', flags)
+        self._flags = enum.IntEnum('_flags', flags)
 
 
 class FloatArg(Argument):

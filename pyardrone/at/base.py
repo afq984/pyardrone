@@ -22,27 +22,44 @@ class ATCommandMeta(type):
 
         # update doc
         if '__doc__' in namespace:
+            doc_updates = ['']
             indent = ''
             for line in namespace['__doc__'].splitlines():
                 text = line.strip()
                 if text:
                     indent = line.split(text)[0]
                     break
-            namespace['__doc__'] += '\n'
 
             for parameter in parameters:
                 try:
                     type_hint = parameter.type_hint.__name__
                 except AttributeError:
                     type_hint = ''
-                namespace['__doc__'] += (
-                    '{indent}:param {type} {name}: {desc}\n'.format(
-                        indent=indent,
+                doc_updates.append(
+                    ':param {type} {name}: {desc}'.format(
                         type=type_hint,
                         name=parameter.name,
                         desc=parameter.description or 'no description'
                     )
                 )
+
+            doc_updates.append('')
+
+            has_flags = False
+            for parameter in parameters:
+                if hasattr(parameter, '_flags'):
+                    parameter._flags.__name__ = parameter.name
+                    if not has_flags:
+                        doc_updates.append('Flags:')
+                    for flag in sorted(parameter._flags):
+                        doc_updates.append(
+                            '    * ``{flag!r}``'.format(
+                                flag=flag
+                            )
+                        )
+                doc_updates.append('')
+
+            namespace['__doc__'] += ('\n' + indent).join(doc_updates)
 
         namespace['parameters'] = parameters
         self = type.__new__(cls, name, bases, dict(namespace))
