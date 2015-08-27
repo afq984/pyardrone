@@ -50,7 +50,7 @@ The usage is similiar to writing:
         >>> drone.config['general:ardrone_name']
         'My ARDrone'
 
-    If the requested configuration option does not exist, *KeyError* is raised.
+    If the requested configuration option does not exist, :py:exc:`KeyError` will be raised
 
 .. note::
 
