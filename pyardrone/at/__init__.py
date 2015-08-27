@@ -114,7 +114,7 @@ class CALIB(ATCommand):
 class CTRL(ATCommand):
 
     '''
-    Not documented, change control mode
+    Not documented in developer guide, change control mode
     '''
 
     mode = Int32Arg()
