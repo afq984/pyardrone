@@ -54,6 +54,9 @@ class CommandTest(unittest.TestCase):
     def test_not_equal_to_other_type(self):
         self.assertNotEqual(at.REF(17), 17)
 
+    def test_pack(self):
+        self.assertEqual(at.REF(20).pack(100), b'AT*REF=100,20\r')
+
 
 class CommandDefaultTest(unittest.TestCase):
 
