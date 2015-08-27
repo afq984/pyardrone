@@ -68,20 +68,5 @@ The usage is similiar to writing:
 Config API
 ----------
 
-.. class:: Config(owner)
-
-    .. method:: clear_cache()
-
-        Clears the cached config options.
-
-    .. attribute:: owner
-
-        Owner (:py:class:`ARDrone`) of the config object. (is a proxy)
-
-    .. attribute:: data
-
-        Cached dict of options from :py:meth:`ARDrone.get_raw_config`.
-
-    .. attribute:: updates
-
-        Cached dict of options set by the user.
+.. autoclass:: pyardrone.config.Config
+    :members:

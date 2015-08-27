@@ -2,7 +2,7 @@
 ATCommand Argument Classes
 '''
 
-
+import enum
 import functools
 import json
 import warnings
@@ -11,19 +11,33 @@ from pyardrone.utils import ieee754float
 
 class Argument:
 
-    __slots__ = ('name', 'description')
+    '''
+    Base class of all arguments.
+
+    :param description: stored, but has no effect.
+
+    :param default: used to provide a default value for the argument for the \
+                    :class:`~pyardrone.at.base.ATCommand`.
+    '''
+
+    __slots__ = ('name', 'description', 'default')
 
     def __init__(self, description=None, *, default=None):
         self.description = description
         self.default = default
 
     def __get__(self, obj, type_=None):
-        try:
-            return obj._args[self.name]
-        except KeyError:
-            return self.default
+        if obj is None:
+            return self
+        else:
+            try:
+                return obj._args[self.name]
+            except KeyError:
+                return self.default
 
     def __set__(self, obj, value):
+        if obj is None:
+            raise AttributeError('{!r} is not settable'.format(self))
         if hasattr(self, 'check'):
             self.check(value)
         obj._args[self.name] = value
@@ -34,8 +48,31 @@ class Argument:
         else:
             return super().__repr__()
 
+    @staticmethod
+    def pack(value):
+        '''
+        Packs the value into bytes
+
+        :rtype: bytes
+
+        Subclasses should define this method.
+        '''
+
+        raise NotImplementedError
+
 
 class Int32Arg(Argument):
+
+    '''
+    Argument representing an 32bit integer.
+    '''
+
+    __slots__ = ('_flags',)
+
+    type_hint = int
+
+    def __getattr__(self, attr):
+        return getattr(self._flags, attr)
 
     @staticmethod
     def check(value):
@@ -48,8 +85,20 @@ class Int32Arg(Argument):
     def pack(value):
         return str(int(value)).encode()
 
+    def set_flags(self, **flags):
+        '''
+        Set the flags of this arguments
+        '''
+        self._flags = enum.IntEnum('flags', flags)
+
 
 class FloatArg(Argument):
+
+    'Argument representing a float'
+
+    __slots__ = ()
+
+    type_hint = float
 
     @staticmethod
     def pack(value):
@@ -57,6 +106,12 @@ class FloatArg(Argument):
 
 
 class StringArg(Argument):
+
+    'Argument representing a string'
+
+    __slots__ = ()
+
+    type_hint = str
 
     @staticmethod
     def check(value):
@@ -71,6 +126,14 @@ class StringArg(Argument):
 
     @functools.singledispatch
     def pack(value):
+        '''
+        packing rule:
+            * ``True`` => ``b'TRUE'``
+            * ``False`` => ``b'FALSE'``
+            * ``65535`` => ``b'65535'``
+            * ``0.32`` => ``b'0.32'``
+            * ``'hello, world'`` => ``b'hello, world'``
+        '''
         return json.dumps(str(value)).encode()
 
     @pack.register(bool)

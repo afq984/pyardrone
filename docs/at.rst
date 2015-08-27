@@ -17,10 +17,10 @@ For example, to create an ``"AT*PCMD"`` command with the progressive flag and ve
 
         >>> from pyardrone import at
         >>> cmd = at.PCMD(at.PCMD.Flags.progressive, 0, 0.8, 0, 0)
-        PCMD(flag=at.PCMD.Flags.progressive, roll=0.0, pitch=0.8, gaz=0.0, yaw=0.0)
+        PCMD(flag=<flags.progressive: 1>, roll=0, pitch=0.8, gaz=0, yaw=0)
         >>> # or with keyword arguments, just use it like a function
-        >>> at.PCMD(at.PCMD.Flags.progressive, gaz=0.8)
-        PCMD(flag=at.PCMD.Flags.progressive, roll=0.0, pitch=0.8, gaz=0.0, yaw=0.0)
+        >>> at.PCMD(at.PCMD.flag.progressive, gaz=0.8)
+        PCMD(flag=<flags.progressive: 1>, roll=0, pitch=0.8, gaz=0, yaw=0)
 
 Sending an *ATCommand*
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -30,7 +30,7 @@ To send a AT\*PCMD command with the progressive flag and vertical speed = 0.8, u
     .. code-block:: python3
 
         >>> # drone is an ARDrone instance here
-        >>> drone.send(at.PCMD(at.PCMD.Flags.progressive, 0, 0.8, 0, 0))
+        >>> drone.send(at.PCMD(at.PCMD.flag.progressive, 0, 0.8, 0, 0))
 
 The library provides the sequence number for the *pack()* function automatically.
 
@@ -39,7 +39,7 @@ Defining an *ATCommand* class
 
 If you want to use an *ATCommand* not defined in the library, you can define it yourself.
 
-For example, to define a "AT*EXAMPLE" command with three arguments: number, speed, comment, which is a integer, a float, and a string respectively:
+For example, to define a "AT*EXAMPLE" command with three arguments: options, speed, comment, which is a integer, a float, and a string respectively:
 
     .. code-block:: python
 
@@ -48,71 +48,53 @@ For example, to define a "AT*EXAMPLE" command with three arguments: number, spee
 
         class EXAMPLE(ATCommand):
 
-            number = Int32Arg(default=15)
+            options = Int32Arg()
             speed = FloatArg()
-            comment = StringArg()
+            comment = StringArg(default='nothing')
+
+            options.set_flags(
+                eat=0b1,
+                sleep=0b10,
+                wander=0b100
+            )
 
 The created *EXAMPLE* class can then be used just like other ATCommand classes:
 
     .. code-block:: python
 
-        >>> cmd = EXAMPLE(4, 3.5, 'nothing')
+        >>> cmd = EXAMPLE(EXAMPLE.options.sleep, 3.5, 'hello')
         >>> cmd
-        EXAMPLE(number=4, speed=3.5, comment='nothing')
+        EXAMPLE(number=<flags.sleep: 2>, speed=3.5, comment='hello')
         >>> cmd.pack()
-        b'AT*EXAMPLE=SEQUNSET,4,1080033280,"nothing"\r'
-        >>> EXAMPLE(speed=6.7, comment='QAQ')
-        EXAMPLE(number=15, speed=6.7, comment='QAQ')
+        b'AT*EXAMPLE=SEQUNSET,2,1080033280,"hello"\r'
+        >>> EXAMPLE(number=EXAMPLE.options.wander, speed=6.7)
+        EXAMPLE(number=<flags.wander: 4>, speed=6.7, comment='nothing')
 
 ATCommand API
 -------------
 
-.. class:: ATCommand(*args, **kwargs)
+.. autoclass:: pyardrone.at.base.ATCommand
+    :members:
+    :special-members:
 
-    Base class of all *ATCommand*\ s
+List of ATCommands
+------------------
 
-    .. method:: __eq__(other)
+.. automodule:: pyardrone.at
+    :members:
 
-        Two *ATCommand*\ s are compared equal if:
-            * They are of the same class
+Argument Classes
+----------------
 
-            * They have the same arguments
+.. currentmodule:: pyardrone.at.arguments
 
-    .. method:: pack(seq='SEQUNSET')
+.. autoclass:: Argument
+    :members:
 
-        Packs the command into *bytes*, if you want to manipulate it manually (you don't have to do this):
+.. autoclass:: Int32Arg
+    :members: set_flags
 
-        :param seq: sequence number
+.. autoclass:: FloatArg
 
-        .. code-block:: python
-
-            >>> cmd.pack()
-            b'AT*PCMD=SEQUNSET,2,0,1061997773,0,0\r'
-            >>> cmd.pack(100)
-            b'AT*PCMD=100,2,0,1061997773,0,0\r'
-
-    .. attribute:: parameters
-
-        A list of parameters (:py:class:`Argument`\ s) of the command.
-
-    .. attribute:: _args
-
-        Dict of stored arguments.
-
-.. class:: Argument(description=None, *, default=None)
-
-    Base class of all arguments.
-
-    :param description: stored, but has no effect.
-
-    :param default: used to provide a default value for the argument for the *ATCommand*.
-
-.. class:: Int32Arg(...)
-
-.. class:: FloatArg(...)
-
-.. class:: StringArg(...)
-
-    .. staticmethod:: pack(value)
-
-        Pack the value into bytes.
+.. autoclass:: StringArg
+    :members: pack

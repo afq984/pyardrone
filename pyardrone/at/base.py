@@ -14,16 +14,55 @@ class ATCommandMeta(type):
         return collections.OrderedDict()
 
     def __new__(cls, name, bases, namespace):
-        self = type.__new__(cls, name, bases, dict(namespace))
-        self.parameters = list()
+        parameters = list()
         for key, value in namespace.items():
             if isinstance(value, Argument):
                 value.name = key
-                self.parameters.append(value)
+                parameters.append(value)
+
+        # update doc
+        if '__doc__' in namespace:
+            indent = ''
+            for line in namespace['__doc__'].splitlines():
+                text = line.strip()
+                if text:
+                    indent = line.split(text)[0]
+                    break
+            namespace['__doc__'] += '\n'
+
+            for parameter in parameters:
+                try:
+                    type_hint = parameter.type_hint.__name__
+                except AttributeError:
+                    type_hint = ''
+                namespace['__doc__'] += (
+                    '{indent}:param {type} {name}: {desc}\n'.format(
+                        indent=indent,
+                        type=type_hint,
+                        name=parameter.name,
+                        desc=parameter.description or 'no description'
+                    )
+                )
+
+        namespace['parameters'] = parameters
+        self = type.__new__(cls, name, bases, dict(namespace))
         return self
 
 
 class ATCommand(metaclass=ATCommandMeta):
+
+    '''
+    Base class of all ATCommands
+
+    .. attribute:: parameters
+
+        A list of parameters (:py:class:`~pyardrone.at.arguments.Argument`\ s)\
+        of the command.
+
+    .. attribute:: _args
+
+        Dict of stored arguments.
+    '''
     __slots__ = '_args'
 
     def __init__(self, *args, **kwargs):
@@ -53,11 +92,24 @@ class ATCommand(metaclass=ATCommandMeta):
         )
 
     def __eq__(self, other):
+        '''
+        Two *ATCommand*\ s are compared equal if:
+            * They are of the same class
+
+            * They have the same arguments
+        '''
         if isinstance(other, ATCommand):
             return type(self) == type(other) and self._args == other._args
         return NotImplemented
 
     def pack(self, seq='SEQUNSET'):
+        '''
+        Packs the command into *bytes*
+
+        :param seq: sequence number
+        :rtype: bytes
+        '''
+
         # should use bytes.format, fix this after python3.5 is released
         return 'AT*{clsname}={seq},{argl}\r'.format(
             clsname=type(self).__name__,

@@ -194,7 +194,7 @@ class ConstantTest(unittest.TestCase):
         8.1.2:
         ...with a mode parameter equaling 4 (CFG_GET_CONTROL_MODE)
         '''
-        self.assertEqual(at.CTRL.Modes.CFG_GET_CONTROL_MODE, 4)
+        self.assertEqual(at.CTRL.mode.CFG_GET_CONTROL_MODE, 4)
 
 
 if __name__ == '__main__':

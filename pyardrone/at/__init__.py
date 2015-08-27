@@ -1,12 +1,12 @@
-'''
-AT Commands
-'''
-
-
-from enum import IntEnum
 from pyardrone.at.base import ATCommand
 from pyardrone.at.arguments import Int32Arg, FloatArg, StringArg
 from pyardrone.utils import bits
+
+
+__all__ = (
+    'REF', 'PCMD', 'PCMD_MAG', 'FTRIM', 'CONFIG',
+    'CONFIG_IDS', 'COMWDG', 'CALIB', 'CTRL'
+)
 
 
 class REF(ATCommand):
@@ -20,10 +20,11 @@ class REF(ATCommand):
         'an integer value, '
         'representing a 32 bit-wide bit-field controlling the drone')
 
-    class Flags(IntEnum):
-        default = bits(18, 20, 22, 24, 28)  # Always on
-        start = bits(9)  # Takeoff / Land
-        select = bits(8)  # Switch of emergency mode
+    input.set_flags(
+        default=bits(18, 20, 22, 24, 28),  # Always on
+        start=bits(9),  # Takeoff / Land
+        select=bits(8),  # Switch of emergency mode
+    )
 
 
 class PCMD(ATCommand):
@@ -40,10 +41,11 @@ class PCMD(ATCommand):
     gaz = FloatArg('drone vertical speed, [-1...1]', default=0)
     yaw = FloatArg('drone angular speed, [-1...1]', default=0)
 
-    class Flags(IntEnum):
-        absolute_control = bits(2)
-        combined_yaw = bits(1)
-        progressive = bits(0)
+    flag.set_flags(
+        absolute_control=bits(2),
+        combined_yaw=bits(1),
+        progressive=bits(0),
+    )
 
 
 class PCMD_MAG(ATCommand):
@@ -117,21 +119,20 @@ class CTRL(ATCommand):
 
     mode = Int32Arg()
 
-    class Modes(IntEnum):
-        (
-            NO_CONTROL_MODE,  # Doing nothing
-            ARDRONE_UPDATE_CONTROL_MODE,  # Not used
-            PIC_UPDATE_CONTROL_MODE,  # Not used
-            LOGS_GET_CONTROL_MODE,  # Not used
+    mode.set_flags(
+        NO_CONTROL_MODE=0,  # Doing nothing
+        ARDRONE_UPDATE_CONTROL_MODE=1,  # Not used
+        PIC_UPDATE_CONTROL_MODE=2,  # Not used
+        LOGS_GET_CONTROL_MODE=3,  # Not used
 
-            CFG_GET_CONTROL_MODE,
-            # Send active configuration file to a client through the
-            # 'control' socket UDP 5559 */
+        CFG_GET_CONTROL_MODE=4,
+        # Send active configuration file to a client through the
+        # 'control' socket UDP 5559 */
 
-            ACK_CONTROL_MODE,  # Reset command mask in navdata
+        ACK_CONTROL_MODE=5,  # Reset command mask in navdata
 
-            CUSTOM_CFG_GET_CONTROL_MODE,
-            # Requests the list of custom configuration IDs
-        ) = range(7)
+        CUSTOM_CFG_GET_CONTROL_MODE=6,
+        # Requests the list of custom configuration IDs
+    )
 
     zero = Int32Arg(default=0)

@@ -6,6 +6,21 @@ from pyardrone import at
 
 class Config(collections.ChainMap):
 
+    '''
+    .. attribute:: owner
+
+        Owner (:py:class:`ARDrone`) of the config object. (is a proxy)
+
+    .. attribute:: data
+
+        Cached dict of options from
+        :py:meth:`~pyardrone.ARDrone.get_raw_config`.
+
+    .. attribute:: updates
+
+        Cached dict of options set by the user.
+    '''
+
     def __init__(self, owner):
         self.owner = weakref.proxy(owner)
         self.data = LazyConfigDict(owner)
@@ -20,6 +35,9 @@ class Config(collections.ChainMap):
         self.owner.send(at.CONFIG(key, value))
 
     def clear_cache(self):
+        '''
+        Clears the cached config options.
+        '''
         self.updates.clear()
         self.data.clear()
 

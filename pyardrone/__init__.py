@@ -22,6 +22,22 @@ QueuedCommand = collections.namedtuple('QueuedCommand', 'command event')
 
 class ARDrone:
 
+    '''
+    The class representing a Parrot AR.Drone
+
+    :param address: address of the drone
+    :param at_port: AT command port
+    :param navdata_port: NavData port
+    :param video_port: Video port
+    :param control_port: Control port
+    :param interval: delay between subsequent commands in seconds
+    :param connect: connect to the drone at init
+
+    .. attribute:: config
+
+        The config object of the drone, see :ref:`configuration`.
+    '''
+
     def __init__(
         self,
         *,
@@ -66,7 +82,30 @@ class ARDrone:
     def interval(self, value):
         self._at_executor.interval = value
 
+    def takeoff(wait=False, discard=True):
+        '''
+        Drone takeoff.
+
+        :param wait: if True, wait for queued commands to complete before\
+        taking off.
+        :param discard: if True, discard all queued commands after taking off.
+        '''
+        raise NotImplementedError
+
+    def land(wait=False, discard=True):
+        '''
+        Drone land.
+
+        Parameters same as :py:meth:`takeoff`
+        '''
+        raise NotImplementedError
+
     def connect(self):
+        '''
+        Connect to the drone.
+
+        :raises RuntimeError: if the drone is connected or closed already.
+        '''
         if self.closed:
             raise RuntimeError("The drone's connection is closed already")
         if self.connected:
@@ -76,6 +115,12 @@ class ARDrone:
         self._at_executor.start()
 
     def close(self):
+        '''
+        Exit all threads and disconnect the drone.
+
+        This method has no effect if the drone is closed already or not
+        connected yet.
+        '''
         if self.closed or not self.connected:
             return
         self.closed = True
@@ -83,12 +128,26 @@ class ARDrone:
         self._close_sockets()
 
     def register(self, command, with_event=True):
+        '''
+        Puts the *ATCommand* to the queue, does not block.
+
+        :param ATCommand command: Command to register.
+        :param bool with_event: If ``True``, returns an \
+        :py:class:`threading.Event` object, which can be used to \
+        indicate whether the job is done.
+        '''
         return self._at_executor.put(command, with_event)
 
     def send(self, command):
+        '''
+        Puts the command to the queue, blocks until it is sent to the drone.
+        '''
         self._at_executor.put(command, True).wait()
 
     def send_nowait(self, command):
+        '''
+        Sends the command to the drone immediately.
+        '''
         with self.seq_lock:
             self.seq_num += 1
             packed = command.pack(self.seq_num)
@@ -102,6 +161,9 @@ class ARDrone:
             )
 
     def get_raw_config(self):
+        '''
+        Requests and returns the raw config file from the :data:`control_port`.
+        '''
         self.send(at.CTRL(at.CTRL.Modes.CFG_GET_CONTROL_MODE))
         return b''.join(
             itertools.dropwhile(noop, self.control_sock.recv(4096))
