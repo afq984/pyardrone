@@ -43,6 +43,7 @@ class PCMD(ATCommand):
     class Flags(IntEnum):
         absolute_control = bits(2)
         combined_yaw = bits(1)
+        progressive = bits(0)
 
 
 class PCMD_MAG(ATCommand):
