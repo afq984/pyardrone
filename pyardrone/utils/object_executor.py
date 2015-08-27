@@ -12,16 +12,16 @@ class Interrupt:
 
     def __enter__(self):
         self.obj_exe.pause(wait=self.wait)
-        if self.discard:
-            q = self.obj_exe._queue
-            with self.obj_exe._queue_lock:
-                with q.mutex:
-                    q.queue.clear()
-                    q.all_tasks_done.notify_all()
-                    q.unfinished_tasks = 0
 
     def __exit__(self, exc_type, exc_value, exc_tb):
         if exc_type is None:
+            if self.discard:
+                q = self.obj_exe._queue
+                with self.obj_exe._queue_lock:
+                    with q.mutex:
+                        q.queue.clear()
+                        q.all_tasks_done.notify_all()
+                        q.unfinished_tasks = 0
             self.obj_exe.resume()
 
 
