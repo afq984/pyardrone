@@ -35,10 +35,10 @@ class PCMD(ATCommand):
     flag = Int32Arg(
         'flag enabling the use of progressive commands and/or the Combined'
         'Yaw mode (bitfield)')
-    roll = FloatArg('drone left-right tilt, [-1...1]')
-    pitch = FloatArg('drone front-back tilt, [-1...1]')
-    gaz = FloatArg('drone vertical speed, [-1...1]')
-    yaw = FloatArg('drone angular speed, [-1...1]')
+    roll = FloatArg('drone left-right tilt, [-1...1]', default=0)
+    pitch = FloatArg('drone front-back tilt, [-1...1]', default=0)
+    gaz = FloatArg('drone vertical speed, [-1...1]', default=0)
+    yaw = FloatArg('drone angular speed, [-1...1]', default=0)
 
     class Flags(IntEnum):
         absolute_control = bits(2)
