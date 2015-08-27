@@ -9,7 +9,7 @@ class Config(collections.ChainMap):
     '''
     .. attribute:: owner
 
-        Owner (:py:class:`ARDrone`) of the config object. (is a proxy)
+        Owner (:py:class:`~pyardrone.ARDrone`) of the config object. (is a proxy)
 
     .. attribute:: data
 

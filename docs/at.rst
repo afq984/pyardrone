@@ -13,26 +13,37 @@ To create an *ATCommand* instance, you have to call the command class with the c
 
 For example, to create an ``"AT*PCMD"`` command with the progressive flag and vertical speed = 0.8:
 
-    .. code-block:: python3
+    >>> from pyardrone import at
+    >>> cmd = at.PCMD(at.PCMD.flag.progressive, 0, 0.8, 0, 0)
+    >>> cmd
+    PCMD(flag=<flag.progressive: 1>, roll=0, pitch=0.8, gaz=0, yaw=0)
 
-        >>> from pyardrone import at
-        >>> cmd = at.PCMD(at.PCMD.flag.progressive, 0, 0.8, 0, 0)
-        PCMD(flag=<flag.progressive: 1>, roll=0, pitch=0.8, gaz=0, yaw=0)
-        >>> # or with keyword arguments, just use it like a function
-        >>> at.PCMD(at.PCMD.flag.progressive, gaz=0.8)
-        PCMD(flag=<flag.progressive: 1>, roll=0, pitch=0.8, gaz=0, yaw=0)
+or using keyword arguments, just like a function:
+
+    >>> at.PCMD(at.PCMD.flag.progressive, gaz=0.8)
+    PCMD(flag=<flag.progressive: 1>, roll=0, pitch=0.8, gaz=0, yaw=0)
+
+We can use attribute access to view or modify the command:
+
+    >>> cmd
+    PCMD(flag=<flag.progressive: 1>, roll=0, pitch=0.8, gaz=0, yaw=0)
+    >>> cmd.roll
+    0
+    >>> cmd.pitch
+    0.8
+    >>> cmd.yaw = 0.5
+    >>> cmd
+    PCMD(flag=<flag.progressive: 1>, roll=0, pitch=0.8, gaz=0, yaw=0.5)
 
 Sending an *ATCommand*
 ~~~~~~~~~~~~~~~~~~~~~~
 
-To send a AT\*PCMD command with the progressive flag and vertical speed = 0.8, use the following:
+To send a AT\*PCMD command with the progressive flag and vertical speed = 0.8, use :py:meth:`pyardrone.ARDrone.send`
 
-    .. code-block:: python3
+    >>> # drone is an ARDrone instance here
+    >>> drone.send(at.PCMD(at.PCMD.flag.progressive, 0, 0.8, 0, 0))
 
-        >>> # drone is an ARDrone instance here
-        >>> drone.send(at.PCMD(at.PCMD.flag.progressive, 0, 0.8, 0, 0))
-
-The library provides the sequence number for the *pack()* function automatically.
+The library provides the sequence number for the :py:meth:`~pyardrone.at.base.ATCommand.pack` function automatically.
 
 Defining an *ATCommand* class
 -----------------------------
@@ -41,37 +52,35 @@ If you want to use an *ATCommand* not defined in the library, you can define it 
 
 For example, to define a "AT*EXAMPLE" command with three arguments: options, speed, comment, which is a integer, a float, and a string respectively:
 
-    .. code-block:: python
+.. code-block:: python
 
-        from pyardrone.at.base import ATCommand
-        from pyardrone.at.arguments imoprt Int32Arg, FloatArg, StringArg
+    from pyardrone.at.base import ATCommand
+    from pyardrone.at.arguments imoprt Int32Arg, FloatArg, StringArg
 
-        class EXAMPLE(ATCommand):
+    class EXAMPLE(ATCommand):
 
-            options = Int32Arg()
-            speed = FloatArg()
-            comment = StringArg(default='nothing')
+        options = Int32Arg()
+        speed = FloatArg()
+        comment = StringArg(default='nothing')
 
-            options.set_flags(
-                eat=0b1,
-                sleep=0b10,
-                wander=0b100
-            )
+        options.set_flags(
+            eat=0b1,
+            sleep=0b10,
+            wander=0b100
+        )
 
 The created *EXAMPLE* class can then be used just like other ATCommand classes:
 
-    .. code-block:: python
+    >>> cmd = EXAMPLE(EXAMPLE.options.sleep, 3.5, 'hello')
+    >>> cmd
+    EXAMPLE(number=<options.sleep: 2>, speed=3.5, comment='hello')
+    >>> cmd.pack()
+    b'AT*EXAMPLE=SEQUNSET,2,1080033280,"hello"\r'
+    >>> EXAMPLE(number=EXAMPLE.options.wander, speed=6.7)
+    EXAMPLE(number=<options.wander: 4>, speed=6.7, comment='nothing')
 
-        >>> cmd = EXAMPLE(EXAMPLE.options.sleep, 3.5, 'hello')
-        >>> cmd
-        EXAMPLE(number=<options.sleep: 2>, speed=3.5, comment='hello')
-        >>> cmd.pack()
-        b'AT*EXAMPLE=SEQUNSET,2,1080033280,"hello"\r'
-        >>> EXAMPLE(number=EXAMPLE.options.wander, speed=6.7)
-        EXAMPLE(number=<options.wander: 4>, speed=6.7, comment='nothing')
-
-ATCommand API
--------------
+The ATCommand Class
+-------------------
 
 .. autoclass:: pyardrone.at.base.ATCommand
     :members:

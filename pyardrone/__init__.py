@@ -1,7 +1,3 @@
-'''
-High level ARDrone API
-'''
-
 import collections
 import itertools
 import logging
@@ -14,7 +10,9 @@ from pyardrone.utils import noop
 from pyardrone.utils.object_executor import ObjectExecutor
 
 
-__version__ = '0.1.0a1'
+__version__ = '0.1.0a2'
+
+__all__ = ('ARDrone',)
 
 
 logger = logging.getLogger(__name__)
@@ -99,7 +97,7 @@ class ARDrone:
         '''
         Drone land.
 
-        Parameters same as :py:meth:`takeoff`
+        Parameters same as :py:meth:`~pyardrone.ARDrone.takeoff`
         '''
         raise NotImplementedError
 
@@ -165,7 +163,7 @@ class ARDrone:
 
     def get_raw_config(self):
         '''
-        Requests and returns the raw config file from the :data:`control_port`.
+        Requests and returns the raw config file from the *control_port*.
         '''
         self.send(at.CTRL(at.CTRL.Modes.CFG_GET_CONTROL_MODE))
         return b''.join(

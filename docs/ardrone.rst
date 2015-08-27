@@ -1,5 +1,5 @@
 The ARDrone object
 ==================
 
-.. autoclass:: pyardrone.ARDrone
+.. automodule:: pyardrone
     :members:

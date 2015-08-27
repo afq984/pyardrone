@@ -1,56 +1,53 @@
+.. highlight:: pycon3
+
 .. _configuration:
 
 Configuration
 =============
 
-Configuration is done by sending *ATCommand*\ s to the drone and reading from *control_port*.
+Configuration is done by sending :py:class:`~pyardrone.at.CONFIG` commands to the drone and reading from :py:class:`~pyardrone.ARDrone`.control_port.
 
 See ARDrone Developer Guide chapters 8.4 - 8.14 for detailed information of each option.
 
 Using the config object
 -----------------------
 
-*ARDrone* provides a config object to simplify configuration.
+:py:class:`~pyardrone.ARDrone` provides a config object to simplify configuration: :py:attr:`pyardrone.ARDrone.config`.
 
 Writing configuration
 ~~~~~~~~~~~~~~~~~~~~~
 
 To set ``"general:navdata_demo"`` to ``"TRUE"``:
 
-    .. code-block:: python3
-
-        >>> drone.config.general.navdata_demo = True
+    >>> drone.config.general.navdata_demo = True
 
 which is equivalent to:
 
-    .. code-block:: python3
-
-        >>> drone.config['general:navdata_demo'] = True
+    >>> drone.config['general:navdata_demo'] = True
 
 or even:
 
-    .. code-block:: python3
-
-        >>> drone.send(at.CONFIG('general:navdata_demo', True))
+    >>> drone.send(at.CONFIG('general:navdata_demo', True))
 
 Reading configuration
 ~~~~~~~~~~~~~~~~~~~~~
 
-The usage is similiar to writing:
+The usage is similiar to writing.
 
-    .. code-block:: python3
+Attribute access:
 
-        >>> drone.config.general.ardrone_name
-        'My ARDrone'
+    >>> drone.config.general.ardrone_name
+    'My ARDrone'
 
-    or
+or __getitem__:
 
-    .. code-block:: python3
+.. code-block:: pycon3
 
-        >>> drone.config['general:ardrone_name']
-        'My ARDrone'
+    >>> drone.config["general:ardrone_name"]
+    'My ARDrone'
 
-    If the requested configuration option does not exist, :py:exc:`KeyError` will be raised
+
+If the requested configuration option does not exist, :py:exc:`KeyError` will be raised
 
 .. note::
 
@@ -65,8 +62,8 @@ The usage is similiar to writing:
 
     Still, the cache can be cleared by calling :py:meth:`~pyardrone.config.Config.clear_cache`
 
-Config API
-----------
+The Config Class
+----------------
 
 .. autoclass:: pyardrone.config.Config
     :members:
