@@ -3,7 +3,7 @@ from setuptools import setup
 
 setup(
     name='pyardrone',
-    version='0.1.0a1',
+    version='0.1.0a2',
     packages=['pyardrone'],
     include_package_data=True,
     license='MIT License',

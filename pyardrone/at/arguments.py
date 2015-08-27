@@ -28,7 +28,7 @@ class Argument:
 
     def __get__(self, obj, type_=None):
         if obj is None:
-            return self
+            return None
         else:
             try:
                 return obj._args[self.name]
@@ -71,10 +71,11 @@ class Int32Arg(Argument):
 
     type_hint = int
 
-    def __getattr__(self, attr):
-        if attr == '_flags':
-            raise AttributeError('{!r} has no attribute: _flags'.format(self))
-        return getattr(self._flags, attr)
+    def __get__(self, obj, type_=None):
+        if obj is None:
+            return getattr(self, '_flags', None)
+        else:
+            return super().__get__(obj, type_)
 
     @staticmethod
     def check(value):
