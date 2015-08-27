@@ -14,6 +14,9 @@ from pyardrone.utils import noop
 from pyardrone.utils.object_executor import ObjectExecutor
 
 
+__version__ = '0.1.0a'
+
+
 logger = logging.getLogger(__name__)
 
 

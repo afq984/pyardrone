@@ -11,7 +11,7 @@ Installation
 
 .. code-block:: bash
 
-    pip install pyardrone  # Not available yet
+    pip install pyardrone
 
 Basic Usage
 -----------
