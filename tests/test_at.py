@@ -87,6 +87,16 @@ class ArgumentReprTest(unittest.TestCase):
         self.assertEqual(repr(bar), '<Bar:parn>')
 
 
+class ArgumentCheckTest(unittest.TestCase):
+
+    def test_int32_int_range(self):
+        arguments.Int32Arg.check(2 ** 32 - 1)
+
+    def test_int32_out_of_range(self):
+        with self.assertRaises(ValueError):
+            arguments.Int32Arg.check(2 ** 32)
+
+
 class ArgumentPackTest(unittest.TestCase):
 
     def test_description(self):
