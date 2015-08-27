@@ -5,9 +5,13 @@ The ARDrone object
 
     The class representing a Parrot AR.Drone
 
-    *interval*: delay between subsequent commands in seconds
-
-    *connect*: connect to the drone at init
+    :param address: address of the drone
+    :param at_port: AT command port
+    :param navdata_port: NavData port
+    :param video_port: Video port
+    :param control_port: Control port
+    :param interval: delay between subsequent commands in seconds
+    :param connect: connect to the drone at init
 
     .. attribute:: config
 
@@ -17,7 +21,7 @@ The ARDrone object
 
         Connect to the drone.
 
-        raises :py:exc:`RuntimeError` if the drone is connected or closed already.
+        :raises RuntimeError: if the drone is connected or closed already.
 
     .. method:: close()
 
@@ -35,18 +39,23 @@ The ARDrone object
 
         If *discard* is True, discard all queued commands after taking off/land.
 
-    .. method:: register(command, event=None)
+    .. method:: register(command, with_event=True)
 
         Puts the *ATCommand* to the queue, does not block.
 
+        :param ATCommand command: Command to register.
+        :param bool with_event: If ``True``, returns an :py:class:`threading.Event` object, which can be used to indicate whether the job is done.
+
     .. method:: send(command)
 
-        Puts the *ATCommand* to the queue, blocks until it is sent to the drone.
+        Puts the command to the queue, blocks until it is sent to the drone.
 
     .. method:: send_nowait(command)
 
-        Sends the *ATCommand* to the drone immediately.
+        Sends the command to the drone immediately.
 
     .. method:: get_raw_config()
 
         Requests and returns the raw config file from the *control_port*.
+
+        :rtype: bytes

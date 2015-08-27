@@ -22,18 +22,6 @@ For example, to create an ``"AT*PCMD"`` command with the progressive flag and ve
         >>> at.PCMD(at.PCMD.Flags.progressive, gaz=0.8)
         PCMD(flag=at.PCMD.Flags.progressive, roll=0.0, pitch=0.8, gaz=0.0, yaw=0.0)
 
-Packing an *ATCommand*
-~~~~~~~~~~~~~~~~~~~~~~
-
-*ATCommand.pack* can be used to pack the command into *bytes*, if you want to manipulate it manually (you don't have to do this):
-
-* *pack* takes an optional argument seq (sequence number), which defaults to ``'SEQUNSET'``
-
-        >>> cmd.pack()
-        b'AT*PCMD=SEQUNSET,2,0,1061997773,0,0\r'
-        >>> cmd.pack(100)
-        b'AT*PCMD=100,2,0,1061997773,0,0\r'
-
 Sending an *ATCommand*
 ~~~~~~~~~~~~~~~~~~~~~~
 
@@ -92,11 +80,20 @@ ATCommand API
 
     .. method:: pack(seq='SEQUNSET')
 
-        Pack the command into bytes for sockets.
+        Packs the command into *bytes*, if you want to manipulate it manually (you don't have to do this):
+
+        :param seq: sequence number
+
+        .. code-block:: python
+
+            >>> cmd.pack()
+            b'AT*PCMD=SEQUNSET,2,0,1061997773,0,0\r'
+            >>> cmd.pack(100)
+            b'AT*PCMD=100,2,0,1061997773,0,0\r'
 
     .. attribute:: parameters
 
-        A list of *Arguments* of the command.
+        A list of parameters (:py:class:`Argument`\ s) of the command.
 
     .. attribute:: _args
 
@@ -106,9 +103,9 @@ ATCommand API
 
     Base class of all arguments.
 
-    *description* is stored, but has no effect.
+    :param description: stored, but has no effect.
 
-    *default* is used to provide a default value for the argument for the *ATCommand*.
+    :param default: used to provide a default value for the argument for the *ATCommand*.
 
 .. class:: Int32Arg(...)
 
