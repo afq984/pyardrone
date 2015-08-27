@@ -23,7 +23,7 @@ The ARDrone object
 
         Exit all threads and disconnect the drone.
 
-        raises :py:exc:`RuntimeError` if the drone is closed already or not connected yet.
+        This method has no effect if the drone is closed already or not connected yet.
 
     .. method:: takeoff(wait=False, discard=True)
 

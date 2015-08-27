@@ -76,13 +76,11 @@ class ARDrone:
         self._at_executor.start()
 
     def close(self):
-        if not self.connected:
-            raise RuntimeError('The drone is not connected')
-        if self.closed:
-            raise RuntimeError("The drone's connection is closed already")
+        if self.closed or not self.connected:
+            return
         self.closed = True
-        self._close_sockets()
         self._at_executor.stop(True)
+        self._close_sockets()
 
     def register(self, command, with_event=True):
         return self._at_executor.put(command, with_event)
