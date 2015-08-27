@@ -11,7 +11,7 @@ The ARDrone object
 
     .. attribute:: config
 
-        The config object of the drone, see the configuration topic.
+        The config object of the drone, see :ref:`configuration`.
 
     .. method:: connect()
 

@@ -1,3 +1,5 @@
+.. _configuration:
+
 Configuration
 =============
 
@@ -52,16 +54,16 @@ The usage is similiar to writing:
 
 .. note::
 
-    1. The config object uses `get_raw_config_file()` to retrieve the config file from the drone and caches it, when requested to read a option.
+    1. The config object uses :py:meth:`ARDrone.get_raw_config` to retrieve the config file from the drone and caches it, when requested to read a option.
 
     2. Options set by the user are also cached.
 
-    So `get_raw_config_file()` is called only if:
+    So :py:meth:`ARDrone.get_raw_config` is called only if:
         * the option is not set previously
 
-        * *get_raw_config_file()* is not called previously
+        * it is not called previously
 
-    Still, the cache can be cleared by calling *config.clear_cache()*
+    Still, the cache can be cleared by calling :py:meth:`Config.clear_cache`
 
 Config API
 ----------
@@ -74,11 +76,11 @@ Config API
 
     .. attribute:: owner
 
-        Owner (ARDrone) of the config object. (is a proxy)
+        Owner (:py:class:`ARDrone`) of the config object. (is a proxy)
 
     .. attribute:: data
 
-        Cached dict of options from get_raw_config_file().
+        Cached dict of options from :py:meth:`ARDrone.get_raw_config`.
 
     .. attribute:: updates
 
