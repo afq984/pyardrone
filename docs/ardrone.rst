@@ -17,9 +17,13 @@ The ARDrone object
 
         Connect to the drone.
 
-    .. method:: disconnect()
+        raises :py:class:`RuntimeError` if the drone is connected or closed already.
 
-        Disconnect the drone.
+    .. method:: close()
+
+        Exit all threads and disconnect the drone.
+
+        raises :py:class:`RuntimeError` if the drone is closed already or not connected yet.
 
     .. method:: takeoff(wait=False, discard=True)
 
