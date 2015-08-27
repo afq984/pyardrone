@@ -22,7 +22,7 @@ class ConfigTest(unittest.TestCase):
         self.drone.send = mock.Mock(spec=self.drone.send)
 
     def tearDown(self):
-        self.drone.close_sockets()
+        self.drone.close()
 
     def test_read_config_by_attribute(self):
         self.assertEqual(self.drone.config.some.config, True)

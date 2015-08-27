@@ -67,6 +67,7 @@ class ObjectExecutor:
         else:
             event = None
         self._queue.put((obj, event))
+        return event
 
     def _process_object(self):
         with self._queue_lock:
