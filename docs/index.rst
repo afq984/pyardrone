@@ -16,6 +16,7 @@ Welcome to pyardrone's documentation!
    ardrone
    at
    config
+   navdata
 
 ..
     Indices and tables

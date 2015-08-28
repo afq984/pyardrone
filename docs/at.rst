@@ -1,15 +1,15 @@
-*ATCommand*\ s
-==============
+ATCommands
+==========
 
-The (in)complete description of *ATCommand*\ s is documented in Parrot's AR.Drone Developer Guide chapter 6.5, please refer to it for detailed description of each command.
+The (in)complete description of ATCommands is documented in Parrot's AR.Drone Developer Guide chapter 6.5, please refer to it for detailed description of each command.
 
-Using *ATCommand*\s
+Using ATCommand\s
 -------------------
 
-Creating an *ATCommand* instance
+Creating an ATCommand instance
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-To create an *ATCommand* instance, you have to call the command class with the corresponding arguments.
+To create an :class:`~pyardrone.at.base.ATCommand` instance, you have to call the command class with the corresponding arguments.
 
 For example, to create an ``"AT*PCMD"`` command with the progressive flag and vertical speed = 0.8:
 
@@ -35,8 +35,8 @@ We can use attribute access to view or modify the command:
     >>> cmd
     PCMD(flag=<flag.progressive: 1>, roll=0, pitch=0.8, gaz=0, yaw=0.5)
 
-Sending an *ATCommand*
-~~~~~~~~~~~~~~~~~~~~~~
+Sending an ATCommand
+~~~~~~~~~~~~~~~~~~~~
 
 To send a AT\*PCMD command with the progressive flag and vertical speed = 0.8, use :py:meth:`pyardrone.ARDrone.send`
 
@@ -45,10 +45,10 @@ To send a AT\*PCMD command with the progressive flag and vertical speed = 0.8, u
 
 The library provides the sequence number for the :py:meth:`~pyardrone.at.base.ATCommand.pack` function automatically.
 
-Defining an *ATCommand* class
+Defining an ATCommand class
 -----------------------------
 
-If you want to use an *ATCommand* not defined in the library, you can define it yourself.
+If you want to use an ATCommand not defined in the library, you can define it yourself.
 
 For example, to define a "AT*EXAMPLE" command with three arguments: options, speed, comment, which is a integer, a float, and a string respectively:
 
@@ -91,6 +91,11 @@ List of ATCommands
 
 .. automodule:: pyardrone.at
     :members:
+    :member-order:
+
+.. autoclass:: pyardrone.at.PCMD
+    :members:
+    :member-order:
 
 Argument Classes
 ----------------
