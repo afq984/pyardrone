@@ -90,7 +90,7 @@ class Int32Arg(Argument):
 
     def set_flags(self, **flags):
         '''
-        Set the flags of this arguments
+        Set the flags of this argument.
         '''
         self._flags = enum.IntEnum('_flags', flags)
 

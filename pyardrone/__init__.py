@@ -83,6 +83,21 @@ class ARDrone:
     def interval(self, value):
         self._at_executor.interval = value
 
+    @property
+    def state(self):
+        '''
+        The latest state from *NavData*.
+
+            >>> drone.state.fly_mask
+            True  # drone is flying
+            >>> drone.state.video
+            True  # video is enabled
+
+        See :py:class:`~pyardrone.navdata.states.DroneState`
+        for the full list of states.
+        '''
+        raise NotImplementedError
+
     def takeoff(wait=False, discard=True):
         '''
         Drone takeoff.
