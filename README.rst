@@ -10,4 +10,4 @@ still work in progress...
 Documentation
 -------------
 
-http://pyardrone.rtfd.org/
+http://pyardrone.readthedocs.org/
