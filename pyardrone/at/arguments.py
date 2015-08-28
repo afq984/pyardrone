@@ -14,7 +14,7 @@ class Argument:
     '''
     Base class of all arguments.
 
-    :param description: stored, but has no effect.
+    :param description: stored, used to generate documentation.
 
     :param default: used to provide a default value for the argument for the \
                     :class:`~pyardrone.at.base.ATCommand`.
