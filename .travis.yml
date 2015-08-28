@@ -7,9 +7,9 @@ python:
 
 install:
     - pip install --upgrade pip
-    - pip install pep8 nose coverage sphinx
+    - pip install pep8 sphinx
 
 script:
     - pep8 pyardrone
-    - nosetests --with-coverage --cover-package pyardrone
+    - python -m unittest
     - sphinx-build -nW -b html -d docs/_build/doctrees docs docs/_build/html
