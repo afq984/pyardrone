@@ -49,6 +49,13 @@ class CommandTest(unittest.TestCase):
     def test_pack(self):
         self.assertEqual(at.REF(20)._pack(100), b'AT*REF=100,20\r')
 
+    def test_command_arguments_can_not_be_assigned(self):
+        with self.assertRaises(AttributeError):
+            at.REF(10).input = 11
+
+    def test_attributes_which_are_not_arguments_can_be_assigned(self):
+        at.REF(11).some_attribute = 20
+
 
 class CommandDefaultTest(unittest.TestCase):
 

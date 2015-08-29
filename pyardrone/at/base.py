@@ -70,12 +70,6 @@ class ATCommand(metaclass=ATCommandMeta):
     def __ne__(self, other):
         return not self == other
 
-    def __setattr__(self, name, value):
-        raise AttributeError('cannot set attribute {!r} of {} object'.format(
-            name,
-            self.__class__.__name__,
-        ))
-
     def _pack(self, seq='SEQUNSET'):
         '''
         Packs the command into *bytes*
