@@ -46,6 +46,7 @@ class ObjectExecutor:
         if wait:
             self.join()
         self._stop_event.set()
+        self.join()
 
     def pause(self, wait=False):
         if wait:
