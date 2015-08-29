@@ -105,17 +105,17 @@ List of ATCommands
     :members:
     :member-order:
 
-Parameter classes
------------------
+Parameters
+----------
 
 .. currentmodule:: pyardrone.at.parameters
-
-Parameter types
-~~~~~~~~~~~~~~~
 
 .. autoclass:: Parameter
     :members:
     :private-members:
+
+Parameter types
+~~~~~~~~~~~~~~~
 
 .. autoclass:: Int32(...)
     :members:

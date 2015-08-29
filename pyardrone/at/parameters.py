@@ -43,10 +43,11 @@ class Parameter:
     def _check(value):
         '''
         Checks the value on :py:class:`~pyardrone.at.base.ATCommand`\ 's init.
-        Subclasses can optionally define this method.
+        Subclasses can optionally define this method, the default
+        implementation is a no-op.
 
-        :rtype: bool
-
+        :raises TypeError: If the value is of the wrong type.
+        :raises ValueError: If the value is not valid.
         '''
         pass
 
@@ -57,7 +58,6 @@ class Parameter:
         Subclasses should define this method.
 
         :rtype: bytes
-
         '''
 
 
