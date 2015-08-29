@@ -7,7 +7,7 @@ Using ATCommand\s
 -------------------
 
 Creating an ATCommand instance
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 To create an :class:`~pyardrone.at.base.ATCommand` instance, you have to call the command class with the corresponding arguments.
 
@@ -23,7 +23,10 @@ or using keyword arguments, just like a function:
     >>> at.PCMD(at.PCMD.flag.progressive, gaz=0.8)
     PCMD(flag=<flag.progressive: 1>, roll=0, pitch=0.8, gaz=0, yaw=0)
 
-We can use attribute access to view or modify the command:
+Examining an ATCommand
+~~~~~~~~~~~~~~~~~~~~~~
+
+ATCommands are :py:func:`collections.namedtuple` subclasses, so reading it is just as easy.
 
     >>> cmd
     PCMD(flag=<flag.progressive: 1>, roll=0, pitch=0.8, gaz=0, yaw=0)
@@ -31,9 +34,17 @@ We can use attribute access to view or modify the command:
     0
     >>> cmd.pitch
     0.8
-    >>> cmd.yaw = 0.5
-    >>> cmd
-    PCMD(flag=<flag.progressive: 1>, roll=0, pitch=0.8, gaz=0, yaw=0.5)
+    >>> cmd[0]
+    <flag.progressive: 1>
+    >>> cmd[2]
+    0.8
+    >>> list(cmd)
+    [<flag.progressive: 1>, 0, 0.8, 0, 0]
+
+Additionally :py:meth:`~pyardrone.at.base.ATCommand._pack` packs the command into bytes
+
+    >>> cmd._pack(10)  # pack with sequence number = 10
+    b'AT*PCMD=10,1,0,1061997773,0,0\r'
 
 Sending an ATCommand
 ~~~~~~~~~~~~~~~~~~~~
@@ -43,10 +54,10 @@ To send a AT\*PCMD command with the progressive flag and vertical speed = 0.8, u
     >>> # drone is an ARDrone instance here
     >>> drone.send(at.PCMD(at.PCMD.flag.progressive, 0, 0.8, 0, 0))
 
-The library provides the sequence number for the :py:meth:`~pyardrone.at.base.ATCommand.pack` function automatically.
+:py:meth:`~pyardrone.ARDrone.send` provides the sequence number for the :py:meth:`~pyardrone.at.base.ATCommand._pack` function automatically.
 
-Defining an ATCommand class
------------------------------
+Defining an ATCommand subclass
+------------------------------
 
 If you want to use an ATCommand not defined in the library, you can define it yourself.
 
@@ -54,16 +65,15 @@ For example, to define a "AT*EXAMPLE" command with three arguments: options, spe
 
 .. code-block:: python
 
-    from pyardrone.at.base import ATCommand
-    from pyardrone.at.arguments imoprt Int32Arg, FloatArg, StringArg
+    from pyardrone.at import base, parameters
 
-    class EXAMPLE(ATCommand):
+    class EXAMPLE(base.ATCommand):
 
-        options = Int32Arg()
-        speed = FloatArg()
-        comment = StringArg(default='nothing')
+        options = parameters.Int32()
+        speed = parameters.Float()
+        comment = parameters.String(default='nothing')
 
-        options.set_flags(
+        options._set_flags(
             eat=0b1,
             sleep=0b10,
             wander=0b100
@@ -73,18 +83,20 @@ The created *EXAMPLE* class can then be used just like other ATCommand classes:
 
     >>> cmd = EXAMPLE(EXAMPLE.options.sleep, 3.5, 'hello')
     >>> cmd
-    EXAMPLE(number=<options.sleep: 2>, speed=3.5, comment='hello')
-    >>> cmd.pack()
+    EXAMPLE(options=<options.sleep: 2>, speed=3.5, comment='hello')
+    >>> cmd._pack()
     b'AT*EXAMPLE=SEQUNSET,2,1080033280,"hello"\r'
-    >>> EXAMPLE(number=EXAMPLE.options.wander, speed=6.7)
-    EXAMPLE(number=<options.wander: 4>, speed=6.7, comment='nothing')
+    >>> EXAMPLE(options=EXAMPLE.options.wander, speed=6.7)
+    EXAMPLE(options=<options.wander: 4>, speed=6.7, comment='nothing')
 
-The ATCommand Class
--------------------
+The base ATCommand Class
+------------------------
+
+Subclasses share the following methods:
 
 .. autoclass:: pyardrone.at.base.ATCommand
     :members:
-    :special-members:
+    :private-members:
 
 List of ATCommands
 ------------------
@@ -93,22 +105,26 @@ List of ATCommands
     :members:
     :member-order:
 
-.. autoclass:: pyardrone.at.PCMD
+Parameter classes
+-----------------
+
+.. currentmodule:: pyardrone.at.parameters
+
+Parameter types
+~~~~~~~~~~~~~~~
+
+.. autoclass:: Parameter
     :members:
-    :member-order:
+    :private-members:
 
-Argument Classes
-----------------
+.. autoclass:: Int32(...)
+    :members:
+    :private-members:
 
-.. currentmodule:: pyardrone.at.arguments
-
-.. autoclass:: Argument
+.. autoclass:: Float(...)
     :members:
 
-.. autoclass:: Int32Arg
-    :members: set_flags
+.. autoclass:: String(...)
+    :members:
+    :private-members:
 
-.. autoclass:: FloatArg
-
-.. autoclass:: StringArg
-    :members: pack

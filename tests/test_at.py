@@ -1,7 +1,7 @@
 import enum
 import unittest
 from pyardrone import at
-from pyardrone.at import arguments, base
+from pyardrone.at import parameters, base
 from pyardrone.utils import ieee754float
 
 
@@ -14,17 +14,6 @@ class CommandTest(unittest.TestCase):
     def test_init_by_kwarg(self):
         cmd = at.REF(input=3)
         self.assertEqual(cmd.input, 3)
-
-    def test_defaults_to_none(self):
-        cmd = at.REF()
-        self.assertIs(cmd.input, None)
-
-    def test_argument_updatable(self):
-        cmd = at.REF()
-        cmd.input = 20
-        self.assertEqual(cmd.input, 20)
-        cmd.input = 14
-        self.assertEqual(cmd.input, 14)
 
     def test_too_many_arguments_raises_TypeError(self):
         with self.assertRaises(TypeError):
@@ -44,10 +33,13 @@ class CommandTest(unittest.TestCase):
     def test_equal(self):
         self.assertEqual(at.REF(20), at.REF(20))
 
+    def test_unequal_different_argument(self):
+        self.assertNotEqual(at.REF(10), at.REF(12))
+
     def test_different_commands_with_same_arguments_are_different(self):
         class REF2(base.ATCommand):
 
-            input = arguments.Int32Arg()
+            input = parameters.Int32()
 
         self.assertNotEqual(at.REF(3), REF2(3))
 
@@ -55,30 +47,21 @@ class CommandTest(unittest.TestCase):
         self.assertNotEqual(at.REF(17), 17)
 
     def test_pack(self):
-        self.assertEqual(at.REF(20).pack(100), b'AT*REF=100,20\r')
+        self.assertEqual(at.REF(20)._pack(100), b'AT*REF=100,20\r')
 
 
 class CommandDefaultTest(unittest.TestCase):
 
     class FOO(base.ATCommand):
-        argument = arguments.Int32Arg(default=20)
+        argument = parameters.Int32(default=20)
 
     def test_default(self):
         self.assertEqual(self.FOO().argument, 20)
 
-    def test_default_overwrite(self):
-        bar = self.FOO()
-        bar.argument = 9
-        self.assertEqual(bar.argument, 9)
-
-        baz = self.FOO()
-        baz.argument = 17
-        self.assertEqual(baz.argument, 17)
-
 
 class ArgumentReprTest(unittest.TestCase):
 
-    class Bar(arguments.Argument):
+    class Bar(parameters.Parameter):
         pass
 
     def test_repr_without_name(self):
@@ -86,31 +69,31 @@ class ArgumentReprTest(unittest.TestCase):
 
     def test_repr_with_name(self):
         bar = self.Bar()
-        bar.name = 'parn'
+        bar._name = 'parn'
         self.assertEqual(repr(bar), '<Bar:parn>')
 
 
 class ArgumentCheckTest(unittest.TestCase):
 
     def test_int32_int_range(self):
-        arguments.Int32Arg.check(2 ** 32 - 1)
+        parameters.Int32._check(2 ** 32 - 1)
 
     def test_int32_out_of_range(self):
         with self.assertRaises(ValueError):
-            arguments.Int32Arg.check(2 ** 32)
+            parameters.Int32._check(2 ** 32)
 
 
 class ArgumentPackTest(unittest.TestCase):
 
     def test_description(self):
         self.assertEqual(
-            arguments.Int32Arg('hahaha').description,
+            parameters.Int32('hahaha').__doc__,
             'hahaha'
         )
 
     def test_int_pack(self):
         self.assertEqual(
-            arguments.Int32Arg.pack(100),
+            parameters.Int32._pack(100),
             b'100'
         )
 
@@ -119,56 +102,56 @@ class ArgumentPackTest(unittest.TestCase):
             some_flag = 10
 
         self.assertEqual(
-            arguments.Int32Arg.pack(10),
+            parameters.Int32._pack(10),
             b'10'
         )
 
     def test_float_pack(self):
         # ieee754 specification is not the scope of this test
         self.assertIsInstance(
-            arguments.FloatArg.pack(0.5),
+            parameters.Float._pack(0.5),
             bytes
         )
 
     def test_float_pack_int(self):
         self.assertEqual(
-            arguments.FloatArg.pack(10),
+            parameters.Float._pack(10),
             str(ieee754float(10.)).encode(),
         )
 
     def test_str_pack_int(self):
         self.assertEqual(
-            arguments.StringArg.pack(6543),
+            parameters.String._pack(6543),
             b'"6543"'
         )
 
     def test_str_pack_float(self):
         self.assertEqual(
-            arguments.StringArg.pack(0.5),
+            parameters.String._pack(0.5),
             b'"0.5"',
         )
 
     def test_str_pack_str(self):
         self.assertEqual(
-            arguments.StringArg.pack('ertb3'),
+            parameters.String._pack('ertb3'),
             b'"ertb3"',
         )
 
     def test_str_pack_true(self):
         self.assertEqual(
-            arguments.StringArg.pack(True),
+            parameters.String._pack(True),
             b'"TRUE"'
         )
 
     def test_str_pack_false(self):
         self.assertEqual(
-            arguments.StringArg.pack(False),
+            parameters.String._pack(False),
             b'"FALSE"'
         )
 
     def test_str_pack_bytes(self):
         self.assertEqual(
-            arguments.StringArg.pack(b'jgoi'),
+            parameters.String._pack(b'jgoi'),
             b'"jgoi"'
         )
 
@@ -179,10 +162,10 @@ class ArgumentAPITest(unittest.TestCase):
         self.assertEqual(value, b'200')
 
     def test_pack_with_class(self):
-        self.assert200(arguments.Int32Arg.pack(200))
+        self.assert200(parameters.Int32._pack(200))
 
     def test_pack_with_instance(self):
-        self.assert200(arguments.Int32Arg().pack(200))
+        self.assert200(parameters.Int32()._pack(200))
 
 
 class ConstantTest(unittest.TestCase):

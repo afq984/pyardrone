@@ -10,7 +10,7 @@ from pyardrone.utils import noop
 from pyardrone.utils.object_executor import ObjectExecutor
 
 
-__version__ = '0.1.0a2'
+__version__ = '0.2.0dev1'
 
 __all__ = ('ARDrone',)
 
@@ -166,7 +166,7 @@ class ARDrone:
         '''
         with self.seq_lock:
             self.seq_num += 1
-            packed = command.pack(self.seq_num)
+            packed = command._pack(self.seq_num)
             bytes_sent = self.at_sock.sendto(packed, (self.addr, self.at_port))
             logger.debug(
                 'sent %d bytes to "%s:%d", %r',

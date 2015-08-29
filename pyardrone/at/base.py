@@ -1,10 +1,5 @@
-'''
-ATCommand Base Class
-'''
-
-
 import collections
-from pyardrone.at.arguments import Argument
+from pyardrone.at.parameters import Parameter
 
 
 class ATCommandMeta(type):
@@ -15,55 +10,39 @@ class ATCommandMeta(type):
 
     def __new__(cls, name, bases, namespace):
         parameters = list()
+
+        param_index = 0
+
         for key, value in namespace.items():
-            if isinstance(value, Argument):
-                value.name = key
+            if isinstance(value, Parameter):
+                value._name = key
+                value._index = param_index
                 parameters.append(value)
+                param_index += 1
 
-        # update doc
-        if '__doc__' in namespace:
-            doc_updates = ['']
-            indent = ''
-            for line in namespace['__doc__'].splitlines():
-                text = line.strip()
-                if text:
-                    indent = line.split(text)[0]
-                    break
+        namespace['_parameters'] = parameters
 
-            for parameter in parameters:
-                try:
-                    type_hint = parameter.type_hint.__name__
-                except AttributeError:
-                    type_hint = ''
-                doc_updates.append(
-                    ':param {type} {name}: {desc}'.format(
-                        type=type_hint,
-                        name=parameter.name,
-                        desc=parameter.description or 'no description'
-                    )
-                )
+        bases += cls._get_superclass_injections(name, parameters)
 
-            doc_updates.append('')
+        return type.__new__(cls, name, bases, dict(namespace))
 
-            has_flags = False
-            for parameter in parameters:
-                if hasattr(parameter, '_flags'):
-                    parameter._flags.__name__ = parameter.name
-                    if not has_flags:
-                        doc_updates.append('Flags:')
-                    for flag in sorted(parameter._flags):
-                        doc_updates.append(
-                            '    * ``{flag!r}``'.format(
-                                flag=flag
-                            )
-                        )
-                doc_updates.append('')
+    @staticmethod
+    def _get_superclass_injections(class_name, parameters):
+        if class_name == 'ATCommand':
+            return ()
+        if parameters:
+            param_names, defaults = zip(*(
+                (param._name, param._default) for param in parameters
+            ))
+        else:
+            param_names = defaults = ()
 
-            namespace['__doc__'] += ('\n' + indent).join(doc_updates)
-
-        namespace['parameters'] = parameters
-        self = type.__new__(cls, name, bases, dict(namespace))
-        return self
+        middleclass = collections.namedtuple(
+            '{}Namespace'.format(class_name),
+            param_names
+        )
+        middleclass.__new__.__defaults__ = tuple(defaults)
+        return (middleclass,)
 
 
 class ATCommand(metaclass=ATCommandMeta):
@@ -71,55 +50,33 @@ class ATCommand(metaclass=ATCommandMeta):
     '''
     Base class of all ATCommands
 
-    .. attribute:: parameters
+    .. data:: _parameters
 
-        A list of parameters (:py:class:`~pyardrone.at.arguments.Argument`\ s)\
-        of the command.
-
-    .. attribute:: _args
-
-        Dict of stored arguments.
+        A list of :py:class:`~pyardrone.at.parameters.Parameter`\ s of the
+        command.
     '''
-    __slots__ = '_args'
 
     def __init__(self, *args, **kwargs):
-        self._args = dict()
-        if len(args) > len(self.parameters):
-            raise TypeError('__init__ got {} arguments, expected {}'.format(
-                len(args), len(self.parameters)
-            ))
-        for arg, par in zip(args, self.parameters):
-            setattr(self, par.name, arg)
-        for key, value in kwargs.items():
-            if key in self._args:
-                raise TypeError(
-                    'Argument {!r} given by name and position'.format(
-                        key
-                    )
-                )
-            setattr(self, key, value)
-
-    def __repr__(self):
-        return '{clsname}({argl})'.format(
-            clsname=type(self).__name__,
-            argl=', '.join(
-                '{}={!r}'.format(par.name, getattr(self, par.name))
-                for par in self.parameters
-            )
-        )
+        for param, arg in zip(self._parameters, self):
+            param._check(arg)
 
     def __eq__(self, other):
         '''
-        Two *ATCommand*\ s are compared equal if:
-            * They are of the same class
-
-            * They have the same arguments
+        Two commands are considered equal if they have the same arguments and
+        they are of the same class
         '''
-        if isinstance(other, ATCommand):
-            return type(self) == type(other) and self._args == other._args
-        return NotImplemented
+        return (type(self) is type(other)) and tuple.__eq__(self, other)
 
-    def pack(self, seq='SEQUNSET'):
+    def __ne__(self, other):
+        return not self == other
+
+    def __setattr__(self, name, value):
+        raise AttributeError('cannot set attribute {!r} of {} object'.format(
+            name,
+            self.__class__.__name__,
+        ))
+
+    def _pack(self, seq='SEQUNSET'):
         '''
         Packs the command into *bytes*
 
@@ -135,5 +92,5 @@ class ATCommand(metaclass=ATCommandMeta):
         ).encode()
 
     def _iter_packed(self):
-        for par in self.parameters:
-            yield par.pack(getattr(self, par.name))
+        for param, arg in zip(self._parameters, self):
+            yield param._pack(arg)
