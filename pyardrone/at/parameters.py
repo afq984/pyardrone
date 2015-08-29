@@ -64,7 +64,7 @@ class Parameter:
 class Int32(Parameter):
 
     '''
-    Argument representing an 32bit integer.
+    Parameter class of a 32-bit integer.
     '''
 
     @staticmethod
@@ -107,7 +107,7 @@ class Int32(Parameter):
 
 class Float(Parameter):
 
-    'Argument representing a float'
+    'Parameter class of a float'
 
     __slots__ = ()
 
@@ -122,7 +122,7 @@ class Float(Parameter):
 
 class String(Parameter):
 
-    'Argument representing a string'
+    'Parameter class of a string'
 
     __slots__ = ()
 
