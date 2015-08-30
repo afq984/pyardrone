@@ -10,7 +10,7 @@ from pyardrone.utils import noop
 from pyardrone.utils.object_executor import ObjectExecutor
 
 
-__version__ = '0.2.0dev1'
+__version__ = '0.2.1dev1'
 
 __all__ = ('ARDrone',)
 

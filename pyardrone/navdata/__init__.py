@@ -1,47 +1,69 @@
-import struct
 import io
-import reprlib
+import collections
+
+from pyardrone.navdata.options import Metadata, Checksum, index
+from pyardrone.navdata.types import OptionHeader, OptionType
+
 
 
 header = 0x55667788
 
 
-class NavData:
+def compute_checksum(buffer):
+    return sum(buffer) & 0xffffffff
 
-    def __init__(self, bytes_):
-        flo = io.BytesIO(bytes_)
-        (
-            self.header,
-            self.drone_state,
-            self.sequence_number,
-            self.version_flag
-        ) = struct.unpack('<IIII', flo.read(16))
-        self.options = []
-        while flo.tell() != len(bytes_):
-            self.options.append(NavOption(flo))
 
-    def __repr__(self):
+class NavData(collections.OrderedDict):
+
+    '''
+    Container of navdata :py:class:`~pyardrone.navdata.types.Option`\ s.
+
+    To fetch a option, use the option class as the key:
+
+        >>> nav[options.Demo]
+        Demo(altitude=0, ctrl_state=131072, detection_camera_rot=...)
+    '''
+
+    def __init__(self, buffer):
+        super().__init__()
+
+        self.checksum = compute_checksum(buffer[:-8])
+
+        file = io.BytesIO(buffer)
+
+        self.add_option(Metadata, file.read(Metadata.get_size()))
+
+        header_size = OptionHeader.get_size()
+        while True:
+            hb = file.read(header_size)
+            if not hb:
+                break
+            header = OptionHeader.unpack(hb)
+            if header.size:
+                option_class = index[header.tag]
+                data = file.read(header.size - 4)
+                self.add_option(option_class, data)
+
+    def is_valid(self):
+        '''
+        Checks if this NavData is valid:
+            1. Header matches 0x55667788
+            2. Checksum is the last item and is correct
+
+        :rtype: bool
+        '''
         return (
-            '{self.__class__.__name__}'
-            '(drone_state={self.drone_state}, '
-            'sequence_number={self.sequence_number}, '
-            'version_flag={self.version_flag}, options={options})').format(
-            self=self,
-            options=reprlib.repr(self.options)
+            self[Metadata].header == header
+            and Checksum in self
+            and self[Checksum].value == self.checksum
         )
 
-
-class NavOption:
-
-    def __init__(self, flo):
-        self.id, self.size = struct.unpack('<HH', flo.read(4))
-        self.data = flo.read(self.size)
-
     def __repr__(self):
-        return (
-            '{self.__class__.__name__}'
-            '(id={self.id}, size={self.size})').format(self=self)
+        return '{self.__class__.__name__}({objv})'.format(
+            self=self,
+            objv=', '.join(map(repr, self.values()))
+        )
 
-
-def compute_checksum(bytes_):
-    return sum(bytes_[:-8]) & 0xffffffff
+    def add_option(self, option_class, data):
+        option = option_class.unpack(data)
+        self[option_class] = option
