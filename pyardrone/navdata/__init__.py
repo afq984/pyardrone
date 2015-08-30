@@ -2,8 +2,7 @@ import io
 import collections
 
 from pyardrone.navdata.options import Metadata, Checksum, index
-from pyardrone.navdata.types import OptionHeader, OptionType
-
+from pyardrone.navdata.types import OptionHeader
 
 
 header = 0x55667788
@@ -53,9 +52,9 @@ class NavData(collections.OrderedDict):
         :rtype: bool
         '''
         return (
-            self[Metadata].header == header
-            and Checksum in self
-            and self[Checksum].value == self.checksum
+            self[Metadata].header == header and
+            Checksum in self and
+            self[Checksum].value == self.checksum
         )
 
     def __repr__(self):
