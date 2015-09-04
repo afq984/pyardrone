@@ -20,6 +20,9 @@ class DroneState:
     def __init__(self, data):
         self._data = data
 
+    def __repr__(self):
+        return '{self.__class__.__name__}(0b{self._data:b})'.format(self=self)
+
     fly_mask = StateMask(
         0,
         'FLY MASK : (0) ardrone is landed, (1) ardrone is flying'
