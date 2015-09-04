@@ -4,8 +4,10 @@ import logging
 import socket
 import threading
 
-from pyardrone.config import Config
 from pyardrone import at
+from pyardrone.config import Config
+from pyardrone.navdata import NavData, Metadata
+from pyardrone.navdata.states import DroneState
 from pyardrone.utils import noop
 from pyardrone.utils.object_executor import ObjectExecutor
 
@@ -26,13 +28,15 @@ class ARDrone:
     '''
     The class representing a Parrot AR.Drone
 
-    :param address: address of the drone
-    :param at_port: AT command port
-    :param navdata_port: NavData port
-    :param video_port: Video port
-    :param control_port: Control port
-    :param interval: delay between subsequent commands in seconds
-    :param connect: connect to the drone at init
+    :param address:         address of the drone
+    :param at_port:         AT command port
+    :param navdata_port:    NavData port
+    :param video_port:      Video port
+    :param control_port:    Control port
+    :param interval:        delay between subsequent commands in seconds
+    :param bind:            whether to :py:meth:`~socket.socket.bind`
+                            the sockets; this option exists for testing
+    :param connect:         connect to the drone at init
 
     .. attribute:: config
 
@@ -48,6 +52,7 @@ class ARDrone:
         video_port=5555,  # 5553?
         control_port=5559,
         interval=0.03,
+        bind=True,
         connect=True
     ):
         self.addr = addr
@@ -55,6 +60,7 @@ class ARDrone:
         self.navdata_port = navdata_port
         self.video_port = video_port
         self.control_port = control_port
+        self.bind = bind
 
         # sequence number required by ATCommands
         # DevGuide: send 1 as the sequence number of the first sent command
@@ -96,7 +102,7 @@ class ARDrone:
         See :py:class:`~pyardrone.navdata.states.DroneState`
         for the full list of states.
         '''
-        raise NotImplementedError
+        return DroneState(self.navdata[Metadata].state)
 
     def takeoff(wait=False, discard=True):
         '''
@@ -167,7 +173,7 @@ class ARDrone:
         with self.seq_lock:
             self.seq_num += 1
             packed = command._pack(self.seq_num)
-            bytes_sent = self.at_sock.sendto(packed, (self.addr, self.at_port))
+            bytes_sent = self.at_sock.send(packed)
             logger.debug(
                 'sent %d bytes to "%s:%d", %r',
                 bytes_sent,
@@ -188,13 +194,34 @@ class ARDrone:
     def _init_sockets(self):
 
         self.at_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self.at_sock.bind(('', self.at_port))
 
         self.navdata_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self.navdata_sock.bind(('', self.navdata_port))
 
         self.control_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.control_sock.bind(('', self.control_port))
+
+        if self.bind:
+            self.at_sock.bind(('', self.at_port))
+            self.navdata_sock.bind(('', self.navdata_port))
+            self.control_sock.bind(('', self.control_port))
+
+        self.at_sock.connect((self.addr, self.at_port))
+        self.navdata_sock.connect((self.addr, self.navdata_port))
+        # self.control_sock.connect((self.addr, self.navdata_port))
+
+        self.navdata_sock.setblocking(False)
+
+    def get_new_and_latest_navdata(self):
+        navb = None
+        while True:
+            try:
+                navb = self.navdata_sock.recv(1024)
+            except BlockingIOError:
+                return navb
+
+    def update_navdata(self):
+        navb = self.get_new_and_latest_navdata()
+        if navb is not None:
+            self.navdata = NavData(navb)
 
     def _close_sockets(self):
         self.at_sock.close()
