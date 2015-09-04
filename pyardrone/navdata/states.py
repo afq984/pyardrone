@@ -9,7 +9,7 @@ class StateMask:
         if obj is None:
             return self
         else:
-            return bool(obj.data >> self.bit & 1)
+            return bool(obj._data >> self.bit & 1)
 
     def __set__(self, obj, value):
         raise AttributeError('{!r} of {!r} is not settable'.format(self, obj))
@@ -18,7 +18,7 @@ class StateMask:
 class DroneState:
 
     def __init__(self, data):
-        self.data = data
+        self._data = data
 
     fly_mask = StateMask(
         0,
