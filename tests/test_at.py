@@ -2,7 +2,7 @@ import enum
 import unittest
 from pyardrone import at
 from pyardrone.at import parameters, base
-from pyardrone.utils import ieee754float
+from pyardrone.utils import repack_to_int
 
 
 class CommandTest(unittest.TestCase):
@@ -123,7 +123,7 @@ class ArgumentPackTest(unittest.TestCase):
     def test_float_pack_int(self):
         self.assertEqual(
             parameters.Float._pack(10),
-            str(ieee754float(10.)).encode(),
+            str(repack_to_int(10.)).encode(),
         )
 
     def test_str_pack_int(self):

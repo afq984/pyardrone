@@ -4,7 +4,7 @@ import json
 import io
 import operator
 
-from pyardrone.utils import ieee754float
+from pyardrone.utils import repack_to_int
 
 
 class Parameter:
@@ -117,7 +117,7 @@ class Float(Parameter):
 
     @staticmethod
     def _pack(value):
-        return str(ieee754float(value)).encode()
+        return str(repack_to_int(value)).encode()
 
 
 class String(Parameter):

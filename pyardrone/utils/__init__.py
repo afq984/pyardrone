@@ -1,8 +1,8 @@
 import struct
 
 
-def ieee754float(value):
-    return struct.unpack('i', struct.pack('f', value))[0]
+def repack_to_int(float_):
+    return struct.unpack('i', struct.pack('f', float_))[0]
 
 
 def bits(*args):

@@ -1,5 +1,5 @@
 import unittest
-from pyardrone.utils import ieee754float, bits, noop
+from pyardrone.utils import repack_to_int, bits, noop
 
 
 class IEEE754Test(unittest.TestCase):
@@ -9,7 +9,7 @@ class IEEE754Test(unittest.TestCase):
         According to ARDrone Developer Guide chapter 6.3,
         -0.8 can be considered as holding the 32-bit integer value −1085485875
         '''
-        self.assertEqual(ieee754float(-0.8), -1085485875)
+        self.assertEqual(repack_to_int(-0.8), -1085485875)
 
 
 class BitsTest(unittest.TestCase):
