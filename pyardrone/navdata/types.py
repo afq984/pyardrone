@@ -5,6 +5,8 @@ import itertools
 import struct
 import types
 
+from pyardrone.utils.dochelper import DocFile
+
 
 def _grouper(iterable, n, fillvalue=None):
     "Collect data into fixed-length chunks or blocks"
@@ -130,6 +132,7 @@ class OptionType(type, Type):
         return OptionNamespace()
 
     def __new__(cls, name, bases, namespace):
+        cls.update_doc(namespace)
         return type.__new__(cls, name, bases, dict(namespace))
 
     def unpack(self, buffer):
@@ -140,6 +143,22 @@ class OptionType(type, Type):
         for name, type_ in self._fields:
             setattr(obj, name, type_.unpack_file(file))
         return obj
+
+    @staticmethod
+    def update_doc(namespace):
+        # TODO: This should be done by a sphinx extension instead of a
+        #       metaclass hack
+        if '__doc__' not in namespace or '_attrname' not in namespace:
+            return
+        df = DocFile(namespace['__doc__'])
+        df.write('\n')
+        df.writeline(
+            "available via :py:class:`~pyardrone.navdata.NavData`'s "
+            "attribute: ``{}``".format(
+                namespace['_attrname']
+            )
+        )
+        namespace['__doc__'] = df.getvalue()
 
     @property
     def code(self):
@@ -154,6 +173,11 @@ class Option(types.SimpleNamespace, metaclass=OptionType):
     Base class of all NavData options.
 
     Corresponds to C struct ``navdata_option_t``.
+
+    .. py:data:: attrname
+
+        The attribute name the get this option from
+        :py:class:`~pyardrone.navdata.NavData`
     '''
 
 

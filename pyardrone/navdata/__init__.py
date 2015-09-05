@@ -1,5 +1,5 @@
 import io
-import collections
+from types import SimpleNamespace
 
 from pyardrone.navdata.options import Metadata, Checksum, index
 from pyardrone.navdata.types import OptionHeader
@@ -12,14 +12,14 @@ def compute_checksum(buffer):
     return sum(buffer) & 0xffffffff
 
 
-class NavData(collections.OrderedDict):
+class NavData(SimpleNamespace):
 
     '''
     Container of navdata :py:class:`~pyardrone.navdata.types.Option`\ s.
 
-    To fetch a option, use the option class as the key:
+    To fetch an option:
 
-        >>> nav[options.Demo]
+        >>> nav.demo
         Demo(altitude=0, ctrl_state=131072, detection_camera_rot=...)
     '''
 
@@ -57,12 +57,6 @@ class NavData(collections.OrderedDict):
             self[Checksum].value == self.checksum
         )
 
-    def __repr__(self):
-        return '{self.__class__.__name__}({objv})'.format(
-            self=self,
-            objv=', '.join(map(repr, self.values()))
-        )
-
     def add_option(self, option_class, data):
         option = option_class.unpack(data)
-        self[option_class] = option
+        setattr(self, option_class._attrname, option)

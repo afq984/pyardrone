@@ -39,12 +39,17 @@ class Metadata(Option):
     '''
     Header of :py:class:`~pyardrone.navdata.NavData`.
 
+    Available via :py:class:`~pyardrone.navdata.NavData`.metadata
+
     Corresponds to C struct ``navdata_t``.
     '''
 
+    _attrname = 'metadata'
+
     header = uint32_t  #: Should be 0x55667788
 
-    #: drone state, see also: ``pyardrone.navdata.states.DroneState``
+    #: raw drone state,
+    #: see also: :py:class:`~pyardrone.navdata.states.DroneState`
     state = uint32_t
 
     sequence_number = uint32_t  #:
@@ -59,6 +64,8 @@ class Demo(Option):
 
     Corresponds to C struct ``navdata_demo_t``.
     '''
+
+    _attrname = 'demo'
 
     #: Flying state (landed, flying, hovering, etc.)
     #: defined in CTRL_STATES enum.
@@ -100,6 +107,8 @@ class Time(Option):
     Corresponds to C struct ``navdata_time_t``.
     '''
 
+    _attrname = 'time'
+
     #: 32 bit value where the 11 most significant bits represents the seconds,
     #: and the 21 least significant bits are the microseconds.
     time = uint32_t
@@ -113,6 +122,8 @@ class RawMeasures(Option):
 
     Corresponds to C struct ``navdata_raw_measures_t``.
     '''
+
+    _attrname = 'raw_measures'
 
     # +12 bytes
     raw_accs = uint16_t[NB_ACCS]  #: filtered accelerometers
@@ -139,6 +150,8 @@ class PressureRaw(Option):
 
     'Corresponds to C struct ``navdata_pressure_raw_t``.'
 
+    _attrname = 'pressure_raw'
+
     up = int32_t
     ut = int16_t
     Temperature_meas = int32_t
@@ -149,6 +162,8 @@ class PressureRaw(Option):
 class Magneto(Option):
 
     'Corresponds to C struct ``navdata_magneto_t``.'
+
+    _attrname = 'magneto'
 
     mx = int16_t
     my = int16_t
@@ -170,6 +185,8 @@ class Magneto(Option):
 class WindSpeed(Option):
 
     'Corresponds to C struct ``navdata_wind_speed_t``.'
+
+    _attrname = 'wind_speed'
 
     wind_speed = float32_t  #: estimated wind speed [m/s]
 
@@ -195,6 +212,8 @@ class KalmanPressure(Option):
 
     'Corresponds to C struct ``navdata_kalman_pressure_t``.'
 
+    _attrname = 'kalman_pressure'
+
     offset_pressure = float32_t
     est_z = float32_t
     est_zdot = float32_t
@@ -219,6 +238,8 @@ class Zimmu3000(Option):
 
     'Corresponds to C struct ``navdata_zimmu_3000_t``.'
 
+    _attrname = 'zimmu_3000'
+
     vzimmuLSB = int32_t
     vzfind = float32_t
 
@@ -227,6 +248,8 @@ class Zimmu3000(Option):
 class PhysMeasures(Option):
 
     'Corresponds to C struct ``navdata_phys_measures_t``.'
+
+    _attrname = 'phys_measures'
 
     accs_temp = float32_t
     gyro_temp = uint16_t
@@ -240,7 +263,9 @@ class PhysMeasures(Option):
 @index.register(4)
 class GyrosOffsets(Option):
 
-    'Corresponds to C struct ``navdata_gyro_offsets_t``.'
+    'Corresponds to C struct ``navdata_gyros_offsets_t``.'
+
+    _attrname = 'gyros_offsets'
 
     offset_g = float32_t[NB_GYROS]
 
@@ -250,6 +275,8 @@ class EulerAngles(Option):
 
     'Corresponds to C struct ``navdata_euler_angles_t``.'
 
+    _attrname = 'eular_angles'
+
     theta_a = float32_t
     phi_a = float32_t
 
@@ -258,6 +285,8 @@ class EulerAngles(Option):
 class References(Option):
 
     'Corresponds to C struct ``navdata_references_t``.'
+
+    _attrname = 'references'
 
     ref_theta = int32_t
     ref_phi = int32_t
@@ -290,6 +319,8 @@ class Trims(Option):
 
     'Corresponds to C struct ``navdata_trims_t``.'
 
+    _attrname = 'trims'
+
     angular_rates_trim_r = float32_t
     euler_angles_trim_theta = float32_t
     euler_angles_trim_phi = float32_t
@@ -299,6 +330,8 @@ class Trims(Option):
 class RcReferences(Option):
 
     'Corresponds to C struct ``navdata_rc_references_t``.'
+
+    _attrname = 'rc_references'
 
     rc_ref_pitch = int32_t
     rc_ref_roll = int32_t
@@ -311,6 +344,8 @@ class RcReferences(Option):
 class Pwm(Option):
 
     'Corresponds to C struct ``navdata_pwm_t``.'
+
+    _attrname = 'pwm'
 
     motor1 = uint8_t
     motor2 = uint8_t
@@ -346,6 +381,8 @@ class Altitude(Option):
 
     'Corresponds to C struct ``navdata_altitude_t``.'
 
+    _attrname = 'altitude'
+
     altitude_vision = int32_t
     altitude_vz = float32_t
     altitude_ref = int32_t
@@ -364,6 +401,8 @@ class VisionRaw(Option):
 
     'Corresponds to C struct ``navdata_vision_raw_t``.'
 
+    _attrname = 'vision_raw'
+
     vision_tx_raw = float32_t
     vision_ty_raw = float32_t
     vision_tz_raw = float32_t
@@ -373,6 +412,8 @@ class VisionRaw(Option):
 class Vision(Option):
 
     'Corresponds to C struct ``navdata_vision_t``.'
+
+    _attrname = 'vision'
 
     vision_state = uint32_t
     vision_misc = int32_t
@@ -404,6 +445,8 @@ class VisionPerf(Option):
 
     'Corresponds to C struct ``navdata_vision_pref_t``.'
 
+    _attrname = 'vision_perf'
+
     time_szo = float32_t
     time_corners = float32_t
     time_compute = float32_t
@@ -418,6 +461,8 @@ class TrackersSend(Option):
 
     'Corresponds to C struct ``navdata_trackers_send_t``.'
 
+    _attrname = 'trackers_send'
+
     locked = int32_t[DEFAULT_NB_TRACKERS_WIDTH * DEFAULT_NB_TRACKERS_HEIGHT]
     point = screen_point_t[
         DEFAULT_NB_TRACKERS_WIDTH * DEFAULT_NB_TRACKERS_HEIGHT
@@ -431,6 +476,8 @@ class VisionDetect(Option):
 
     # Change the function 'navdata_server_reset_vision_detect()'
     # if this structure is modified
+
+    _attrname = 'vision_detect'
 
     nb_detected = uint32_t
     type = uint32_t[NB_NAVDATA_DETECTION_RESULTS]
@@ -450,6 +497,8 @@ class VisionOf(Option):
 
     'Corresponds to C struct ``navdata_vision_of_t``.'
 
+    _attrname = 'vision_of'
+
     of_dx = float32_t[5]
     of_dy = float32_t[5]
 
@@ -458,6 +507,8 @@ class VisionOf(Option):
 class Watchdog(Option):
 
     'Corresponds to C struct ``navdata_watchdog_t``.'
+
+    _attrname = 'watchdog'
 
     # +4 bytes
     watchdog = int32_t
@@ -468,6 +519,8 @@ class AdcDataFrame(Option):
 
     'Corresponds to C struct ``navdata_adc_data_frame_t``.'
 
+    _attrname = 'adc_data_frame'
+
     version = uint32_t
     data_frame = uint8_t[32]
 
@@ -476,6 +529,8 @@ class AdcDataFrame(Option):
 class VideoStream(Option):
 
     'Corresponds to C struct ``navdata_video_stream_t``.'
+
+    _attrname = 'video_stream'
 
     quant = uint8_t  #: quantizer reference used to encode frame [1:31]
     frame_size = uint32_t  #: frame size (bytes)
@@ -513,6 +568,8 @@ class HdvideoStream(Option):
 
     'Corresponds to C struct ``navdata_hdvideo_stream_t``.'
 
+    _attrname = 'hdvideo_stream'
+
     hdvideo_state = uint32_t
     storage_fifo_nb_packets = uint32_t
     storage_fifo_size = uint32_t
@@ -533,6 +590,8 @@ class Games(Option):
 
     'Corresponds to C struct ``navdata_games_t``.'
 
+    _attrname = 'games'
+
     double_tap_counter = uint32_t
     finish_line_counter = uint32_t
 
@@ -542,6 +601,8 @@ class Wifi(Option):
 
     'Corresponds to C struct ``navdata_wifi_t``.'
 
+    _attrname = 'wifi'
+
     link_quality = uint32_t
 
 
@@ -549,5 +610,7 @@ class Wifi(Option):
 class Checksum(Option):
 
     'Corresponds to C struct ``navdata_cks_t``.'
+
+    _attrname = 'cks'
 
     value = uint32_t  #: Value of the checksum
