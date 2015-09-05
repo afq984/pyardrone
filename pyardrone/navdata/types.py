@@ -173,11 +173,6 @@ class Option(types.SimpleNamespace, metaclass=OptionType):
     Base class of all NavData options.
 
     Corresponds to C struct ``navdata_option_t``.
-
-    .. py:data:: attrname
-
-        The attribute name the get this option from
-        :py:class:`~pyardrone.navdata.NavData`
     '''
 
 
