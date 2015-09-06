@@ -1,4 +1,3 @@
-import collections
 import itertools
 import logging
 import socket
@@ -6,10 +5,9 @@ import threading
 
 from pyardrone import at
 from pyardrone.config import Config
-from pyardrone.navdata import NavData, Metadata
+from pyardrone.navdata import NavData
 from pyardrone.navdata.states import DroneState
 from pyardrone.utils import noop
-from pyardrone.utils.object_executor import ObjectExecutor
 
 
 __version__ = '0.2.1dev1'
@@ -18,9 +16,6 @@ __all__ = ('ARDrone',)
 
 
 logger = logging.getLogger(__name__)
-
-
-QueuedCommand = collections.namedtuple('QueuedCommand', 'command event')
 
 
 class ARDrone:
@@ -33,7 +28,9 @@ class ARDrone:
     :param navdata_port:    NavData port
     :param video_port:      Video port
     :param control_port:    Control port
-    :param interval:        delay between subsequent commands in seconds
+    :param watchdog_interval:  seconds between each
+                               :py:class:`~pyardrone.at.COMWDG`
+                               sent in background
     :param bind:            whether to :py:meth:`~socket.socket.bind`
                             the sockets; this option exists for testing
     :param connect:         connect to the drone at init
@@ -46,32 +43,27 @@ class ARDrone:
     def __init__(
         self,
         *,
-        addr='192.168.1.1',
+        address='192.168.1.1',
         at_port=5556,
         navdata_port=5554,
         video_port=5555,  # 5553?
         control_port=5559,
-        interval=0.03,
+        watchdog_interval=0.03,
         bind=True,
         connect=True
     ):
-        self.addr = addr
+        self.address = address
         self.at_port = at_port
         self.navdata_port = navdata_port
         self.video_port = video_port
         self.control_port = control_port
+        self.watchdog_interval = watchdog_interval
         self.bind = bind
 
         # sequence number required by ATCommands
         # DevGuide: send 1 as the sequence number of the first sent command
-        self.seq_num = 0
-        self.seq_lock = threading.Lock()
-
-        self._at_executor = ObjectExecutor(
-            self.send_nowait,
-            interval,
-            at.COMWDG()
-        )
+        self.sequence_number = 0
+        self.sequence_number_mutex = threading.Lock()
 
         self.config = Config(self)
 
@@ -80,14 +72,6 @@ class ARDrone:
 
         if connect:
             self.connect()
-
-    @property
-    def interval(self):
-        return self._at_executor.interval
-
-    @interval.setter
-    def interval(self, value):
-        self._at_executor.interval = value
 
     @property
     def state(self):
@@ -102,25 +86,19 @@ class ARDrone:
         See :py:class:`~pyardrone.navdata.states.DroneState`
         for the full list of states.
         '''
-        return DroneState(self.navdata[Metadata].state)
+        return DroneState(self.navdata.metadata.state)
 
-    def takeoff(wait=False, discard=True):
+    def takeoff(self):
         '''
-        Drone takeoff.
+        Sends the takeoff command.
+        '''
+        self.send(at.REF(at.REF.input.default | at.REF.input.start))
 
-        :param wait: if True, wait for queued commands to complete before\
-        taking off.
-        :param discard: if True, discard all queued commands after taking off.
+    def land(self):
         '''
-        raise NotImplementedError
-
-    def land(wait=False, discard=True):
+        Sends the land command.
         '''
-        Drone land.
-
-        Parameters same as :py:meth:`~pyardrone.ARDrone.takeoff`
-        '''
-        raise NotImplementedError
+        self.send(at.REF(at.REF.input.default))
 
     def connect(self):
         '''
@@ -134,7 +112,6 @@ class ARDrone:
             raise RuntimeError('The drone is connected already')
         self.connected = True
         self._init_sockets()
-        self._at_executor.start()
 
     def close(self):
         '''
@@ -146,40 +123,20 @@ class ARDrone:
         if self.closed or not self.connected:
             return
         self.closed = True
-        self._at_executor.stop(True)
         self._close_sockets()
-
-    def register(self, command, with_event=True):
-        '''
-        Puts the *ATCommand* to the queue, does not block.
-
-        :param ATCommand command: Command to register.
-        :param bool with_event: If ``True``, returns an \
-        :py:class:`threading.Event` object, which can be used to \
-        indicate whether the job is done.
-        '''
-        return self._at_executor.put(command, with_event)
 
     def send(self, command):
         '''
-        Puts the command to the queue, blocks until it is sent to the drone.
-        '''
-        self._at_executor.put(command, True).wait()
+        :param pyardrone.at.ATCommand command: command to send
 
-    def send_nowait(self, command):
+        Sends the command to the drone,
+        with an internal increasing sequence number.
+        this method is thread-safe.
         '''
-        Sends the command to the drone immediately.
-        '''
-        with self.seq_lock:
-            self.seq_num += 1
-            packed = command._pack(self.seq_num)
-            bytes_sent = self.at_sock.send(packed)
-            logger.debug(
-                'sent %d bytes to "%s:%d", %r',
-                bytes_sent,
-                self.addr,
-                self.at_port,
-                packed
+        with self.sequence_number_mutex:
+            self.sequence_number += 1
+            self.at_sock.send(
+                command._pack(self.sequence_number)
             )
 
     def get_raw_config(self):
@@ -190,25 +147,6 @@ class ARDrone:
         return b''.join(
             itertools.dropwhile(noop, self.control_sock.recv(4096))
         ).encode()
-
-    def _init_sockets(self):
-
-        self.at_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-
-        self.navdata_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-
-        self.control_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
-        if self.bind:
-            self.at_sock.bind(('', self.at_port))
-            self.navdata_sock.bind(('', self.navdata_port))
-            self.control_sock.bind(('', self.control_port))
-
-        self.at_sock.connect((self.addr, self.at_port))
-        self.navdata_sock.connect((self.addr, self.navdata_port))
-        # self.control_sock.connect((self.addr, self.navdata_port))
-
-        self.navdata_sock.setblocking(False)
 
     def get_new_and_latest_navdata(self):
         navb = None
@@ -222,6 +160,23 @@ class ARDrone:
         navb = self.get_new_and_latest_navdata()
         if navb is not None:
             self.navdata = NavData(navb)
+
+    def _init_sockets(self):
+
+        self.at_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self.navdata_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self.control_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+        if self.bind:
+            self.at_sock.bind(('', self.at_port))
+            self.navdata_sock.bind(('', self.navdata_port))
+            self.control_sock.bind(('', self.control_port))
+
+        self.at_sock.connect((self.address, self.at_port))
+        self.navdata_sock.connect((self.address, self.navdata_port))
+        # self.control_sock.connect((self.address, self.navdata_port))
+
+        self.navdata_sock.setblocking(False)
 
     def _close_sockets(self):
         self.at_sock.close()
