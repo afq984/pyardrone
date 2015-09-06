@@ -18,6 +18,7 @@ Welcome to pyardrone's documentation!
    config
    navdata
    options
+   utils
 
 
 Indices and tables
