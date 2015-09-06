@@ -7,7 +7,6 @@ Controlling ARDrone with Python
 
 still work in progress...
 
-Documentation
--------------
-
-http://pyardrone.readthedocs.org/
+~ `Github <https://github.com/afg984/pyardrone>`_ ~
+`PyPI <https://pypi.python.org/pypi/pyardrone>`_ ~
+`Online Docs <http://pyardrone.readthedocs.org>`_ ~

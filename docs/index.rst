@@ -6,6 +6,13 @@
 Welcome to pyardrone's documentation!
 =====================================
 
+~ `Github <https://github.com/afg984/pyardrone>`_ ~
+`PyPI <https://pypi.python.org/pypi/pyardrone>`_ ~
+`Online Docs <http://pyardrone.readthedocs.org>`_ ~
+
+pyardrone is a ARDrone 2.0 client library for Python 3.
+
+
 ..
     Contents:
 

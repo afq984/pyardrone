@@ -10,7 +10,7 @@ from pyardrone.navdata.states import DroneState
 from pyardrone.utils import noop
 
 
-__version__ = '0.2.1dev1'
+__version__ = '0.3.0dev1'
 
 __all__ = ('ARDrone',)
 

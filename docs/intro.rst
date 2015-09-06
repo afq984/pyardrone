@@ -1,6 +1,8 @@
 Getting Started
 ===============
 
+THIS SECTION IS WIP.
+
 Requirements
 ------------
 
@@ -18,9 +20,11 @@ Basic Usage
 
 .. code-block:: python3
 
-    >>> import time
-    >>> from pyardrone import ARDrone
-    >>> drone = ARDrone()
-    >>> drone.takeoff()
-    >>> time.sleep(10)
-    >>> drone.land()
+    import time
+    from pyardrone import ARDrone
+    drone = ARDrone()
+    while not drone.state.fly_mask:
+        drone.takeoff()
+    time.sleep(10)
+    while drone.state.fly_mask:
+        drone.land()
