@@ -76,7 +76,7 @@ class ARDrone:
     @property
     def state(self):
         '''
-        The latest state from *NavData*.
+        The latest state from :py:class:`~pyardrone.navdata.NavData`.
 
             >>> drone.state.fly_mask
             True  # drone is flying
