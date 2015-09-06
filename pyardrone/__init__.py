@@ -127,7 +127,7 @@ class ARDrone:
 
     def send(self, command):
         '''
-        :param pyardrone.at.ATCommand command: command to send
+        :param pyardrone.at.base.ATCommand command: command to send
 
         Sends the command to the drone,
         with an internal increasing sequence number.
