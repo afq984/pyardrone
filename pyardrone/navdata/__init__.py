@@ -1,7 +1,7 @@
 import io
 from types import SimpleNamespace
 
-from pyardrone.navdata.options import Metadata, Checksum, index
+from pyardrone.navdata.options import Metadata, index
 from pyardrone.navdata.types import OptionHeader
 
 
