@@ -52,9 +52,8 @@ class NavData(SimpleNamespace):
         :rtype: bool
         '''
         return (
-            self[Metadata].header == header and
-            Checksum in self and
-            self[Checksum].value == self.checksum
+            self.metadata.header == header and
+            self.checksum.value == self.checksum
         )
 
     def add_option(self, option_class, data):
