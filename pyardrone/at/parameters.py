@@ -49,7 +49,6 @@ class Parameter:
         :raises TypeError: If the value is of the wrong type.
         :raises ValueError: If the value is not valid.
         '''
-        pass
 
     @staticmethod
     def _pack(value):
@@ -59,6 +58,7 @@ class Parameter:
 
         :rtype: bytes
         '''
+        raise NotImplementedError
 
 
 class Int32(Parameter):

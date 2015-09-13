@@ -66,6 +66,16 @@ class CommandDefaultTest(unittest.TestCase):
         self.assertEqual(self.FOO().argument, 20)
 
 
+class ParameterClassTest(unittest.TestCase):
+
+    def test_pack_required(self):
+        with self.assertRaises(NotImplementedError):
+            parameters.Parameter._pack(10)
+
+    def test_check_optional(self):
+        parameters.Parameter._check(10)
+
+
 class ArgumentReprTest(unittest.TestCase):
 
     class Bar(parameters.Parameter):
