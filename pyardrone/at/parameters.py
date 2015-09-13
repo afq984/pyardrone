@@ -23,7 +23,7 @@ class Parameter:
         self._index = index
 
     def __repr__(self):
-        if hasattr(self, '_name'):
+        if self._name is not None:
             return '<{self.__class__.__name__}:{self._name}>'.format(self=self)
         else:
             return super().__repr__()

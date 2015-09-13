@@ -72,7 +72,8 @@ class ArgumentReprTest(unittest.TestCase):
         pass
 
     def test_repr_without_name(self):
-        repr(self.Bar())
+        obj = self.Bar()
+        self.assertEqual(object.__repr__(obj), repr(obj))
 
     def test_repr_with_name(self):
         bar = self.Bar()
