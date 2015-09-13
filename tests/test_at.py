@@ -76,7 +76,7 @@ class ParameterClassTest(unittest.TestCase):
         parameters.Parameter._check(10)
 
 
-class ArgumentReprTest(unittest.TestCase):
+class ParameterReprTest(unittest.TestCase):
 
     class Bar(parameters.Parameter):
         pass
@@ -91,7 +91,7 @@ class ArgumentReprTest(unittest.TestCase):
         self.assertEqual(repr(bar), '<Bar:parn>')
 
 
-class ArgumentCheckTest(unittest.TestCase):
+class ParameterCheckTest(unittest.TestCase):
 
     def test_int32_int_range(self):
         parameters.Int32._check(2 ** 32 - 1)
@@ -101,7 +101,7 @@ class ArgumentCheckTest(unittest.TestCase):
             parameters.Int32._check(2 ** 32)
 
 
-class ArgumentPackTest(unittest.TestCase):
+class ParameterPackTest(unittest.TestCase):
 
     def test_description(self):
         self.assertEqual(
@@ -174,7 +174,7 @@ class ArgumentPackTest(unittest.TestCase):
         )
 
 
-class ArgumentAPITest(unittest.TestCase):
+class ParameterAPITest(unittest.TestCase):
 
     def assert200(self, value):
         self.assertEqual(value, b'200')
