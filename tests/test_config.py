@@ -72,6 +72,11 @@ class ConfigTest(unittest.TestCase):
         self.drone.config.some.config
         self.assertFalse(self.drone.get_raw_config.call_count)
 
+    def test_config_category_repr(self):
+        reprs = repr(self.drone.config.QzEw)
+        self.assertIn('ConfigCategory', reprs)
+        self.assertIn('QzEw', reprs)
+
 
 class RawConfigUnpackTest(unittest.TestCase):
 
