@@ -2,6 +2,7 @@ import itertools
 import logging
 import socket
 import threading
+import time
 
 from pyardrone import at
 from pyardrone.config import Config
@@ -58,6 +59,10 @@ class ARDrone:
         self.video_port = video_port
         self.control_port = control_port
         self.watchdog_interval = watchdog_interval
+        self._watchdog_thread = threading.Thread(
+            target=self._watchdog_job,
+            daemon=True
+        )
         self.bind = bind
 
         # sequence number required by ATCommands
@@ -112,6 +117,7 @@ class ARDrone:
             raise RuntimeError('The drone is connected already')
         self.connected = True
         self._init_sockets()
+        self._init_threads()
 
     def close(self):
         '''
@@ -124,6 +130,7 @@ class ARDrone:
             return
         self.closed = True
         self._close_sockets()
+        self._close_threads()
 
     def send(self, command):
         '''
@@ -135,9 +142,9 @@ class ARDrone:
         '''
         with self.sequence_number_mutex:
             self.sequence_number += 1
-            self.at_sock.send(
-                command._pack(self.sequence_number)
-            )
+            packed = command._pack(self.sequence_number)
+            self.at_sock.send(packed)
+            logger.debug('send: %r', packed)
 
     def get_raw_config(self):
         '''
@@ -182,3 +189,14 @@ class ARDrone:
         self.at_sock.close()
         self.navdata_sock.close()
         self.control_sock.close()
+
+    def _watchdog_job(self):
+        while not self.closed:
+            time.sleep(self.watchdog_interval)
+            self.send(at.COMWDG())
+
+    def _init_threads(self):
+        self._watchdog_thread.start()
+
+    def _close_threads(self):
+        pass
