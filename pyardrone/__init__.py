@@ -2,7 +2,6 @@ import itertools
 import logging
 import socket
 import threading
-import time
 
 from pyardrone import at
 from pyardrone.config import Config
@@ -59,10 +58,7 @@ class ARDrone:
         self.video_port = video_port
         self.control_port = control_port
         self.watchdog_interval = watchdog_interval
-        self._watchdog_thread = threading.Thread(
-            target=self._watchdog_job,
-            daemon=True
-        )
+        self._watchdog_thread = threading.Thread(target=self._watchdog_job)
         self.bind = bind
 
         # sequence number required by ATCommands
@@ -73,7 +69,7 @@ class ARDrone:
         self.config = Config(self)
 
         self.connected = False
-        self.closed = False
+        self.closed = threading.Event()
 
         if connect:
             self.connect()
@@ -111,7 +107,7 @@ class ARDrone:
 
         :raises RuntimeError: if the drone is connected or closed already.
         '''
-        if self.closed:
+        if self.closed.is_set():
             raise RuntimeError("The drone's connection is closed already")
         if self.connected:
             raise RuntimeError('The drone is connected already')
@@ -126,11 +122,11 @@ class ARDrone:
         This method has no effect if the drone is closed already or not
         connected yet.
         '''
-        if self.closed or not self.connected:
+        if self.closed.is_set() or not self.connected:
             return
-        self.closed = True
-        self._close_sockets()
+        self.closed.set()
         self._close_threads()
+        self._close_sockets()
 
     def send(self, command):
         '''
@@ -187,12 +183,12 @@ class ARDrone:
         self.control_sock.close()
 
     def _watchdog_job(self):
-        while not self.closed:
-            time.sleep(self.watchdog_interval)
+        while not self.closed.is_set():
             self.send(at.COMWDG())
+            self.closed.wait(timeout=self.watchdog_interval)
 
     def _init_threads(self):
         self._watchdog_thread.start()
 
     def _close_threads(self):
-        pass
+        self._watchdog_thread.join()
