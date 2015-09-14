@@ -143,7 +143,7 @@ class ARDrone:
         with self.sequence_number_mutex:
             self.sequence_number += 1
             packed = command._pack(self.sequence_number)
-            self.at_sock.send(packed)
+            self.at_sock.sendto(packed, (self.address, self.at_port))
             logger.debug('send: %r', packed)
 
     def get_raw_config(self):
@@ -178,10 +178,6 @@ class ARDrone:
             self.at_sock.bind(('', self.at_port))
             self.navdata_sock.bind(('', self.navdata_port))
             self.control_sock.bind(('', self.control_port))
-
-        self.at_sock.connect((self.address, self.at_port))
-        self.navdata_sock.connect((self.address, self.navdata_port))
-        # self.control_sock.connect((self.address, self.navdata_port))
 
         self.navdata_sock.setblocking(False)
 
