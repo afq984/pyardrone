@@ -14,7 +14,7 @@ i:am = tired
 class ConfigTest(unittest.TestCase):
 
     def setUp(self):
-        self.drone = ARDrone()
+        self.drone = ARDrone(connect=False)
         self.drone.get_raw_config = mock.Mock(
             spec=self.drone.get_raw_config,
             return_value=config_file_example,
