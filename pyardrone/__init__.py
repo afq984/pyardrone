@@ -49,7 +49,7 @@ class ARDrone:
         navdata_port=5554,
         video_port=5555,  # 5553?
         control_port=5559,
-        watchdog_interval=0.03,
+        watchdog_interval=0.5,
         bind=True,
         connect=True
     ):
