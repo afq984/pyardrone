@@ -56,6 +56,12 @@ class CommandTest(unittest.TestCase):
     def test_attributes_which_are_not_arguments_can_be_assigned(self):
         at.REF(11).some_attribute = 20
 
+    def test_parameterless_pack_does_not_end_with_comma(self):
+        self.assertEqual(
+            at.COMWDG()._pack(100),
+            b'AT*COMWDG=100\r'
+        )
+
 
 class CommandDefaultTest(unittest.TestCase):
 

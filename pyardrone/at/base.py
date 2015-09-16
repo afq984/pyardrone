@@ -79,12 +79,13 @@ class ATCommand(metaclass=ATCommandMeta):
         '''
 
         # should use bytes.format, fix this after python3.5 is released
-        return 'AT*{clsname}={seq},{argl}\r'.format(
+        return 'AT*{clsname}={seq}{argl_wc}\r'.format(
             clsname=type(self).__name__,
             seq=seq,
-            argl=b','.join(self._iter_packed()).decode()
+            argl_wc=b''.join(self._iter_packed_with_comma()).decode()
         ).encode()
 
-    def _iter_packed(self):
+    def _iter_packed_with_comma(self):
         for param, arg in zip(self._parameters, self):
+            yield b','
             yield param._pack(arg)
