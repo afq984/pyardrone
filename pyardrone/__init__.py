@@ -1,5 +1,4 @@
 import itertools
-import logging
 import socket
 import threading
 
@@ -7,7 +6,7 @@ from pyardrone import at
 from pyardrone.config import Config
 from pyardrone.navdata import NavData
 from pyardrone.navdata.states import DroneState
-from pyardrone.utils import noop
+from pyardrone.utils import noop, logging
 
 
 __version__ = '0.3.0dev1'
@@ -140,7 +139,7 @@ class ARDrone:
             self.sequence_number += 1
             packed = command._pack(self.sequence_number)
             self.at_sock.sendto(packed, (self.address, self.at_port))
-            logger.debug('send: %r', packed)
+            logger.debug('send: {!r}', packed)
 
     def get_raw_config(self):
         '''
