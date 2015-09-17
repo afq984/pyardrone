@@ -150,18 +150,13 @@ class ARDrone:
             itertools.dropwhile(noop, self.control_sock.recv(4096))
         ).encode()
 
-    def get_new_and_latest_navdata(self):
-        navb = None
-        while True:
-            try:
-                navb = self.navdata_sock.recv(1024)
-            except BlockingIOError:
-                return navb
+    def navdata_received(self, data):
+        '''
+        Called when navdata received.
 
-    def update_navdata(self):
-        navb = self.get_new_and_latest_navdata()
-        if navb is not None:
-            self.navdata = NavData(navb)
+        :param bytes data: navdata received.
+        '''
+        self.navdata = NavData(data)
 
     def _init_sockets(self):
 
