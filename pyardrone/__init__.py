@@ -28,6 +28,7 @@ class ARDroneBase:
         video_port=5555,  # 5553?
         control_port=5559,
         watchdog_interval=0.5,
+        timeout=0.01,
         bind=True,
         connect=True
     ):
@@ -37,7 +38,7 @@ class ARDroneBase:
         self.video_port = video_port
         self.control_port = control_port
         self.watchdog_interval = watchdog_interval
-        self._watchdog_thread = threading.Thread(target=self._watchdog_job)
+        self.timeout = timeout
         self.bind = bind
 
         self.config = Config(self)
@@ -140,12 +141,12 @@ class IOMixin:
         self.navdata_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.control_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
+        self.navdata_sock.settimeout(self.timeout)
+
         if self.bind:
             self.at_sock.bind(('', self.at_port))
             self.navdata_sock.bind(('', self.navdata_port))
             self.control_sock.bind(('', self.control_port))
-
-        self.navdata_sock.setblocking(False)
 
     def _close_sockets(self):
         self.at_sock.close()
@@ -157,11 +158,26 @@ class IOMixin:
             self.send(at.COMWDG())
             self.closed.wait(timeout=self.watchdog_interval)
 
+    def _navdata_job(self):
+        while not self.closed.is_set():
+            try:
+                data, addr = self.navdata_sock.recvfrom(4096)
+            except socket.timeout:
+                pass
+            else:
+                if addr == (self.address, self.navdata_port):
+                    self.navdata_received(data)
+
     def _init_threads(self):
+        self._watchdog_thread = threading.Thread(target=self._watchdog_job)
+        self._navdata_thread = threading.Thread(target=self._navdata_job)
+
         self._watchdog_thread.start()
+        self._navdata_thread.start()
 
     def _close_threads(self):
-        self._watchdog_thread.join()
+            self._watchdog_thread.join()
+            self._navdata_thread.join()
 
 
 class HelperMixin:
