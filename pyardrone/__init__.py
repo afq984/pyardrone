@@ -9,7 +9,7 @@ from pyardrone.navdata.states import DroneState
 from pyardrone.utils import noop, logging
 
 
-__version__ = '0.3.0dev1'
+__version__ = '0.3.1dev1'
 
 __all__ = ('ARDrone',)
 
@@ -17,27 +17,7 @@ __all__ = ('ARDrone',)
 logger = logging.getLogger(__name__)
 
 
-class ARDrone:
-
-    '''
-    The class representing a Parrot AR.Drone
-
-    :param address:         address of the drone
-    :param at_port:         AT command port
-    :param navdata_port:    NavData port
-    :param video_port:      Video port
-    :param control_port:    Control port
-    :param watchdog_interval:  seconds between each
-                               :py:class:`~pyardrone.at.COMWDG`
-                               sent in background
-    :param bind:            whether to :py:meth:`~socket.socket.bind`
-                            the sockets; this option exists for testing
-    :param connect:         connect to the drone at init
-
-    .. attribute:: config
-
-        The config object of the drone, see :ref:`configuration`.
-    '''
+class ARDroneBase:
 
     def __init__(
         self,
@@ -59,11 +39,6 @@ class ARDrone:
         self.watchdog_interval = watchdog_interval
         self._watchdog_thread = threading.Thread(target=self._watchdog_job)
         self.bind = bind
-
-        # sequence number required by ATCommands
-        # DevGuide: send 1 as the sequence number of the first sent command
-        self.sequence_number = 0
-        self.sequence_number_mutex = threading.Lock()
 
         self.config = Config(self)
 
@@ -88,17 +63,29 @@ class ARDrone:
         '''
         return DroneState(self.navdata.metadata.state)
 
-    def takeoff(self):
+    def send(self, command):
         '''
-        Sends the takeoff command.
-        '''
-        self.send(at.REF(at.REF.input.default | at.REF.input.start))
+        :param pyardrone.at.base.ATCommand command: command to send
 
-    def land(self):
+        Sends the command to the drone,
+        with an internal increasing sequence number.
+        this method is thread-safe.
         '''
-        Sends the land command.
+        with self.sequence_number_mutex:
+            self.sequence_number += 1
+            packed = command._pack(self.sequence_number)
+            self.send_bytes(packed)
+
+    def navdata_received(self, data):
         '''
-        self.send(at.REF(at.REF.input.default))
+        Called when navdata received.
+
+        :param bytes data: navdata received.
+        '''
+        self.navdata = NavData(data)
+
+
+class IOMixin:
 
     def connect(self):
         '''
@@ -110,7 +97,14 @@ class ARDrone:
             raise RuntimeError("The drone's connection is closed already")
         if self.connected:
             raise RuntimeError('The drone is connected already')
+
         self.connected = True
+
+        # sequence number required by ATCommands
+        # DevGuide: send 1 as the sequence number of the first sent command
+        self.sequence_number = 0
+        self.sequence_number_mutex = threading.Lock()
+
         self._init_sockets()
         self._init_threads()
 
@@ -127,19 +121,9 @@ class ARDrone:
         self._close_threads()
         self._close_sockets()
 
-    def send(self, command):
-        '''
-        :param pyardrone.at.base.ATCommand command: command to send
-
-        Sends the command to the drone,
-        with an internal increasing sequence number.
-        this method is thread-safe.
-        '''
-        with self.sequence_number_mutex:
-            self.sequence_number += 1
-            packed = command._pack(self.sequence_number)
-            self.at_sock.sendto(packed, (self.address, self.at_port))
-            logger.debug('send: {!r}', packed)
+    def send_bytes(self, bytez):
+        self.at_sock.sendto(bytez, (self.address, self.at_port))
+        logger.debug('sent: {!r}', bytez)
 
     def get_raw_config(self):
         '''
@@ -149,14 +133,6 @@ class ARDrone:
         return b''.join(
             itertools.dropwhile(noop, self.control_sock.recv(4096))
         ).encode()
-
-    def navdata_received(self, data):
-        '''
-        Called when navdata received.
-
-        :param bytes data: navdata received.
-        '''
-        self.navdata = NavData(data)
 
     def _init_sockets(self):
 
@@ -186,3 +162,22 @@ class ARDrone:
 
     def _close_threads(self):
         self._watchdog_thread.join()
+
+
+class HelperMixin:
+
+    def takeoff(self):
+        '''
+        Sends the takeoff command.
+        '''
+        self.send(at.REF(at.REF.input.default | at.REF.input.start))
+
+    def land(self):
+        '''
+        Sends the land command.
+        '''
+        self.send(at.REF(at.REF.input.default))
+
+
+class ARDrone(HelperMixin, IOMixin, ARDroneBase):
+    pass
