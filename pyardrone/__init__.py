@@ -194,6 +194,15 @@ class HelperMixin:
         '''
         self.send(at.REF(at.REF.input.default))
 
+    def move(self, roll=0, pitch=0, gaz=0, yaw=0):
+        '''
+        Moves the drone.
+
+        Same as sending :py:class:`~pyardrone.at.PCMD` command with progressive
+        flag.
+        '''
+        self.send(at.PCMD(at.PCMD.flag.progressive, roll, pitch, gaz, yaw))
+
 
 class ARDrone(HelperMixin, IOMixin, ARDroneBase):
     pass
