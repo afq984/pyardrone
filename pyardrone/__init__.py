@@ -203,6 +203,12 @@ class HelperMixin:
         '''
         self.send(at.PCMD(at.PCMD.flag.progressive, roll, pitch, gaz, yaw))
 
+    def hover(self):
+        '''
+        Sends the hover command.
+        '''
+        self.send(at.PCMD(flag=0))
+
 
 class ARDrone(HelperMixin, IOMixin, ARDroneBase):
     pass
