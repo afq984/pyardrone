@@ -5,9 +5,13 @@ sudo: false
 python:
     - '3.4'
 
+env:
+    - NUMPY=
+    - NUMPY=numpy
+
 install:
     - pip install --upgrade pip
-    - pip install flake8 sphinx
+    - pip install flake8 sphinx $NUMPY
 
 script:
     - flake8 pyardrone
