@@ -5,16 +5,12 @@ NavData
     :members:
     :show-inheritance:
 
-Option base class
------------------
-
-.. autoclass:: pyardrone.navdata.types.Option
-    :members:
-
 
 List of navdata Options
 -----------------------
 
+The documentation here is quite unreadable, and reading the source directly
+is recommended.
 
 .. automodule:: pyardrone.navdata.options
     :members:
