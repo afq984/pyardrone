@@ -49,13 +49,17 @@ class NavData(SimpleNamespace):
 
         self.add_option(Metadata, buffer, 0)
 
-        option_header_size = sizeof(OptionHeader)
         offset = sizeof(Metadata)
         while offset < len(buffer):
             header = OptionHeader.from_buffer_copy(buffer, offset)
-            offset += option_header_size
             if header.size:
                 option_class = index[header.tag]
+                if header.size != sizeof(option_class):
+                    raise InvalidSize(
+                        'Option: {!r}, calculated: {}, reported: {}'.format(
+                            option_class, sizeof(option_class), header.size
+                        )
+                    )
                 self.add_option(option_class, buffer, offset)
                 offset += sizeof(option_class)
 

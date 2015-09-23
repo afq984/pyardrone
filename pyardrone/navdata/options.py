@@ -13,7 +13,7 @@ uint16_t = ctypes.c_uint16
 uint32_t = ctypes.c_uint32
 int16_t = ctypes.c_int16
 int32_t = ctypes.c_int32
-bool_t = ctypes.c_bool
+bool_t = ctypes.c_uint32  # ARDroneTool's bool is 4 bytes
 char = ctypes.c_char
 float32_t = ctypes.c_float
 
@@ -38,7 +38,7 @@ _screen_point_t = int32_t * 2
 _matrix33_t = float32_t * 3 * 3
 
 
-class OptionIndex(dict):
+class OptionHeaderIndex(dict):
 
     def register(self, tag):
         return functools.partial(self._register, tag)
@@ -51,7 +51,7 @@ class OptionIndex(dict):
         return function
 
 
-index = OptionIndex()
+index = OptionHeaderIndex()
 
 
 class Metadata(Structure):
@@ -63,6 +63,8 @@ class Metadata(Structure):
 
     Corresponds to C struct ``navdata_t``.
     '''
+
+    _pack_ = 1
 
     _attrname = 'metadata'
 
@@ -78,12 +80,14 @@ class Metadata(Structure):
 
 class OptionHeader(Structure):
 
+    _pack_ = 1
+
     tag = uint16_t
     size = uint16_t
 
 
 @index.register(0)
-class Demo(Structure):
+class Demo(OptionHeader):
 
     '''
     Minimal navigation data for all flights.
@@ -125,7 +129,7 @@ class Demo(Structure):
 
 
 @index.register(1)
-class Time(Structure):
+class Time(OptionHeader):
 
     '''
     Timestamp
@@ -141,7 +145,7 @@ class Time(Structure):
 
 
 @index.register(2)
-class RawMeasures(Structure):
+class RawMeasures(OptionHeader):
 
     '''
     Raw sensors measurements
@@ -172,7 +176,7 @@ class RawMeasures(Structure):
 
 
 @index.register(21)
-class PressureRaw(Structure):
+class PressureRaw(OptionHeader):
 
     'Corresponds to C struct ``navdata_pressure_raw_t``.'
 
@@ -185,7 +189,7 @@ class PressureRaw(Structure):
 
 
 @index.register(22)
-class Magneto(Structure):
+class Magneto(OptionHeader):
 
     'Corresponds to C struct ``navdata_magneto_t``.'
 
@@ -208,7 +212,7 @@ class Magneto(Structure):
 
 
 @index.register(23)
-class WindSpeed(Structure):
+class WindSpeed(OptionHeader):
 
     'Corresponds to C struct ``navdata_wind_speed_t``.'
 
@@ -234,7 +238,7 @@ class WindSpeed(Structure):
 
 
 @index.register(24)
-class KalmanPressure(Structure):
+class KalmanPressure(OptionHeader):
 
     'Corresponds to C struct ``navdata_kalman_pressure_t``.'
 
@@ -260,7 +264,7 @@ class KalmanPressure(Structure):
 
 
 @index.register(27)
-class Zimmu3000(Structure):
+class Zimmu3000(OptionHeader):
 
     'Corresponds to C struct ``navdata_zimmu_3000_t``.'
 
@@ -271,7 +275,7 @@ class Zimmu3000(Structure):
 
 
 @index.register(3)
-class PhysMeasures(Structure):
+class PhysMeasures(OptionHeader):
 
     'Corresponds to C struct ``navdata_phys_measures_t``.'
 
@@ -287,7 +291,7 @@ class PhysMeasures(Structure):
 
 
 @index.register(4)
-class GyrosOffsets(Structure):
+class GyrosOffsets(OptionHeader):
 
     'Corresponds to C struct ``navdata_gyros_offsets_t``.'
 
@@ -297,7 +301,7 @@ class GyrosOffsets(Structure):
 
 
 @index.register(5)
-class EulerAngles(Structure):
+class EulerAngles(OptionHeader):
 
     'Corresponds to C struct ``navdata_euler_angles_t``.'
 
@@ -308,7 +312,7 @@ class EulerAngles(Structure):
 
 
 @index.register(6)
-class References(Structure):
+class References(OptionHeader):
 
     'Corresponds to C struct ``navdata_references_t``.'
 
@@ -341,7 +345,7 @@ class References(Structure):
 
 
 @index.register(7)
-class Trims(Structure):
+class Trims(OptionHeader):
 
     'Corresponds to C struct ``navdata_trims_t``.'
 
@@ -353,7 +357,7 @@ class Trims(Structure):
 
 
 @index.register(8)
-class RcReferences(Structure):
+class RcReferences(OptionHeader):
 
     'Corresponds to C struct ``navdata_rc_references_t``.'
 
@@ -367,7 +371,7 @@ class RcReferences(Structure):
 
 
 @index.register(9)
-class Pwm(Structure):
+class Pwm(OptionHeader):
 
     'Corresponds to C struct ``navdata_pwm_t``.'
 
@@ -403,7 +407,7 @@ class Pwm(Structure):
 
 
 @index.register(10)
-class Altitude(Structure):
+class Altitude(OptionHeader):
 
     'Corresponds to C struct ``navdata_altitude_t``.'
 
@@ -419,11 +423,11 @@ class Altitude(Structure):
     obs_x = _vector31_t
     obs_state = uint32_t
     est_vb = _vector21_t
-    est_state = uint32_t * 3
+    est_state = uint32_t
 
 
 @index.register(11)
-class VisionRaw(Structure):
+class VisionRaw(OptionHeader):
 
     'Corresponds to C struct ``navdata_vision_raw_t``.'
 
@@ -435,7 +439,7 @@ class VisionRaw(Structure):
 
 
 @index.register(13)
-class Vision(Structure):
+class Vision(OptionHeader):
 
     'Corresponds to C struct ``navdata_vision_t``.'
 
@@ -467,9 +471,9 @@ class Vision(Structure):
 
 
 @index.register(14)
-class VisionPerf(Structure):
+class VisionPerf(OptionHeader):
 
-    'Corresponds to C struct ``navdata_vision_pref_t``.'
+    'Corresponds to C struct ``navdata_vision_perf_t``.'
 
     _attrname = 'vision_perf'
 
@@ -483,7 +487,7 @@ class VisionPerf(Structure):
 
 
 @index.register(15)
-class TrackersSend(Structure):
+class TrackersSend(OptionHeader):
 
     'Corresponds to C struct ``navdata_trackers_send_t``.'
 
@@ -496,7 +500,7 @@ class TrackersSend(Structure):
 
 
 @index.register(16)
-class VisionDetect(Structure):
+class VisionDetect(OptionHeader):
 
     'Corresponds to C struct ``navdata_vision_detect_t``.'
 
@@ -519,7 +523,7 @@ class VisionDetect(Structure):
 
 
 @index.register(12)
-class VisionOf(Structure):
+class VisionOf(OptionHeader):
 
     'Corresponds to C struct ``navdata_vision_of_t``.'
 
@@ -530,7 +534,7 @@ class VisionOf(Structure):
 
 
 @index.register(17)
-class Watchdog(Structure):
+class Watchdog(OptionHeader):
 
     'Corresponds to C struct ``navdata_watchdog_t``.'
 
@@ -541,7 +545,7 @@ class Watchdog(Structure):
 
 
 @index.register(18)
-class AdcDataFrame(Structure):
+class AdcDataFrame(OptionHeader):
 
     'Corresponds to C struct ``navdata_adc_data_frame_t``.'
 
@@ -552,7 +556,7 @@ class AdcDataFrame(Structure):
 
 
 @index.register(19)
-class VideoStream(Structure):
+class VideoStream(OptionHeader):
 
     'Corresponds to C struct ``navdata_video_stream_t``.'
 
@@ -590,7 +594,7 @@ class VideoStream(Structure):
 
 
 @index.register(25)
-class HdvideoStream(Structure):
+class HdvideoStream(OptionHeader):
 
     'Corresponds to C struct ``navdata_hdvideo_stream_t``.'
 
@@ -612,7 +616,7 @@ class HdvideoStream(Structure):
 
 
 @index.register(20)
-class Games(Structure):
+class Games(OptionHeader):
 
     'Corresponds to C struct ``navdata_games_t``.'
 
@@ -623,7 +627,7 @@ class Games(Structure):
 
 
 @index.register(26)
-class Wifi(Structure):
+class Wifi(OptionHeader):
 
     'Corresponds to C struct ``navdata_wifi_t``.'
 
@@ -633,7 +637,7 @@ class Wifi(Structure):
 
 
 @index.register(0xFFFF)
-class Checksum(Structure):
+class Cks(OptionHeader):
 
     'Corresponds to C struct ``navdata_cks_t``.'
 
