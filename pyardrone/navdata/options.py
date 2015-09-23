@@ -31,11 +31,11 @@ DEFAULT_NB_TRACKERS_HEIGHT = NB_CORNER_TRACKERS_HEIGHT + 1
 NAVDATA_MAX_CUSTOM_TIME_SAVE = 20
 
 
-vector31_t = float32_t * 3
-velocities_t = vector31_t
-vector21_t = float32_t * 2
-screen_point_t = int32_t * 2
-matrix33_t = float32_t * 3 * 3
+_vector31_t = float32_t * 3
+_velocities_t = _vector31_t
+_vector21_t = float32_t * 2
+_screen_point_t = int32_t * 2
+_matrix33_t = float32_t * 3 * 3
 
 
 class OptionIndex(dict):
@@ -113,15 +113,15 @@ class Demo(Structure):
     num_frames = uint32_t
 
     # Camera parameters compute by detection
-    detection_camera_rot = matrix33_t  #: Deprecated ! Don't use !
-    detection_camera_trans = vector31_t  #: Deprecated ! Don't use !
+    detection_camera_rot = _matrix33_t  #: Deprecated ! Don't use !
+    detection_camera_trans = _vector31_t  #: Deprecated ! Don't use !
     detection_tag_index = uint32_t  #: Deprecated ! Don't use !
 
     detection_camera_type = uint32_t  #: Type of tag searched in detection
 
     # Camera parameters compute by drone
-    drone_camera_rot = matrix33_t  #: Deprecated ! Don't use !
-    drone_camera_trans = vector31_t  #: Deprecated ! Don't use !
+    drone_camera_rot = _matrix33_t  #: Deprecated ! Don't use !
+    drone_camera_trans = _vector31_t  #: Deprecated ! Don't use !
 
 
 @index.register(1)
@@ -194,9 +194,9 @@ class Magneto(Structure):
     mx = int16_t
     my = int16_t
     mz = int16_t
-    magneto_raw = vector31_t  #: magneto in the body frame, in mG
-    magneto_rectified = vector31_t
-    magneto_offset = vector31_t
+    magneto_raw = _vector31_t  #: magneto in the body frame, in mG
+    magneto_rectified = _vector31_t
+    magneto_offset = _vector31_t
     heading_unwrapped = float32_t
     heading_gyro_unwrapped = float32_t
     heading_fusion_unwrapped = float32_t
@@ -416,9 +416,9 @@ class Altitude(Structure):
 
     obs_accZ = float32_t
     obs_alt = float32_t
-    obs_x = vector31_t
+    obs_x = _vector31_t
     obs_state = uint32_t
-    est_vb = vector21_t
+    est_vb = _vector21_t
     est_state = uint32_t * 3
 
 
@@ -454,7 +454,7 @@ class Vision(Structure):
     psi_capture = float32_t
     altitude_capture = int32_t
     time_capture = uint32_t  #: time in TSECDEC format (see config.h)
-    body_v = velocities_t
+    body_v = _velocities_t
 
     delta_phi = float32_t
     delta_theta = float32_t
@@ -490,7 +490,7 @@ class TrackersSend(Structure):
     _attrname = 'trackers_send'
 
     locked = int32_t * (DEFAULT_NB_TRACKERS_WIDTH * DEFAULT_NB_TRACKERS_HEIGHT)
-    point = screen_point_t * (
+    point = _screen_point_t * (
         DEFAULT_NB_TRACKERS_WIDTH * DEFAULT_NB_TRACKERS_HEIGHT
     )
 
@@ -513,8 +513,8 @@ class VisionDetect(Structure):
     height = uint32_t * NB_NAVDATA_DETECTION_RESULTS
     dist = uint32_t * NB_NAVDATA_DETECTION_RESULTS
     orientation_angle = float32_t * NB_NAVDATA_DETECTION_RESULTS
-    rotation = matrix33_t * NB_NAVDATA_DETECTION_RESULTS
-    translation = vector31_t * NB_NAVDATA_DETECTION_RESULTS
+    rotation = _matrix33_t * NB_NAVDATA_DETECTION_RESULTS
+    translation = _vector31_t * NB_NAVDATA_DETECTION_RESULTS
     camera_source = uint32_t * NB_NAVDATA_DETECTION_RESULTS
 
 

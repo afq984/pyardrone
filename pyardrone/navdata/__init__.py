@@ -34,7 +34,7 @@ def compute_checksum(buffer):
 class NavData(SimpleNamespace):
 
     '''
-    Container of navdata :py:class:`~pyardrone.navdata.types.Option`\ s.
+    Container of navdata options.
 
     To fetch an option:
 
