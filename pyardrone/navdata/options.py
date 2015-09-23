@@ -2,13 +2,20 @@
 This module corresponds to ARDroneLib/Soft/Common/navdata_common.h
 '''
 
-from pyardrone.navdata.types import (
-    uint8_t, uint16_t, uint32_t,
-    int16_t, int32_t,
-    bool_t, char, float32_t,
-    MatrixType, VectorType,
-    Option, OptionIndex
-)
+import ctypes
+import functools
+
+from pyardrone.utils.structure import Structure
+
+
+uint8_t = ctypes.c_uint8
+uint16_t = ctypes.c_uint16
+uint32_t = ctypes.c_uint32
+int16_t = ctypes.c_int16
+int32_t = ctypes.c_int32
+bool_t = ctypes.c_bool
+char = ctypes.c_char
+float32_t = ctypes.c_float
 
 
 NB_GYROS = 3
@@ -23,18 +30,31 @@ DEFAULT_NB_TRACKERS_HEIGHT = NB_CORNER_TRACKERS_HEIGHT + 1
 
 NAVDATA_MAX_CUSTOM_TIME_SAVE = 20
 
-velocities_t = VectorType('velocities_t', ['x', 'y', 'z'])
-vector31_t = VectorType('vector31_t', ['x', 'y', 'z'])
-vector21_t = VectorType('vector32_t', ['x', 'y'])
-screen_point_t = VectorType('screen_point_t', ['x', 'y'], type=int32_t)
 
-matrix33_t = MatrixType(3, 3)
+vector31_t = float32_t * 3
+velocities_t = vector31_t
+vector21_t = float32_t * 2
+screen_point_t = int32_t * 2
+matrix33_t = float32_t * 3 * 3
+
+
+class OptionIndex(dict):
+
+    def register(self, tag):
+        return functools.partial(self._register, tag)
+
+    def _register(self, tag, function):
+        if tag in self:
+            raise KeyError('Key {!r} conflict with existing item {}'.format(
+                tag, self[tag]))
+        self[tag] = function
+        return function
 
 
 index = OptionIndex()
 
 
-class Metadata(Option):
+class Metadata(Structure):
 
     '''
     Header of :py:class:`~pyardrone.navdata.NavData`.
@@ -56,8 +76,14 @@ class Metadata(Option):
     vision_flag = uint32_t  #:
 
 
+class OptionHeader(Structure):
+
+    tag = uint16_t
+    size = uint16_t
+
+
 @index.register(0)
-class Demo(Option):
+class Demo(Structure):
 
     '''
     Minimal navigation data for all flights.
@@ -99,7 +125,7 @@ class Demo(Option):
 
 
 @index.register(1)
-class Time(Option):
+class Time(Structure):
 
     '''
     Timestamp
@@ -115,7 +141,7 @@ class Time(Option):
 
 
 @index.register(2)
-class RawMeasures(Option):
+class RawMeasures(Structure):
 
     '''
     Raw sensors measurements
@@ -126,9 +152,9 @@ class RawMeasures(Option):
     _attrname = 'raw_measures'
 
     # +12 bytes
-    raw_accs = uint16_t[NB_ACCS]  #: filtered accelerometers
-    raw_gyros = int16_t[NB_GYROS]  #: filtered gyrometers
-    raw_gyros_110 = int16_t[2]  #: gyrometers  x/y 110 deg/s
+    raw_accs = uint16_t * NB_ACCS  #: filtered accelerometers
+    raw_gyros = int16_t * NB_GYROS  #: filtered gyrometers
+    raw_gyros_110 = int16_t * 2  #: gyrometers  x/y 110 deg/s
     vbat_raw = uint32_t  #: battery voltage raw (mV)
     us_debut_echo = uint16_t
     us_fin_echo = uint16_t
@@ -146,7 +172,7 @@ class RawMeasures(Option):
 
 
 @index.register(21)
-class PressureRaw(Option):
+class PressureRaw(Structure):
 
     'Corresponds to C struct ``navdata_pressure_raw_t``.'
 
@@ -159,7 +185,7 @@ class PressureRaw(Option):
 
 
 @index.register(22)
-class Magneto(Option):
+class Magneto(Structure):
 
     'Corresponds to C struct ``navdata_magneto_t``.'
 
@@ -182,7 +208,7 @@ class Magneto(Option):
 
 
 @index.register(23)
-class WindSpeed(Option):
+class WindSpeed(Structure):
 
     'Corresponds to C struct ``navdata_wind_speed_t``.'
 
@@ -208,7 +234,7 @@ class WindSpeed(Option):
 
 
 @index.register(24)
-class KalmanPressure(Option):
+class KalmanPressure(Structure):
 
     'Corresponds to C struct ``navdata_kalman_pressure_t``.'
 
@@ -234,7 +260,7 @@ class KalmanPressure(Option):
 
 
 @index.register(27)
-class Zimmu3000(Option):
+class Zimmu3000(Structure):
 
     'Corresponds to C struct ``navdata_zimmu_3000_t``.'
 
@@ -245,7 +271,7 @@ class Zimmu3000(Option):
 
 
 @index.register(3)
-class PhysMeasures(Option):
+class PhysMeasures(Structure):
 
     'Corresponds to C struct ``navdata_phys_measures_t``.'
 
@@ -253,25 +279,25 @@ class PhysMeasures(Option):
 
     accs_temp = float32_t
     gyro_temp = uint16_t
-    phys_accs = float32_t[NB_ACCS]
-    phys_gyros = float32_t[NB_GYROS]
+    phys_accs = float32_t * NB_ACCS
+    phys_gyros = float32_t * NB_GYROS
     alim3V3 = uint32_t  #: 3.3volt alim [LSB]
     vrefEpson = uint32_t  #: ref volt Epson gyro [LSB]
     vrefIDG = uint32_t  #: ref volt IDG gyro [LSB]
 
 
 @index.register(4)
-class GyrosOffsets(Option):
+class GyrosOffsets(Structure):
 
     'Corresponds to C struct ``navdata_gyros_offsets_t``.'
 
     _attrname = 'gyros_offsets'
 
-    offset_g = float32_t[NB_GYROS]
+    offset_g = float32_t * NB_GYROS
 
 
 @index.register(5)
-class EulerAngles(Option):
+class EulerAngles(Structure):
 
     'Corresponds to C struct ``navdata_euler_angles_t``.'
 
@@ -282,7 +308,7 @@ class EulerAngles(Option):
 
 
 @index.register(6)
-class References(Option):
+class References(Structure):
 
     'Corresponds to C struct ``navdata_references_t``.'
 
@@ -315,7 +341,7 @@ class References(Option):
 
 
 @index.register(7)
-class Trims(Option):
+class Trims(Structure):
 
     'Corresponds to C struct ``navdata_trims_t``.'
 
@@ -327,7 +353,7 @@ class Trims(Option):
 
 
 @index.register(8)
-class RcReferences(Option):
+class RcReferences(Structure):
 
     'Corresponds to C struct ``navdata_rc_references_t``.'
 
@@ -341,7 +367,7 @@ class RcReferences(Option):
 
 
 @index.register(9)
-class Pwm(Option):
+class Pwm(Structure):
 
     'Corresponds to C struct ``navdata_pwm_t``.'
 
@@ -377,7 +403,7 @@ class Pwm(Option):
 
 
 @index.register(10)
-class Altitude(Option):
+class Altitude(Structure):
 
     'Corresponds to C struct ``navdata_altitude_t``.'
 
@@ -393,11 +419,11 @@ class Altitude(Option):
     obs_x = vector31_t
     obs_state = uint32_t
     est_vb = vector21_t
-    est_state = uint32_t[3]
+    est_state = uint32_t * 3
 
 
 @index.register(11)
-class VisionRaw(Option):
+class VisionRaw(Structure):
 
     'Corresponds to C struct ``navdata_vision_raw_t``.'
 
@@ -409,7 +435,7 @@ class VisionRaw(Option):
 
 
 @index.register(13)
-class Vision(Option):
+class Vision(Structure):
 
     'Corresponds to C struct ``navdata_vision_t``.'
 
@@ -441,7 +467,7 @@ class Vision(Option):
 
 
 @index.register(14)
-class VisionPerf(Option):
+class VisionPerf(Structure):
 
     'Corresponds to C struct ``navdata_vision_pref_t``.'
 
@@ -453,24 +479,24 @@ class VisionPerf(Option):
     time_tracking = float32_t
     time_trans = float32_t
     time_update = float32_t
-    time_custom = float32_t[NAVDATA_MAX_CUSTOM_TIME_SAVE]
+    time_custom = float32_t * NAVDATA_MAX_CUSTOM_TIME_SAVE
 
 
 @index.register(15)
-class TrackersSend(Option):
+class TrackersSend(Structure):
 
     'Corresponds to C struct ``navdata_trackers_send_t``.'
 
     _attrname = 'trackers_send'
 
-    locked = int32_t[DEFAULT_NB_TRACKERS_WIDTH * DEFAULT_NB_TRACKERS_HEIGHT]
-    point = screen_point_t[
+    locked = int32_t * (DEFAULT_NB_TRACKERS_WIDTH * DEFAULT_NB_TRACKERS_HEIGHT)
+    point = screen_point_t * (
         DEFAULT_NB_TRACKERS_WIDTH * DEFAULT_NB_TRACKERS_HEIGHT
-    ]
+    )
 
 
 @index.register(16)
-class VisionDetect(Option):
+class VisionDetect(Structure):
 
     'Corresponds to C struct ``navdata_vision_detect_t``.'
 
@@ -480,31 +506,31 @@ class VisionDetect(Option):
     _attrname = 'vision_detect'
 
     nb_detected = uint32_t
-    type = uint32_t[NB_NAVDATA_DETECTION_RESULTS]
-    xc = uint32_t[NB_NAVDATA_DETECTION_RESULTS]
-    yc = uint32_t[NB_NAVDATA_DETECTION_RESULTS]
-    width = uint32_t[NB_NAVDATA_DETECTION_RESULTS]
-    height = uint32_t[NB_NAVDATA_DETECTION_RESULTS]
-    dist = uint32_t[NB_NAVDATA_DETECTION_RESULTS]
-    orientation_angle = float32_t[NB_NAVDATA_DETECTION_RESULTS]
-    rotation = matrix33_t[NB_NAVDATA_DETECTION_RESULTS]
-    translation = vector31_t[NB_NAVDATA_DETECTION_RESULTS]
-    camera_source = uint32_t[NB_NAVDATA_DETECTION_RESULTS]
+    type = uint32_t * NB_NAVDATA_DETECTION_RESULTS
+    xc = uint32_t * NB_NAVDATA_DETECTION_RESULTS
+    yc = uint32_t * NB_NAVDATA_DETECTION_RESULTS
+    width = uint32_t * NB_NAVDATA_DETECTION_RESULTS
+    height = uint32_t * NB_NAVDATA_DETECTION_RESULTS
+    dist = uint32_t * NB_NAVDATA_DETECTION_RESULTS
+    orientation_angle = float32_t * NB_NAVDATA_DETECTION_RESULTS
+    rotation = matrix33_t * NB_NAVDATA_DETECTION_RESULTS
+    translation = vector31_t * NB_NAVDATA_DETECTION_RESULTS
+    camera_source = uint32_t * NB_NAVDATA_DETECTION_RESULTS
 
 
 @index.register(12)
-class VisionOf(Option):
+class VisionOf(Structure):
 
     'Corresponds to C struct ``navdata_vision_of_t``.'
 
     _attrname = 'vision_of'
 
-    of_dx = float32_t[5]
-    of_dy = float32_t[5]
+    of_dx = float32_t * 5
+    of_dy = float32_t * 5
 
 
 @index.register(17)
-class Watchdog(Option):
+class Watchdog(Structure):
 
     'Corresponds to C struct ``navdata_watchdog_t``.'
 
@@ -515,18 +541,18 @@ class Watchdog(Option):
 
 
 @index.register(18)
-class AdcDataFrame(Option):
+class AdcDataFrame(Structure):
 
     'Corresponds to C struct ``navdata_adc_data_frame_t``.'
 
     _attrname = 'adc_data_frame'
 
     version = uint32_t
-    data_frame = uint8_t[32]
+    data_frame = uint8_t * 32
 
 
 @index.register(19)
-class VideoStream(Option):
+class VideoStream(Structure):
 
     'Corresponds to C struct ``navdata_video_stream_t``.'
 
@@ -564,7 +590,7 @@ class VideoStream(Option):
 
 
 @index.register(25)
-class HdvideoStream(Option):
+class HdvideoStream(Structure):
 
     'Corresponds to C struct ``navdata_hdvideo_stream_t``.'
 
@@ -586,7 +612,7 @@ class HdvideoStream(Option):
 
 
 @index.register(20)
-class Games(Option):
+class Games(Structure):
 
     'Corresponds to C struct ``navdata_games_t``.'
 
@@ -597,7 +623,7 @@ class Games(Option):
 
 
 @index.register(26)
-class Wifi(Option):
+class Wifi(Structure):
 
     'Corresponds to C struct ``navdata_wifi_t``.'
 
@@ -607,7 +633,7 @@ class Wifi(Option):
 
 
 @index.register(0xFFFF)
-class Checksum(Option):
+class Checksum(Structure):
 
     'Corresponds to C struct ``navdata_cks_t``.'
 

@@ -1,11 +1,30 @@
-import io
+from ctypes import sizeof
 from types import SimpleNamespace
 
-from pyardrone.navdata.options import Metadata, index
-from pyardrone.navdata.types import OptionHeader
+from pyardrone.navdata.options import Metadata, OptionHeader, index
 
 
 header = 0x55667788
+
+
+class NavDataError(Exception):
+    pass
+
+
+class ChecksumError(NavDataError):
+    pass
+
+
+class IncorrectChecksum(ChecksumError):
+    pass
+
+
+class ChecksumNotPresent(ChecksumError):
+    pass
+
+
+class InvalidSize(NavDataError):
+    pass
 
 
 def compute_checksum(buffer):
@@ -26,36 +45,28 @@ class NavData(SimpleNamespace):
     def __init__(self, buffer):
         super().__init__()
 
-        self.checksum = compute_checksum(buffer[:-8])
+        self.checksum = compute_checksum(memoryview(buffer)[:-8])
 
-        file = io.BytesIO(buffer)
+        self.add_option(Metadata, buffer, 0)
 
-        self.add_option(Metadata, file.read(Metadata.get_size()))
-
-        header_size = OptionHeader.get_size()
-        while True:
-            hb = file.read(header_size)
-            if not hb:
-                break
-            header = OptionHeader.unpack(hb)
+        option_header_size = sizeof(OptionHeader)
+        offset = sizeof(Metadata)
+        while offset < len(buffer):
+            header = OptionHeader.from_buffer_copy(buffer, offset)
+            offset += option_header_size
             if header.size:
                 option_class = index[header.tag]
-                data = file.read(header.size - 4)
-                self.add_option(option_class, data)
+                self.add_option(option_class, buffer, offset)
+                offset += sizeof(option_class)
 
-    def is_valid(self):
-        '''
-        Checks if this NavData is valid:
-            1. Header matches 0x55667788
-            2. Checksum is the last item and is correct
+        if not hasattr(self, 'cks'):
+            raise ChecksumNotPresent
+        if self.checksum != self.cks.value:
+            raise IncorrectChecksum('calculated: {}, reported: {}'.format(
+                self.checksum,
+                self.cks.value
+            ))
 
-        :rtype: bool
-        '''
-        return (
-            self.metadata.header == header and
-            self.checksum.value == self.checksum
-        )
-
-    def add_option(self, option_class, data):
-        option = option_class.unpack(data)
+    def add_option(self, option_class, buffer, offset):
+        option = option_class.from_buffer_copy(buffer, offset)
         setattr(self, option_class._attrname, option)
