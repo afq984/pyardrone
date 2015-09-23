@@ -38,7 +38,7 @@ _screen_point_t = int32_t * 2
 _matrix33_t = float32_t * 3 * 3
 
 
-class OptionHeaderIndex(dict):
+class OptionHeader(dict):
 
     def register(self, tag):
         return functools.partial(self._register, tag)
@@ -51,7 +51,7 @@ class OptionHeaderIndex(dict):
         return function
 
 
-index = OptionHeaderIndex()
+index = OptionHeader()
 
 
 class Metadata(Structure):
