@@ -22,10 +22,6 @@ The ARDrone object
                                 the sockets; this option exists for testing
         :param connect:         connect to the drone at init
 
-        .. attribute:: config
-
-            The config object of the drone, see :ref:`configuration`.
-
         .. py:attribute:: navdata
 
             Latest navdata from drone.

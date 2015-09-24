@@ -1,12 +1,10 @@
-import itertools
 import socket
 import threading
 
 from pyardrone import at
-from pyardrone.config import Config
 from pyardrone.navdata import NavData
 from pyardrone.navdata.states import DroneState
-from pyardrone.utils import noop, logging
+from pyardrone.utils import logging
 
 
 __version__ = '0.3.1dev1'
@@ -25,8 +23,7 @@ class ARDroneBase:
         address='192.168.1.1',
         at_port=5556,
         navdata_port=5554,
-        video_port=5555,  # 5553?
-        control_port=5559,
+        video_port=5555,
         watchdog_interval=0.5,
         timeout=0.01,
         bind=True,
@@ -36,12 +33,9 @@ class ARDroneBase:
         self.at_port = at_port
         self.navdata_port = navdata_port
         self.video_port = video_port
-        self.control_port = control_port
         self.watchdog_interval = watchdog_interval
         self.timeout = timeout
         self.bind = bind
-
-        self.config = Config(self)
 
         self.connected = False
         self.closed = threading.Event()
@@ -126,32 +120,20 @@ class IOMixin:
         self.at_sock.sendto(bytez, (self.address, self.at_port))
         logger.debug('sent: {!r}', bytez)
 
-    def get_raw_config(self):
-        '''
-        Requests and returns the raw config file from the *control_port*.
-        '''
-        self.send(at.CTRL(at.CTRL.Modes.CFG_GET_CONTROL_MODE))
-        return b''.join(
-            itertools.dropwhile(noop, self.control_sock.recv(4096))
-        ).encode()
-
     def _init_sockets(self):
 
         self.at_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.navdata_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self.control_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
         self.navdata_sock.settimeout(self.timeout)
 
         if self.bind:
             self.at_sock.bind(('', self.at_port))
             self.navdata_sock.bind(('', self.navdata_port))
-            self.control_sock.bind(('', self.control_port))
 
     def _close_sockets(self):
         self.at_sock.close()
         self.navdata_sock.close()
-        self.control_sock.close()
 
     def _watchdog_job(self):
         while not self.closed.is_set():

@@ -22,7 +22,6 @@ pyardrone is a ARDrone 2.0 client library for Python 3.
    intro
    ardrone
    at
-   config
    navdata
    options
    utils
