@@ -158,8 +158,8 @@ class IOMixin:
         self._navdata_thread.start()
 
     def _close_threads(self):
-            self._watchdog_thread.join()
-            self._navdata_thread.join()
+        self._watchdog_thread.join()
+        self._navdata_thread.join()
 
 
 class HelperMixin:
