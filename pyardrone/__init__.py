@@ -6,6 +6,16 @@ from pyardrone.navdata import NavData
 from pyardrone.navdata.states import DroneState
 from pyardrone.utils import logging
 
+# import VideoMixin only if opencv is available
+try:
+    import cv2
+except ImportError:
+    class VideoMixin:
+        pass
+else:
+    del cv2
+    from pyardrone.video import VideoMixin
+
 
 __version__ = '0.3.1dev1'
 
@@ -192,5 +202,5 @@ class HelperMixin:
         self.send(at.PCMD(flag=0))
 
 
-class ARDrone(HelperMixin, IOMixin, ARDroneBase):
+class ARDrone(HelperMixin, VideoMixin, IOMixin, ARDroneBase):
     pass
