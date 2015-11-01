@@ -4,7 +4,7 @@ from setuptools import setup
 setup(
     name='pyardrone',
     version='0.3.2dev1',
-    packages=['pyardrone'],
+    packages=['pyardrone', 'pyardrone.at', 'pyardrone.navdata', 'pyardrone.utils'],
     include_package_data=True,
     license='MIT License',
     description='Controlling Parrot AR.Drone with Python',
