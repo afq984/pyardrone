@@ -7,7 +7,7 @@ from pyardrone.navdata.states import DroneState
 from pyardrone.utils import logging
 
 
-__version__ = '0.3.1dev1'
+__version__ = '0.3.2dev1'
 
 __all__ = ('ARDrone',)
 
