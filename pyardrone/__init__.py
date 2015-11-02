@@ -12,9 +12,11 @@ try:
 except ImportError:
     class VideoMixin:
         pass
+    VIDEO = False
 else:
     del cv2
     from pyardrone.video import VideoMixin
+    VIDEO = True
 
 
 __version__ = '0.3.1dev1'

@@ -84,14 +84,16 @@ class VideoMixin:
     '''
 
     def _video_client_job(self):
-        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        sock.bind(('localhost', self.video_port))
+        rsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        rsock.connect((self.address, self.video_port))
+        ssock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         while not self.closed.is_set():
-            data, addr = sock.recvfrom(4096)
+            data = rsock.recv(4096)
             if data.startswith(PaVE.HEADER):
                 data = data[ctypes.sizeof(PaVE):]
-            sock.sendto(('localhost', self.redirect_port), data)
-        sock.close()
+            ssock.sendto(data, ('localhost', self.redirect_port))
+        rsock.close()
+        ssock.close()
 
     def _video_opencv_job(self):
         capture = cv2.VideoCapture(
@@ -106,6 +108,7 @@ class VideoMixin:
         self.redirect_port = get_free_udp_port()
         self._video_client_thread = threading.Thread(
             target=self._video_client_job,
+            daemon=True
         )
         self._video_opencv_thread = threading.Thread(
             target=self._video_opencv_job,
@@ -117,7 +120,6 @@ class VideoMixin:
 
     def close(self):
         super().close()
-        self._video_client_thread.join()
 
     def frame_recieved(self, im):
-        pass
+        self.frame = im
