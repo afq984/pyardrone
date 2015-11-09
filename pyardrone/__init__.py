@@ -7,7 +7,7 @@ from pyardrone.navdata.states import DroneState
 from pyardrone.utils import logging
 
 
-__version__ = '0.3.2dev2'
+__version__ = '0.3.3dev1'
 
 __all__ = ('ARDrone',)
 
@@ -141,6 +141,10 @@ class IOMixin:
             self.closed.wait(timeout=self.watchdog_interval)
 
     def _navdata_job(self):
+        self.navdata_sock.sendto(
+            b'\x01\x00\x00\x00',
+            (self.address, self.navdata_port)
+        )
         while not self.closed.is_set():
             try:
                 data, addr = self.navdata_sock.recvfrom(4096)
