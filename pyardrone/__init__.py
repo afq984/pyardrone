@@ -19,7 +19,7 @@ else:
     VIDEO = True
 
 
-__version__ = '0.3.1dev1'
+__version__ = '0.3.3dev1'
 
 __all__ = ('ARDrone',)
 
@@ -153,6 +153,10 @@ class IOMixin:
             self.closed.wait(timeout=self.watchdog_interval)
 
     def _navdata_job(self):
+        self.navdata_sock.sendto(
+            b'\x01\x00\x00\x00',
+            (self.address, self.navdata_port)
+        )
         while not self.closed.is_set():
             try:
                 data, addr = self.navdata_sock.recvfrom(4096)
@@ -170,8 +174,8 @@ class IOMixin:
         self._navdata_thread.start()
 
     def _close_threads(self):
-            self._watchdog_thread.join()
-            self._navdata_thread.join()
+        self._watchdog_thread.join()
+        self._navdata_thread.join()
 
 
 class HelperMixin:
