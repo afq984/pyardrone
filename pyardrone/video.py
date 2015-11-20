@@ -83,7 +83,8 @@ class VideoClient:
     Independent ARDrone Video Client
     '''
 
-    def __init__(self, video_port, redirect_port=None):
+    def __init__(self, address, video_port, redirect_port=None):
+        self.address = address
         self.video_port = video_port
         self.redirect_port = redirect_port
 
@@ -137,7 +138,7 @@ class VideoMixin:
 
     def connect(self):
         super().connect()
-        self.video_client = VideoClient()
+        self.video_client = VideoClient(self.address, self.video_port)
         self.video_client.connect()
 
     def close(self):
