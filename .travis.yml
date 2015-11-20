@@ -16,5 +16,5 @@ install:
 
 script:
     - flake8 pyardrone
-    - cd tests && python -m unittest
     - sphinx-build -nW -b html -d docs/_build/doctrees docs docs/_build/html
+    - cd tests && python -m unittest
