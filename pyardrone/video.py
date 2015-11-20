@@ -78,16 +78,20 @@ class PaVE(Structure):
     #: Padding to align on 64 bytes
 
 
-class VideoMixin:
+class VideoClient:
     '''
-    Mixin of ARDrone that provides video functionality
+    Independent ARDrone Video Client
     '''
+
+    def __init__(self, video_port, redirect_port=None):
+        self.video_port = video_port
+        self.redirect_port = redirect_port
 
     def _video_client_job(self):
         rsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         rsock.connect((self.address, self.video_port))
         ssock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        while not self.closed.is_set():
+        while not self.closed:
             data = rsock.recv(4096)
             if data.startswith(PaVE.HEADER):
                 data = data[ctypes.sizeof(PaVE):]
@@ -99,13 +103,14 @@ class VideoMixin:
         capture = cv2.VideoCapture(
             'udp://localhost:{port}'.format(port=self.redirect_port)
         )
-        while not self.closed.is_set():
+        while not self.closed:
             ret, im = capture.read()
             self.frame_recieved(im)
 
     def connect(self):
-        super().connect()
-        self.redirect_port = get_free_udp_port()
+        self.closed = False
+        if self.redirect_port is None:
+            self.redirect_port = get_free_udp_port()
         self._video_client_thread = threading.Thread(
             target=self._video_client_job,
             daemon=True
@@ -119,7 +124,22 @@ class VideoMixin:
         self._video_opencv_thread.start()
 
     def close(self):
-        super().close()
+        self.closed = True
 
     def frame_recieved(self, im):
         self.frame = im
+
+
+class VideoMixin:
+    '''
+    Mixin of ARDrone that provides video functionality
+    '''
+
+    def connect(self):
+        super().connect()
+        self.video_client = VideoClient()
+        self.video_client.connect()
+
+    def close(self):
+        self.video_client.close()
+        super().close()
