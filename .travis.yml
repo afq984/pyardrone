@@ -4,6 +4,7 @@ sudo: false
 
 python:
     - '3.4'
+    - '3.5'
 
 env:
     - NUMPY=
