@@ -1,5 +1,6 @@
 from pyardrone.utils.structure import Structure
 from pyardrone.utils import get_free_udp_port
+from pyardrone.abc import BaseClient
 import ctypes
 import socket
 import threading
@@ -78,19 +79,19 @@ class PaVE(Structure):
     #: Padding to align on 64 bytes
 
 
-class VideoClient:
+class VideoClient(BaseClient):
     '''
     Independent ARDrone Video Client
     '''
 
-    def __init__(self, address, video_port, redirect_port=None):
-        self.address = address
+    def __init__(self, host, video_port, redirect_port=None):
+        self.host = host
         self.video_port = video_port
         self.redirect_port = redirect_port
 
     def _video_client_job(self):
         rsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        rsock.connect((self.address, self.video_port))
+        rsock.connect((self.host, self.video_port))
         ssock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         while not self.closed:
             data = rsock.recv(4096)
@@ -108,8 +109,7 @@ class VideoClient:
             ret, im = capture.read()
             self.frame_recieved(im)
 
-    def connect(self):
-        self.closed = False
+    def _connect(self):
         if self.redirect_port is None:
             self.redirect_port = get_free_udp_port()
         self._video_client_thread = threading.Thread(
@@ -124,8 +124,8 @@ class VideoClient:
         self._video_client_thread.start()
         self._video_opencv_thread.start()
 
-    def close(self):
-        self.closed = True
+    def _close(self):
+        pass
 
     def frame_recieved(self, im):
         self.frame = im
@@ -136,11 +136,11 @@ class VideoMixin:
     Mixin of ARDrone that provides video functionality
     '''
 
-    def connect(self):
-        super().connect()
-        self.video_client = VideoClient(self.address, self.video_port)
+    def _connect(self):
+        super()._connect()
+        self.video_client = VideoClient(self.host, self.video_port)
         self.video_client.connect()
 
-    def close(self):
+    def _close(self):
         self.video_client.close()
-        super().close()
+        super()._close()
