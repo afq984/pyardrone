@@ -1,11 +1,14 @@
 from pyardrone.utils.structure import Structure
-from pyardrone.utils import get_free_udp_port
+from pyardrone.utils import get_free_udp_port, logging
 from pyardrone.abc import BaseClient
 import ctypes
 import socket
 import threading
 
 import cv2
+
+
+logger = logging.getLogger(__name__)
 
 
 uint8_t = ctypes.c_int8
@@ -88,10 +91,13 @@ class VideoClient(BaseClient):
         self.host = host
         self.video_port = video_port
         self.redirect_port = redirect_port
+        self.video_ready = threading.Event()
 
     def _video_client_job(self):
         rsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         rsock.connect((self.host, self.video_port))
+        logger.info(
+            'Connected to video port {}'.format(self.host, self.video_port))
         ssock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         while not self.closed:
             data = rsock.recv(4096)
@@ -105,13 +111,17 @@ class VideoClient(BaseClient):
         capture = cv2.VideoCapture(
             'udp://localhost:{port}'.format(port=self.redirect_port)
         )
+        logger.info('initiated VideoCapture at port {}'.format(
+            self.redirect_port))
         while not self.closed:
             ret, im = capture.read()
             self.frame_recieved(im)
+            self.video_ready.set()
 
     def _connect(self):
         if self.redirect_port is None:
             self.redirect_port = get_free_udp_port()
+            logger.info('Selected free udp port {}'.format(self.redirect_port))
         self._video_client_thread = threading.Thread(
             target=self._video_client_job,
             daemon=True
@@ -144,3 +154,11 @@ class VideoMixin:
     def _close(self):
         self.video_client.close()
         super()._close()
+
+    @property
+    def frame(self):
+        return self.video_client.frame
+
+    @property
+    def video_ready(self):
+        return self.video_client.video_ready
