@@ -67,6 +67,10 @@ class ARDroneBase(BaseClient):
         '''
         return DroneState(self.navdata_client.navdata.metadata.state)
 
+    @property
+    def navdata_ready(self):
+        return self.navdata_client.navdata_ready
+
     def _connect(self):
         self.at_client = ATClient(self.host, self.at_port)
         self.navdata_client = NavDataClient(self.host, self.navdata_port)

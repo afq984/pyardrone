@@ -85,6 +85,7 @@ class NavDataClient(BaseClient):
         self.host = host
         self.port = port
         self.timeout = timeout
+        self.navdata_ready = threading.Event()
 
     def _listener_job(self):
         while not self.closed:
@@ -95,6 +96,7 @@ class NavDataClient(BaseClient):
             else:
                 if addr == (self.host, self.port):
                     self.navdata_received(data)
+                    self.navdata_ready.set()
 
     def _connect(self):
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
