@@ -3,13 +3,13 @@ ATCommands
 
 The (in)complete description of ATCommands is documented in Parrot's AR.Drone Developer Guide chapter 6.5, please refer to it for detailed description of each command.
 
-Using ATCommand\s
--------------------
+Using ATCommands
+----------------
 
-Creating an ATCommand instance
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Creating an ATCommand
+~~~~~~~~~~~~~~~~~~~~~
 
-To create an :class:`~pyardrone.at.base.ATCommand` instance, you have to call the command class with the corresponding arguments.
+To create an :class:`~pyardrone.at.base.ATCommand`, you have to call the command class with the corresponding arguments.
 
 For example, to create an ``"AT*PCMD"`` command with the progressive flag and vertical speed = 0.8:
 
@@ -22,9 +22,6 @@ or using keyword arguments, just like a function:
 
     >>> at.PCMD(at.PCMD.flag.progressive, gaz=0.8)
     PCMD(flag=<flag.progressive: 1>, roll=0, pitch=0.8, gaz=0, yaw=0)
-
-Examining an ATCommand
-~~~~~~~~~~~~~~~~~~~~~~
 
 ATCommands are :py:func:`collections.namedtuple` subclasses, so reading it is just as easy.
 
@@ -56,8 +53,8 @@ To send a AT\*PCMD command with the progressive flag and vertical speed = 0.8, u
 
 :py:meth:`~pyardrone.ARDrone.send` provides the sequence number for the :py:meth:`~pyardrone.at.base.ATCommand._pack` function automatically.
 
-Defining an ATCommand subclass
-------------------------------
+Defining ATCommand subclasses
+-----------------------------
 
 If you want to use an ATCommand not defined in the library, you can define it yourself.
 

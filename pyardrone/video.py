@@ -157,8 +157,14 @@ class VideoMixin:
 
     @property
     def frame(self):
+        '''
+        The latest frame from ARDrone, in opencv's format.
+        '''
         return self.video_client.frame
 
     @property
     def video_ready(self):
+        '''
+        A :py:class:`threading.Event` object indicating whether video is ready.
+        '''
         return self.video_client.video_ready

@@ -1,16 +1,16 @@
-The ARDrone object
-==================
+High Level API
+==============
+
+The ARDrone Object
+------------------
 
 .. automodule:: pyardrone
 
     .. autoclass:: pyardrone.ARDrone
-        :members:
-        :inherited-members:
-
 
         The class representing a Parrot AR.Drone
 
-        :param address:         address of the drone
+        :param host:            address of the drone
         :param at_port:         AT command port
         :param navdata_port:    NavData port
         :param video_port:      Video port
@@ -22,6 +22,41 @@ The ARDrone object
                                 the sockets; this option exists for testing
         :param connect:         connect to the drone at init
 
+        .. automethod:: takeoff
+
+        .. automethod:: land
+
+        .. automethod:: hover
+
+        .. automethod:: move
+
+        .. py:attribute:: navdata_ready
+
+            A :py:class:`threading.Event` indicating whether
+            :py:attr:`~pyardrone.ARDrone.navdata` and :py:attr:`~pyardrone.ARDrone.state`
+            is ready.
+
+            .. code-block:: python
+
+                drone.navdata_ready.is_set() # bool: whether
+                drone.navdata_ready.wait()   # wait until navdata is ready
+
         .. py:attribute:: navdata
 
-            Latest navdata from drone.
+            Latest :py:class:`~pyardrone.navdata.NavData` from drone.
+
+        .. autoattribute:: state
+
+            Latest :py:class:`~pyardrone.navdata.states.DroneState` from drone.
+
+        .. automethod:: send
+
+
+Video Support
+-------------
+
+The following functions are available to the :py:class:`~pyardrone.ARDrone` class
+if opencv 3.0 (cv2) is installed.
+
+.. autoclass:: pyardrone.VideoMixin
+    :members:

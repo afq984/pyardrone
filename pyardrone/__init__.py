@@ -71,6 +71,16 @@ class ARDroneBase(BaseClient):
     def navdata_ready(self):
         return self.navdata_client.navdata_ready
 
+    def send(self, command):
+        '''
+        :param ~pyardrone.at.base.ATCommand command: command to send
+
+        Sends the command to the drone,
+        with an internal increasing sequence number.
+        this method is thread-safe.
+        '''
+        self.at_client.send(command)
+
     def _connect(self):
         self.at_client = ATClient(self.host, self.at_port)
         self.navdata_client = NavDataClient(self.host, self.navdata_port)
