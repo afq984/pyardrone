@@ -4,6 +4,7 @@ sudo: false
 
 python:
     - '3.4'
+    - '3.5'
 
 env:
     - NUMPY=
@@ -12,8 +13,9 @@ env:
 install:
     - pip install --upgrade pip
     - pip install flake8 sphinx $NUMPY
+    - pip install .
 
 script:
     - flake8 pyardrone
-    - python -m unittest
     - sphinx-build -nW -b html -d docs/_build/doctrees docs docs/_build/html
+    - cd tests && python -m unittest
