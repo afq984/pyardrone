@@ -58,5 +58,5 @@ Video Support
 The following functions are available to the :py:class:`~pyardrone.ARDrone` class
 if opencv 3.0 (cv2) is installed.
 
-.. autoclass:: pyardrone.VideoMixin
+.. autoclass:: pyardrone.video.VideoMixin
     :members:
