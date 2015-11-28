@@ -1,6 +1,13 @@
-from pyardrone.utils import bits
+from pyardrone.utils import bits, logging
 from pyardrone.at.base import ATCommand
 from pyardrone.at import parameters
+from pyardrone.abc import BaseClient
+
+import threading
+import socket
+
+
+logger = logging.getLogger(__name__)
 
 
 __all__ = (
@@ -136,3 +143,60 @@ class CTRL(ATCommand):
     )
 
     zero = parameters.Int32(default=0)
+
+
+class ATClient(BaseClient):
+
+    connected = False
+
+    def __init__(self, host='192.168.1.1', port=5556, watchdog_interval=0.5):
+        self.host = host
+        self.port = port
+        self.watchdog_interval = watchdog_interval
+        self._closed = threading.Event()
+
+    @property
+    def closed(self):
+        return self._closed.is_set()
+
+    @closed.setter
+    def closed(self, boolean):
+        if boolean:
+            self._closed.set()
+        else:
+            self._closed.clear()
+
+    def _connect(self):
+        self.sequence_number = 0
+        self.sequence_number_mutex = threading.Lock()
+
+        self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+
+        self._thread = threading.Thread(target=self._watchdog_job)
+        self._thread.start()
+
+    def _close(self):
+        self._thread.join()
+        self.sock.close()
+
+    def send_bytes(self, bytez):
+        self.sock.sendto(bytez, (self.host, self.port))
+        logger.debug('sent: {!r}', bytez)
+
+    def send(self, command):
+        '''
+        :param pyardrone.at.base.ATCommand command: command to send
+
+        Sends the command to the drone,
+        with an internal increasing sequence number.
+        this method is thread-safe.
+        '''
+        with self.sequence_number_mutex:
+            self.sequence_number += 1
+            packed = command._pack(self.sequence_number)
+            self.send_bytes(packed)
+
+    def _watchdog_job(self):
+        while not self.closed:
+            self.send(COMWDG())
+            self._closed.wait(timeout=self.watchdog_interval)

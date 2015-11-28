@@ -55,3 +55,17 @@ def every(secs):
         time_yielded = time.monotonic()
         yield time_yielded - time_stated
         time.sleep(max(0, secs + time_yielded - time.monotonic()))
+
+
+def get_free_udp_port():
+    '''
+    Get a free UDP port.
+
+    Note this is vlunerable to race conditions.
+    '''
+    import socket
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock.bind(('localhost', 0))
+    addr = sock.getsockname()
+    sock.close()
+    return addr[1]

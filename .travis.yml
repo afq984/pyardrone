@@ -17,5 +17,5 @@ install:
 
 script:
     - flake8 pyardrone
-    - sphinx-build -nW -b html -d docs/_build/doctrees docs docs/_build/html
+    - touch cv2.py && sphinx-build -nW -b html -d docs/_build/doctrees docs docs/_build/html
     - cd tests && python -m unittest
