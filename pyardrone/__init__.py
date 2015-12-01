@@ -113,12 +113,12 @@ class HelperMixin:
         '''
         self.send(at.PCMD(at.PCMD.flag.progressive, roll, pitch, gaz, yaw))
 
-    def move(self, *,
+    def move(
+            self, *,
             forward=0, backward=0,
             left=0, right=0,
             up=0, down=0,
-            cw=0, ccw=0
-        ):
+            cw=0, ccw=0):
         '''
         Moves the drone.
 
