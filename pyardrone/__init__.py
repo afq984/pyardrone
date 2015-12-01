@@ -19,7 +19,7 @@ else:
     VIDEO = True
 
 
-__version__ = '0.4.0dev1'
+__version__ = '0.5.0dev1'
 
 __all__ = ('ARDrone',)
 
@@ -106,14 +106,49 @@ class HelperMixin:
         '''
         self.send(at.REF(at.REF.input.default))
 
-    def move(self, roll=0, pitch=0, gaz=0, yaw=0):
+    def _move(self, roll=0, pitch=0, gaz=0, yaw=0):
         '''
-        Moves the drone.
-
         Same as sending :py:class:`~pyardrone.at.PCMD` command with progressive
         flag.
         '''
         self.send(at.PCMD(at.PCMD.flag.progressive, roll, pitch, gaz, yaw))
+
+    def move(
+            self, *,
+            forward=0, backward=0,
+            left=0, right=0,
+            up=0, down=0,
+            cw=0, ccw=0):
+        '''
+        Moves the drone.
+
+        To move the drone forward at 0.8x speed:
+
+        >>> drone.move(forward=0.8)
+
+        To move the drone right at 0.5x speed and upward at full speed:
+
+        >>> drone.move(right=0.5, up=1)
+
+        To rotate clockwise at 0.7x speed:
+
+        >>> drone.move(cw=0.7)
+
+        :param forward:  speed for moving forward
+        :param backward: speed for moving backward
+        :param left:     speed for moving left
+        :param right:    speed for moving right
+        :param up:       speed for moving up
+        :param down:     speed for moving down
+        :param cw:       speed for rotating clockwise
+        :param ccw:      speed for rotating counter-clockwise
+        '''
+        self._move(
+            roll=right-left,
+            pitch=backward-forward,
+            gaz=up-down,
+            yaw=cw-ccw
+        )
 
     def hover(self):
         '''
