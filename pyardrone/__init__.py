@@ -19,7 +19,7 @@ else:
     VIDEO = True
 
 
-__version__ = '0.4.0dev1'
+__version__ = '0.5.0dev1'
 
 __all__ = ('ARDrone',)
 
