@@ -1,7 +1,45 @@
 import collections
 import weakref
+import socket
 
 from pyardrone import at
+from pyardrone.abc import BaseClient
+
+
+class ConfigClient(BaseClient):
+
+    def __init__(self, host, port, at_client, timeout=3):
+        self.host = host
+        self.port = port
+        self.at_client = at_client
+        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.sock.bind(('', self.port))
+        self.timeout = timeout
+
+    @property
+    def timeout(self):
+        return self.sock.gettimeout()
+
+    @timeout.setter
+    def timeout(self, value):
+        self.sock.settimeout(value)
+
+    def _connect(self):
+        self.sock.connect((self.host, self.port))
+
+    def _close(self):
+        self.sock.close()
+
+    def get_raw_config(self):
+        self.at_client.send(at.CTRL(mode=at.CTRL.mode.NO_CONTROL_MODE))
+        self.at_client.send(at.CTRL(mode=at.CTRL.mode.CFG_GET_CONTROL_MODE))
+        return self.sock.recv(65536)
+
+    def set(self, key, value):
+        self.at_client.send(at.CONFIG(key, value))
+
+    def get(self, key):
+        return dict(self.get_raw_config())
 
 
 class Config(collections.ChainMap):
@@ -106,5 +144,5 @@ def unpack_value(value):
 
 def iter_config_file(confstr):
     for row in confstr.splitlines():
-        name, raw_value = row.split(' = ')
+        name, raw_value = row.split(b' = ')
         yield name, unpack_value(raw_value)

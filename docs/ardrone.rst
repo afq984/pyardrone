@@ -1,3 +1,5 @@
+.. _ardrone:
+
 High Level API
 ==============
 
@@ -38,12 +40,19 @@ The ARDrone Object
 
             .. code-block:: python
 
-                drone.navdata_ready.is_set() # bool: whether
+                drone.navdata_ready.is_set() # bool: whether navdata is ready
                 drone.navdata_ready.wait()   # wait until navdata is ready
 
         .. py:attribute:: navdata
 
             Latest :py:class:`~pyardrone.navdata.NavData` from drone.
+
+            This is an attribute which gets updated each time the drone sends
+            navdata back to the computer.
+
+            .. seealso::
+
+                :py:class:`pyardrone.navdata.NavData`
 
         .. autoattribute:: state
 

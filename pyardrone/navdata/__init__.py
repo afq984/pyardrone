@@ -39,9 +39,15 @@ class NavData(SimpleNamespace):
     '''
     Container of navdata options.
 
+    NavData of :py:class:`~pyardrone.ARDrone` is available after
+    :py:attr:`~pyardrone.ARDrone.navdata_ready`.is_set() is ``True``.
+
+    You can call :py:attr:`~pyardrone.ARDrone.navdata_ready`.wait() to wait for
+    it.
+
     To fetch an option:
 
-        >>> nav.demo
+        >>> drone.navdata.demo
         Demo(altitude=0, ctrl_state=131072, detection_camera_rot=...)
     '''
 

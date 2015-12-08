@@ -32,3 +32,18 @@ Basic Usage
     time.sleep(20)              # hover for a while
     while drone.state.fly_mask:
         drone.land()
+
+
+To move forward:
+
+.. code-block:: python3
+
+    while True:
+        drone.move(forward=1)   # move forward at full speed
+
+
+.. seealso::
+
+    *   :ref:`ardrone`
+    *   `ARDrone Developer Guide from Parrot
+        <https://github.com/afg984/pyardrone/raw/dev-resources/ARDrone_Developer_Guide.pdf>`_ (mirrored)
