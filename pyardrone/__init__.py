@@ -53,6 +53,10 @@ class ARDroneBase(BaseClient):
             self.connect()
 
     @property
+    def navdata(self):
+        return self.navdata_client.navdata
+
+    @property
     def state(self):
         '''
         The latest state from :py:class:`~pyardrone.navdata.NavData`.
@@ -65,7 +69,7 @@ class ARDroneBase(BaseClient):
         See :py:class:`~pyardrone.navdata.states.DroneState`
         for the full list of states.
         '''
-        return DroneState(self.navdata_client.navdata.metadata.state)
+        return DroneState(self.navdata.metadata.state)
 
     @property
     def navdata_ready(self):
