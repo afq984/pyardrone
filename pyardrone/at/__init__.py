@@ -149,10 +149,17 @@ class ATClient(BaseClient):
 
     connected = False
 
-    def __init__(self, host='192.168.1.1', port=5556, watchdog_interval=0.5):
+    def __init__(
+        self,
+        host='192.168.1.1',
+        port=5556,
+        watchdog_interval=0.5,
+        log_comwdg=False
+    ):
         self.host = host
         self.port = port
         self.watchdog_interval = watchdog_interval
+        self.log_comwdg = log_comwdg
         self._closed = threading.Event()
 
     @property
@@ -179,11 +186,12 @@ class ATClient(BaseClient):
         self._thread.join()
         self.sock.close()
 
-    def send_bytes(self, bytez):
+    def send_bytes(self, bytez, *, log=True):
         self.sock.sendto(bytez, (self.host, self.port))
-        logger.debug('sent: {!r}', bytez)
+        if log:
+            logger.debug('sent: {!r}', bytez)
 
-    def send(self, command):
+    def send(self, command, *, log=True):
         '''
         :param pyardrone.at.base.ATCommand command: command to send
 
@@ -194,9 +202,9 @@ class ATClient(BaseClient):
         with self.sequence_number_mutex:
             self.sequence_number += 1
             packed = command._pack(self.sequence_number)
-            self.send_bytes(packed)
+            self.send_bytes(packed, log=log)
 
     def _watchdog_job(self):
         while not self.closed:
-            self.send(COMWDG())
+            self.send(COMWDG(), log=self.log_comwdg)
             self._closed.wait(timeout=self.watchdog_interval)
