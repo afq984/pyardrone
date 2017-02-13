@@ -8,53 +8,53 @@ from pyardrone.utils import repack_to_int
 class CommandTest(unittest.TestCase):
 
     def test_init_by_arg(self):
-        cmd = at.REF(3)
+        cmd = at.REF_0_5(3)
         self.assertEqual(cmd.input, 3)
 
     def test_init_by_kwarg(self):
-        cmd = at.REF(input=3)
+        cmd = at.REF_0_5(input=3)
         self.assertEqual(cmd.input, 3)
 
     def test_too_many_arguments_raises_TypeError(self):
         with self.assertRaises(TypeError):
-            at.REF(3, 7)
+            at.REF_0_5(3, 7)
 
     def test_duplicate_value_raises_TypeError(self):
         with self.assertRaises(TypeError):
-            at.REF(3, input=7)
+            at.REF_0_5(3, input=7)
 
     def test_wrong_type_raises_TypeError(self):
         with self.assertRaises(TypeError):
-            at.REF(0.5)
+            at.REF_0_5(0.5)
 
     def test_repr(self):
-        self.assertEqual(repr(at.REF(3)), 'REF(input=3)')
+        self.assertEqual(repr(at.REF_0_5(3)), 'REF_0_5(input=3)')
 
     def test_equal(self):
-        self.assertEqual(at.REF(20), at.REF(20))
+        self.assertEqual(at.REF_0_5(20), at.REF_0_5(20))
 
     def test_unequal_different_argument(self):
-        self.assertNotEqual(at.REF(10), at.REF(12))
+        self.assertNotEqual(at.REF_0_5(10), at.REF_0_5(12))
 
     def test_different_commands_with_same_arguments_are_different(self):
-        class REF2(base.ATCommand):
+        class REF_0_52(base.ATCommand):
 
             input = parameters.Int32()
 
-        self.assertNotEqual(at.REF(3), REF2(3))
+        self.assertNotEqual(at.REF_0_5(3), REF_0_52(3))
 
     def test_not_equal_to_other_type(self):
-        self.assertNotEqual(at.REF(17), 17)
+        self.assertNotEqual(at.REF_0_5(17), 17)
 
     def test_pack(self):
-        self.assertEqual(at.REF(20)._pack(100), b'AT*REF=100,20\r')
+        self.assertEqual(at.REF_0_5(20)._pack(100), b'AT*REF_0_5=100,20\r')
 
     def test_command_arguments_can_not_be_assigned(self):
         with self.assertRaises(AttributeError):
-            at.REF(10).input = 11
+            at.REF_0_5(10).input = 11
 
     def test_attributes_which_are_not_arguments_can_be_assigned(self):
-        at.REF(11).some_attribute = 20
+        at.REF_0_5(11).some_attribute = 20
 
     def test_parameterless_pack_does_not_end_with_comma(self):
         self.assertEqual(
@@ -202,6 +202,15 @@ class ConstantTest(unittest.TestCase):
         ...with a mode parameter equaling 4 (CFG_GET_CONTROL_MODE)
         '''
         self.assertEqual(at.CTRL.mode.CFG_GET_CONTROL_MODE, 4)
+
+
+class AtREFDefaults(unittest.TestCase):
+
+    def test_defaults_are_added(self):
+        self.assertEqual(at.REF(60).input, 60 | at.REF.input.default)
+
+    def test_defaults_can_be_disabled(self):
+        self.assertEqual(at.REF(60, use_default_bits=False).input, 60)
 
 
 if __name__ == '__main__':
