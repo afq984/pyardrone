@@ -102,13 +102,19 @@ class HelperMixin:
         '''
         Sends the takeoff command.
         '''
-        self.send(at.REF(at.REF.input.default | at.REF.input.start))
+        self.send(at.REF(at.REF.input.start))
 
     def land(self):
         '''
         Sends the land command.
         '''
-        self.send(at.REF(at.REF.input.default))
+        self.send(at.REF())
+
+    def emergency(self):
+        '''
+        Sends the emergency command.
+        '''
+        self.send(at.REF(at.REF.input.select))
 
     def _move(self, roll=0, pitch=0, gaz=0, yaw=0):
         '''

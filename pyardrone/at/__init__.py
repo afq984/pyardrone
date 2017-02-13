@@ -38,7 +38,7 @@ class REF(REF_0_5):
     stop/reset)
     '''
 
-    def __new__(cls, input, *, use_default_bits=True):
+    def __new__(cls, input=0, *, use_default_bits=True):
         if int.bit_length(input) > 32:
             raise ValueError(
                 'value input {} should be less than 4 bytes'.format(input))
