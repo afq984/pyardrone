@@ -166,6 +166,54 @@ class HelperMixin:
         '''
         self.send(at.PCMD(flag=0))
 
+    def move_forward(self, speed=1):
+        '''
+        Moves the drone forward
+        '''
+        self.move(pitch=-speed)
+
+    def move_backward(self, speed=1):
+        '''
+        Moves the drone backward
+        '''
+        self.move(pitch=speed)
+
+    def move_left(self, speed=1):
+        '''
+        Moves the drone left
+        '''
+        self.move(roll=-speed)
+
+    def move_right(self, speed=1):
+        '''
+        Moves the drone right
+        '''
+        self.move(roll=speed)
+
+    def move_upward(self, speed=1):
+        '''
+        Moves the drone upward
+        '''
+        self.move(gaz=speed)
+
+    def move_downward(self, speed=1):
+        '''
+        Moves the drone downward
+        '''
+        self.move(gaz=-speed)
+
+    def rotate_cw(self, speed=1):
+        '''
+        Rotate the drone clockwise
+        '''
+        self.move(yaw=speed)
+
+    def rotate_ccw(self, speed=1):
+        '''
+        Rotate the drone counter-clockwise
+        '''
+        self.move(yaw=-speed)
+
 
 class ARDrone(HelperMixin, VideoMixin, ARDroneBase):
     pass
