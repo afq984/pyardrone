@@ -28,7 +28,7 @@ class CommandTest(unittest.TestCase):
             at.REF_0_5(0.5)
 
     def test_repr(self):
-        self.assertEqual(repr(at.REF_0_5(3)), 'REF_0_5(input=3)')
+        self.assertEqual(repr(at.REF_0_5(3)), 'REF(input=3)')
 
     def test_equal(self):
         self.assertEqual(at.REF_0_5(20), at.REF_0_5(20))
@@ -47,7 +47,7 @@ class CommandTest(unittest.TestCase):
         self.assertNotEqual(at.REF_0_5(17), 17)
 
     def test_pack(self):
-        self.assertEqual(at.REF_0_5(20)._pack(100), b'AT*REF_0_5=100,20\r')
+        self.assertEqual(at.REF_0_5(20)._pack(100), b'AT*REF=100,20\r')
 
     def test_command_arguments_can_not_be_assigned(self):
         with self.assertRaises(AttributeError):
@@ -211,6 +211,18 @@ class AtREFDefaults(unittest.TestCase):
 
     def test_defaults_can_be_disabled(self):
         self.assertEqual(at.REF(60, use_default_bits=False).input, 60)
+
+    def test_pack_equal(self):
+        self.assertEqual(
+            at.REF()._pack(4),
+            at.REF_0_5(at.REF_0_5.input.default)._pack(4))
+
+    def test_pack_default(self):
+        # issue 16
+        self.assertEqual(
+            b'AT*REF=26,290718208\r',
+            at.REF(at.REF.input.start)._pack(26)
+        )
 
 
 if __name__ == '__main__':

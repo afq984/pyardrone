@@ -9,7 +9,7 @@ class ATCommandMeta(type):
         return collections.OrderedDict()
 
     def __new__(cls, name, bases, namespace):
-        parameters = list()
+        parameters = namespace.setdefault('_parameters', list())
 
         param_index = 0
 
@@ -19,8 +19,6 @@ class ATCommandMeta(type):
                 value._index = param_index
                 parameters.append(value)
                 param_index += 1
-
-        namespace['_parameters'] = parameters
 
         bases += cls._get_superclass_injections(name, parameters)
 
@@ -78,7 +76,6 @@ class ATCommand(metaclass=ATCommandMeta):
         :rtype: bytes
         '''
 
-        # should use bytes.format, fix this after python3.5 is released
         return 'AT*{clsname}={seq}{argl_wc}\r'.format(
             clsname=type(self).__name__,
             seq=seq,

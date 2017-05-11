@@ -16,7 +16,7 @@ __all__ = (
 )
 
 
-class REF_0_5(ATCommand):
+class REF(ATCommand):
     '''
     at.REF interface of version 0.5
     '''
@@ -31,12 +31,16 @@ class REF_0_5(ATCommand):
         select=bits(8),  # Switch of emergency mode
     )
 
+REF_0_5 = REF
+
 
 class REF(REF_0_5):
     '''
     Controls the basic behaviour of the drone (take-off/landing, emergency
     stop/reset)
     '''
+
+    _parameters = REF_0_5._parameters
 
     def __new__(cls, input=0, *, use_default_bits=True):
         if int.bit_length(input) > 32:
