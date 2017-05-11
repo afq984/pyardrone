@@ -31,6 +31,7 @@ class REF(ATCommand):
         select=bits(8),  # Switch of emergency mode
     )
 
+
 REF_0_5 = REF
 
 
