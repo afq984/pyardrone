@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>ATCommands &#8212; pyardrone 0.6.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=039e1c02" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=09aae1b8"></script>
+    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/sphinx_highlight.js?v=4825356b"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="NavData" href="navdata.html" />
+    <link rel="prev" title="High Level API" href="ardrone.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="atcommands">
+<h1>ATCommands<a class="headerlink" href="#atcommands" title="Permalink to this heading">¶</a></h1>
+<p>The (in)complete description of ATCommands is documented in Parrot’s AR.Drone Developer Guide chapter 6.5, please refer to it for detailed description of each command.</p>
+<section id="using-atcommands">
+<h2>Using ATCommands<a class="headerlink" href="#using-atcommands" title="Permalink to this heading">¶</a></h2>
+<section id="creating-an-atcommand">
+<h3>Creating an ATCommand<a class="headerlink" href="#creating-an-atcommand" title="Permalink to this heading">¶</a></h3>
+<p>To create an <a class="reference internal" href="#pyardrone.at.base.ATCommand" title="pyardrone.at.base.ATCommand"><code class="xref py py-class docutils literal notranslate"><span class="pre">ATCommand</span></code></a>, you have to call the command class with the corresponding arguments.</p>
+<p>For example, to create an <code class="docutils literal notranslate"><span class="pre">&quot;AT*PCMD&quot;</span></code> command with the progressive flag and vertical speed = 0.8:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pyardrone</span> <span class="kn">import</span> <span class="n">at</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cmd</span> <span class="o">=</span> <span class="n">at</span><span class="o">.</span><span class="n">PCMD</span><span class="p">(</span><span class="n">at</span><span class="o">.</span><span class="n">PCMD</span><span class="o">.</span><span class="n">flag</span><span class="o">.</span><span class="n">progressive</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cmd</span>
+<span class="go">PCMD(flag=&lt;flag.progressive: 1&gt;, roll=0, pitch=0.8, gaz=0, yaw=0)</span>
+</pre></div>
+</div>
+<p>or using keyword arguments, just like a function:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">at</span><span class="o">.</span><span class="n">PCMD</span><span class="p">(</span><span class="n">at</span><span class="o">.</span><span class="n">PCMD</span><span class="o">.</span><span class="n">flag</span><span class="o">.</span><span class="n">progressive</span><span class="p">,</span> <span class="n">gaz</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
+<span class="go">PCMD(flag=&lt;flag.progressive: 1&gt;, roll=0, pitch=0.8, gaz=0, yaw=0)</span>
+</pre></div>
+</div>
+<p>ATCommands are <a class="reference external" href="https://docs.python.org/3/library/collections.html#collections.namedtuple" title="(in Python v3.11)"><code class="xref py py-func docutils literal notranslate"><span class="pre">collections.namedtuple()</span></code></a> subclasses, so reading it is just as easy.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cmd</span>
+<span class="go">PCMD(flag=&lt;flag.progressive: 1&gt;, roll=0, pitch=0.8, gaz=0, yaw=0)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cmd</span><span class="o">.</span><span class="n">roll</span>
+<span class="go">0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cmd</span><span class="o">.</span><span class="n">pitch</span>
+<span class="go">0.8</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cmd</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="go">&lt;flag.progressive: 1&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cmd</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+<span class="go">0.8</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+<span class="go">[&lt;flag.progressive: 1&gt;, 0, 0.8, 0, 0]</span>
+</pre></div>
+</div>
+<p>Additionally <a class="reference internal" href="#pyardrone.at.base.ATCommand._pack" title="pyardrone.at.base.ATCommand._pack"><code class="xref py py-meth docutils literal notranslate"><span class="pre">_pack()</span></code></a> packs the command into bytes</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cmd</span><span class="o">.</span><span class="n">_pack</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>  <span class="c1"># pack with sequence number = 10</span>
+<span class="go">b&#39;AT*PCMD=10,1,0,1061997773,0,0\r&#39;</span>
+</pre></div>
+</div>
+</section>
+<section id="sending-an-atcommand">
+<h3>Sending an ATCommand<a class="headerlink" href="#sending-an-atcommand" title="Permalink to this heading">¶</a></h3>
+<p>To send a AT*PCMD command with the progressive flag and vertical speed = 0.8, use <a class="reference internal" href="ardrone.html#pyardrone.ARDrone.send" title="pyardrone.ARDrone.send"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pyardrone.ARDrone.send()</span></code></a></p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># drone is an ARDrone instance here</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">drone</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">at</span><span class="o">.</span><span class="n">PCMD</span><span class="p">(</span><span class="n">at</span><span class="o">.</span><span class="n">PCMD</span><span class="o">.</span><span class="n">flag</span><span class="o">.</span><span class="n">progressive</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+</pre></div>
+</div>
+<p><a class="reference internal" href="ardrone.html#pyardrone.ARDrone.send" title="pyardrone.ARDrone.send"><code class="xref py py-meth docutils literal notranslate"><span class="pre">send()</span></code></a> provides the sequence number for the <a class="reference internal" href="#pyardrone.at.base.ATCommand._pack" title="pyardrone.at.base.ATCommand._pack"><code class="xref py py-meth docutils literal notranslate"><span class="pre">_pack()</span></code></a> function automatically.</p>
+</section>
+</section>
+<section id="defining-atcommand-subclasses">
+<h2>Defining ATCommand subclasses<a class="headerlink" href="#defining-atcommand-subclasses" title="Permalink to this heading">¶</a></h2>
+<p>If you want to use an ATCommand not defined in the library, you can define it yourself.</p>
+<p>For example, to define a “AT*EXAMPLE” command with three arguments: options, speed, comment, which is a integer, a float, and a string respectively:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pyardrone.at</span> <span class="kn">import</span> <span class="n">base</span><span class="p">,</span> <span class="n">parameters</span>
+
+<span class="k">class</span> <span class="nc">EXAMPLE</span><span class="p">(</span><span class="n">base</span><span class="o">.</span><span class="n">ATCommand</span><span class="p">):</span>
+
+    <span class="n">options</span> <span class="o">=</span> <span class="n">parameters</span><span class="o">.</span><span class="n">Int32</span><span class="p">()</span>
+    <span class="n">speed</span> <span class="o">=</span> <span class="n">parameters</span><span class="o">.</span><span class="n">Float</span><span class="p">()</span>
+    <span class="n">comment</span> <span class="o">=</span> <span class="n">parameters</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s1">&#39;nothing&#39;</span><span class="p">)</span>
+
+    <span class="n">options</span><span class="o">.</span><span class="n">_set_flags</span><span class="p">(</span>
+        <span class="n">eat</span><span class="o">=</span><span class="mb">0b1</span><span class="p">,</span>
+        <span class="n">sleep</span><span class="o">=</span><span class="mb">0b10</span><span class="p">,</span>
+        <span class="n">wander</span><span class="o">=</span><span class="mb">0b100</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+<p>The created <em>EXAMPLE</em> class can then be used just like other ATCommand classes:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cmd</span> <span class="o">=</span> <span class="n">EXAMPLE</span><span class="p">(</span><span class="n">EXAMPLE</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">sleep</span><span class="p">,</span> <span class="mf">3.5</span><span class="p">,</span> <span class="s1">&#39;hello&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cmd</span>
+<span class="go">EXAMPLE(options=&lt;options.sleep: 2&gt;, speed=3.5, comment=&#39;hello&#39;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cmd</span><span class="o">.</span><span class="n">_pack</span><span class="p">()</span>
+<span class="go">b&#39;AT*EXAMPLE=SEQUNSET,2,1080033280,&quot;hello&quot;\r&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">EXAMPLE</span><span class="p">(</span><span class="n">options</span><span class="o">=</span><span class="n">EXAMPLE</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">wander</span><span class="p">,</span> <span class="n">speed</span><span class="o">=</span><span class="mf">6.7</span><span class="p">)</span>
+<span class="go">EXAMPLE(options=&lt;options.wander: 4&gt;, speed=6.7, comment=&#39;nothing&#39;)</span>
+</pre></div>
+</div>
+</section>
+<section id="the-base-atcommand-class">
+<h2>The base ATCommand Class<a class="headerlink" href="#the-base-atcommand-class" title="Permalink to this heading">¶</a></h2>
+<p>Subclasses share the following methods:</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="pyardrone.at.base.ATCommand">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyardrone.at.base.</span></span><span class="sig-name descname"><span class="pre">ATCommand</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyardrone/at/base.html#ATCommand"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyardrone.at.base.ATCommand" title="Permalink to this definition">¶</a></dt>
+<dd><p>Base class of all ATCommands</p>
+<dl class="py data">
+<dt class="sig sig-object py" id="pyardrone.at.base.ATCommand._parameters">
+<span class="sig-name descname"><span class="pre">_parameters</span></span><a class="headerlink" href="#pyardrone.at.base.ATCommand._parameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>A list of <a class="reference internal" href="#pyardrone.at.parameters.Parameter" title="pyardrone.at.parameters.Parameter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Parameter</span></code></a>s of the
+command.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyardrone.at.base.ATCommand._pack">
+<span class="sig-name descname"><span class="pre">_pack</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'SEQUNSET'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyardrone/at/base.html#ATCommand._pack"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyardrone.at.base.ATCommand._pack" title="Permalink to this definition">¶</a></dt>
+<dd><p>Packs the command into <em>bytes</em></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>seq</strong> – sequence number</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.11)">bytes</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-pyardrone.at">
+<span id="list-of-atcommands"></span><h2>List of ATCommands<a class="headerlink" href="#module-pyardrone.at" title="Permalink to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="pyardrone.at.REF">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyardrone.at.</span></span><span class="sig-name descname"><span class="pre">REF</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_default_bits</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyardrone/at.html#REF"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyardrone.at.REF" title="Permalink to this definition">¶</a></dt>
+<dd><p>Controls the basic behaviour of the drone (take-off/landing, emergency
+stop/reset)</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyardrone.at.PCMD">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyardrone.at.</span></span><span class="sig-name descname"><span class="pre">PCMD</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">roll</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pitch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gaz</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yaw</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyardrone/at.html#PCMD"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyardrone.at.PCMD" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send progressive commands - makes the drone move (translate/rotate).</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.at.PCMD.flag">
+<span class="sig-name descname"><span class="pre">flag</span></span><a class="headerlink" href="#pyardrone.at.PCMD.flag" title="Permalink to this definition">¶</a></dt>
+<dd><p>flag enabling the use of progressive commands and/or the CombinedYaw mode (bitfield)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Flags<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">progressive</span></code> = <em>1</em></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">combined_yaw</span></code> = <em>2</em></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">absolute_control</span></code> = <em>4</em></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.at.PCMD.roll">
+<span class="sig-name descname"><span class="pre">roll</span></span><a class="headerlink" href="#pyardrone.at.PCMD.roll" title="Permalink to this definition">¶</a></dt>
+<dd><p>drone left-right tilt, [-1…1]</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.at.PCMD.pitch">
+<span class="sig-name descname"><span class="pre">pitch</span></span><a class="headerlink" href="#pyardrone.at.PCMD.pitch" title="Permalink to this definition">¶</a></dt>
+<dd><p>drone front-back tilt, [-1…1]</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.at.PCMD.gaz">
+<span class="sig-name descname"><span class="pre">gaz</span></span><a class="headerlink" href="#pyardrone.at.PCMD.gaz" title="Permalink to this definition">¶</a></dt>
+<dd><p>drone vertical speed, [-1…1]</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.at.PCMD.yaw">
+<span class="sig-name descname"><span class="pre">yaw</span></span><a class="headerlink" href="#pyardrone.at.PCMD.yaw" title="Permalink to this definition">¶</a></dt>
+<dd><p>drone angular speed, [-1…1]</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyardrone.at.PCMD_MAG">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyardrone.at.</span></span><span class="sig-name descname"><span class="pre">PCMD_MAG</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">roll</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pitch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gaz</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yaw</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">psi</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">psi_accuracy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyardrone/at.html#PCMD_MAG"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyardrone.at.PCMD_MAG" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send progressive commands - makes the drone move (translate/rotate).</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.at.PCMD_MAG.flag">
+<span class="sig-name descname"><span class="pre">flag</span></span><a class="headerlink" href="#pyardrone.at.PCMD_MAG.flag" title="Permalink to this definition">¶</a></dt>
+<dd><p>flag enabling the use of progressive commands and/or the CombinedYaw mode (bitfield)</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.at.PCMD_MAG.roll">
+<span class="sig-name descname"><span class="pre">roll</span></span><a class="headerlink" href="#pyardrone.at.PCMD_MAG.roll" title="Permalink to this definition">¶</a></dt>
+<dd><p>drone left-right tilt, [-1…1]</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.at.PCMD_MAG.pitch">
+<span class="sig-name descname"><span class="pre">pitch</span></span><a class="headerlink" href="#pyardrone.at.PCMD_MAG.pitch" title="Permalink to this definition">¶</a></dt>
+<dd><p>drone front-back tilt, [-1…1]</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.at.PCMD_MAG.gaz">
+<span class="sig-name descname"><span class="pre">gaz</span></span><a class="headerlink" href="#pyardrone.at.PCMD_MAG.gaz" title="Permalink to this definition">¶</a></dt>
+<dd><p>drone vertical speed, [-1…1]</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.at.PCMD_MAG.yaw">
+<span class="sig-name descname"><span class="pre">yaw</span></span><a class="headerlink" href="#pyardrone.at.PCMD_MAG.yaw" title="Permalink to this definition">¶</a></dt>
+<dd><p>drone angular speed, [-1…1]</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.at.PCMD_MAG.psi">
+<span class="sig-name descname"><span class="pre">psi</span></span><a class="headerlink" href="#pyardrone.at.PCMD_MAG.psi" title="Permalink to this definition">¶</a></dt>
+<dd><p>magneto psi, [-1…1]</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.at.PCMD_MAG.psi_accuracy">
+<span class="sig-name descname"><span class="pre">psi_accuracy</span></span><a class="headerlink" href="#pyardrone.at.PCMD_MAG.psi_accuracy" title="Permalink to this definition">¶</a></dt>
+<dd><p>magneto psi accuracy, [-1…1]</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyardrone.at.FTRIM">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyardrone.at.</span></span><span class="sig-name descname"><span class="pre">FTRIM</span></span><a class="reference internal" href="_modules/pyardrone/at.html#FTRIM"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyardrone.at.FTRIM" title="Permalink to this definition">¶</a></dt>
+<dd><p>Flat trims - Tells the drone it is lying horizontally</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyardrone.at.CONFIG">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyardrone.at.</span></span><span class="sig-name descname"><span class="pre">CONFIG</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyardrone/at.html#CONFIG"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyardrone.at.CONFIG" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets an configurable option on the drone</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.at.CONFIG.key">
+<span class="sig-name descname"><span class="pre">key</span></span><a class="headerlink" href="#pyardrone.at.CONFIG.key" title="Permalink to this definition">¶</a></dt>
+<dd><p>the name of the option to set</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.at.CONFIG.value">
+<span class="sig-name descname"><span class="pre">value</span></span><a class="headerlink" href="#pyardrone.at.CONFIG.value" title="Permalink to this definition">¶</a></dt>
+<dd><p>the option value</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyardrone.at.CONFIG_IDS">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyardrone.at.</span></span><span class="sig-name descname"><span class="pre">CONFIG_IDS</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">session</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">application_ids</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyardrone/at.html#CONFIG_IDS"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyardrone.at.CONFIG_IDS" title="Permalink to this definition">¶</a></dt>
+<dd><p>Identifiers for the next AT*CONFIG command</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyardrone.at.COMWDG">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyardrone.at.</span></span><span class="sig-name descname"><span class="pre">COMWDG</span></span><a class="reference internal" href="_modules/pyardrone/at.html#COMWDG"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyardrone.at.COMWDG" title="Permalink to this definition">¶</a></dt>
+<dd><p>reset communication watchdog</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyardrone.at.CALIB">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyardrone.at.</span></span><span class="sig-name descname"><span class="pre">CALIB</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">device_number</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyardrone/at.html#CALIB"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyardrone.at.CALIB" title="Permalink to this definition">¶</a></dt>
+<dd><p>Magnetometer calibration - Tells the drone to calibrate its magnetometer</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.at.CALIB.device_number">
+<span class="sig-name descname"><span class="pre">device_number</span></span><a class="headerlink" href="#pyardrone.at.CALIB.device_number" title="Permalink to this definition">¶</a></dt>
+<dd><p>Identifier of the device to calibrate - Choose this identifier from ardrone_calibration_device_t.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyardrone.at.CTRL">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyardrone.at.</span></span><span class="sig-name descname"><span class="pre">CTRL</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zero</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyardrone/at.html#CTRL"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyardrone.at.CTRL" title="Permalink to this definition">¶</a></dt>
+<dd><p>Not documented in developer guide, change control mode</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.at.CTRL.mode">
+<span class="sig-name descname"><span class="pre">mode</span></span><a class="headerlink" href="#pyardrone.at.CTRL.mode" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Flags<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">NO_CONTROL_MODE</span></code> = <em>0</em></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ARDRONE_UPDATE_CONTROL_MODE</span></code> = <em>1</em></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">PIC_UPDATE_CONTROL_MODE</span></code> = <em>2</em></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">LOGS_GET_CONTROL_MODE</span></code> = <em>3</em></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">CFG_GET_CONTROL_MODE</span></code> = <em>4</em></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ACK_CONTROL_MODE</span></code> = <em>5</em></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">CUSTOM_CFG_GET_CONTROL_MODE</span></code> = <em>6</em></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="parameters">
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="pyardrone.at.parameters.Parameter">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyardrone.at.parameters.</span></span><span class="sig-name descname"><span class="pre">Parameter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyardrone/at/parameters.html#Parameter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyardrone.at.parameters.Parameter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Base class of all at command parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>description</strong> – description of the parameter, stored in __doc__</p></li>
+<li><p><strong>default</strong> – default value of the parameter</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="pyardrone.at.parameters.Parameter._check">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">_check</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyardrone/at/parameters.html#Parameter._check"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyardrone.at.parameters.Parameter._check" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks the value on <a class="reference internal" href="#pyardrone.at.base.ATCommand" title="pyardrone.at.base.ATCommand"><code class="xref py py-class docutils literal notranslate"><span class="pre">ATCommand</span></code></a>‘s init.
+Subclasses can optionally define this method, the default
+implementation is a no-op.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#TypeError" title="(in Python v3.11)"><strong>TypeError</strong></a> – If the value is of the wrong type.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.11)"><strong>ValueError</strong></a> – If the value is not valid.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyardrone.at.parameters.Parameter._pack">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">_pack</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyardrone/at/parameters.html#Parameter._pack"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyardrone.at.parameters.Parameter._pack" title="Permalink to this definition">¶</a></dt>
+<dd><p>Packs the value.
+Subclasses should define this method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.11)">bytes</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<section id="parameter-types">
+<h3>Parameter types<a class="headerlink" href="#parameter-types" title="Permalink to this heading">¶</a></h3>
+<dl class="py class">
+<dt class="sig sig-object py" id="pyardrone.at.parameters.Int32">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyardrone.at.parameters.</span></span><span class="sig-name descname"><span class="pre">Int32</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">...</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyardrone/at/parameters.html#Int32"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyardrone.at.parameters.Int32" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parameter class of a 32-bit integer.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pyardrone.at.parameters.Int32._check">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">_check</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyardrone/at/parameters.html#Int32._check"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyardrone.at.parameters.Int32._check" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks the value on <a class="reference internal" href="#pyardrone.at.base.ATCommand" title="pyardrone.at.base.ATCommand"><code class="xref py py-class docutils literal notranslate"><span class="pre">ATCommand</span></code></a>‘s init.
+Subclasses can optionally define this method, the default
+implementation is a no-op.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#TypeError" title="(in Python v3.11)"><strong>TypeError</strong></a> – If the value is of the wrong type.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.11)"><strong>ValueError</strong></a> – If the value is not valid.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyardrone.at.parameters.Int32._pack">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">_pack</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyardrone/at/parameters.html#Int32._pack"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyardrone.at.parameters.Int32._pack" title="Permalink to this definition">¶</a></dt>
+<dd><p>Packs the value.
+Subclasses should define this method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.11)">bytes</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyardrone.at.parameters.Int32._set_flags">
+<span class="sig-name descname"><span class="pre">_set_flags</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">flags</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyardrone/at/parameters.html#Int32._set_flags"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyardrone.at.parameters.Int32._set_flags" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the flags of this argument.</p>
+<p>Example: <code class="docutils literal notranslate"><span class="pre">int_param._set_flags(a=1,</span> <span class="pre">b=2,</span> <span class="pre">c=4,</span> <span class="pre">d=8)</span></code></p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyardrone.at.parameters.Float">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyardrone.at.parameters.</span></span><span class="sig-name descname"><span class="pre">Float</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">...</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyardrone/at/parameters.html#Float"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyardrone.at.parameters.Float" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parameter class of a float</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyardrone.at.parameters.String">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyardrone.at.parameters.</span></span><span class="sig-name descname"><span class="pre">String</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">...</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyardrone/at/parameters.html#String"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyardrone.at.parameters.String" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parameter class of a string</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pyardrone.at.parameters.String._check">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">_check</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyardrone/at/parameters.html#String._check"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyardrone.at.parameters.String._check" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks the value on <a class="reference internal" href="#pyardrone.at.base.ATCommand" title="pyardrone.at.base.ATCommand"><code class="xref py py-class docutils literal notranslate"><span class="pre">ATCommand</span></code></a>‘s init.
+Subclasses can optionally define this method, the default
+implementation is a no-op.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#TypeError" title="(in Python v3.11)"><strong>TypeError</strong></a> – If the value is of the wrong type.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.11)"><strong>ValueError</strong></a> – If the value is not valid.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyardrone.at.parameters.String._pack">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">_pack</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyardrone/at/parameters.html#String._pack"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyardrone.at.parameters.String._pack" title="Permalink to this definition">¶</a></dt>
+<dd><p>packing rule:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Value</p></th>
+<th class="head"><p>Packes into</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">b'TRUE'</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">b'FALSE'</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">65535</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">b'65535'</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">0.32</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">b'0.32'</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'hello'</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">b'hello'</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="index.html">Table of Contents</a></h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ardrone.html">High Level API</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">ATCommands</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#using-atcommands">Using ATCommands</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#creating-an-atcommand">Creating an ATCommand</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sending-an-atcommand">Sending an ATCommand</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#defining-atcommand-subclasses">Defining ATCommand subclasses</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#the-base-atcommand-class">The base ATCommand Class</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pyardrone.at.base.ATCommand"><code class="docutils literal notranslate"><span class="pre">ATCommand</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyardrone.at">List of ATCommands</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pyardrone.at.REF"><code class="docutils literal notranslate"><span class="pre">REF</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyardrone.at.PCMD"><code class="docutils literal notranslate"><span class="pre">PCMD</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyardrone.at.PCMD_MAG"><code class="docutils literal notranslate"><span class="pre">PCMD_MAG</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyardrone.at.FTRIM"><code class="docutils literal notranslate"><span class="pre">FTRIM</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyardrone.at.CONFIG"><code class="docutils literal notranslate"><span class="pre">CONFIG</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyardrone.at.CONFIG_IDS"><code class="docutils literal notranslate"><span class="pre">CONFIG_IDS</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyardrone.at.COMWDG"><code class="docutils literal notranslate"><span class="pre">COMWDG</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyardrone.at.CALIB"><code class="docutils literal notranslate"><span class="pre">CALIB</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyardrone.at.CTRL"><code class="docutils literal notranslate"><span class="pre">CTRL</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#parameters">Parameters</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pyardrone.at.parameters.Parameter"><code class="docutils literal notranslate"><span class="pre">Parameter</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#parameter-types">Parameter types</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="navdata.html">NavData</a></li>
+<li class="toctree-l1"><a class="reference internal" href="options.html">Drone States</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">Utility functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html#pyardrone.utils.repack_to_int"><code class="docutils literal notranslate"><span class="pre">repack_to_int()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html#pyardrone.utils.bits"><code class="docutils literal notranslate"><span class="pre">bits()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html#pyardrone.utils.noop"><code class="docutils literal notranslate"><span class="pre">noop()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html#pyardrone.utils.every"><code class="docutils literal notranslate"><span class="pre">every()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html#pyardrone.utils.get_free_udp_port"><code class="docutils literal notranslate"><span class="pre">get_free_udp_port()</span></code></a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="ardrone.html" title="previous chapter">High Level API</a></li>
+      <li>Next: <a href="navdata.html" title="next chapter">NavData</a></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/at.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2015, afg984.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.1.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+      |
+      <a href="_sources/at.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

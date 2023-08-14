@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Utility functions &#8212; pyardrone 0.6.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=039e1c02" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=09aae1b8"></script>
+    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/sphinx_highlight.js?v=4825356b"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Drone States" href="options.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <span class="target" id="module-pyardrone.utils"></span><section id="utility-functions">
+<h1>Utility functions<a class="headerlink" href="#utility-functions" title="Permalink to this heading">¶</a></h1>
+</section>
+<dl class="py function">
+<dt class="sig sig-object py" id="pyardrone.utils.repack_to_int">
+<span class="sig-prename descclassname"><span class="pre">pyardrone.utils.</span></span><span class="sig-name descname"><span class="pre">repack_to_int</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyardrone/utils.html#repack_to_int"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyardrone.utils.repack_to_int" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts the passed in float <em>value</em> to interger as ieee754 specification.</p>
+<p>Same as <em>*(int*)&amp;value</em> in C, or <em>reinterpret_cast&lt;int&gt;value</em> in C++.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyardrone.utils.bits">
+<span class="sig-prename descclassname"><span class="pre">pyardrone.utils.</span></span><span class="sig-name descname"><span class="pre">bits</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyardrone/utils.html#bits"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyardrone.utils.bits" title="Permalink to this definition">¶</a></dt>
+<dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">bits</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span>
+<span class="go">128</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bits</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span> <span class="o">==</span> <span class="mb">0b101010</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyardrone.utils.noop">
+<span class="sig-prename descclassname"><span class="pre">pyardrone.utils.</span></span><span class="sig-name descname"><span class="pre">noop</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyardrone/utils.html#noop"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyardrone.utils.noop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the passed in argument.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">noop</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+<span class="go">10</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">noop</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+<span class="go">&lt;class &#39;list&#39;&gt;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyardrone.utils.every">
+<span class="sig-prename descclassname"><span class="pre">pyardrone.utils.</span></span><span class="sig-name descname"><span class="pre">every</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">secs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyardrone/utils.html#every"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyardrone.utils.every" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generator that yields for every <em>secs</em> seconds.</p>
+<p>Example:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">every</span><span class="p">(</span><span class="mf">0.1</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Hello&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>You get <code class="docutils literal notranslate"><span class="pre">Hello</span></code> output every 0.1 seconds.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyardrone.utils.get_free_udp_port">
+<span class="sig-prename descclassname"><span class="pre">pyardrone.utils.</span></span><span class="sig-name descname"><span class="pre">get_free_udp_port</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyardrone/utils.html#get_free_udp_port"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyardrone.utils.get_free_udp_port" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a free UDP port.</p>
+<p>Note this is vlunerable to race conditions.</p>
+</dd></dl>
+
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="index.html">Table of Contents</a></h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ardrone.html">High Level API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="at.html">ATCommands</a></li>
+<li class="toctree-l1"><a class="reference internal" href="navdata.html">NavData</a></li>
+<li class="toctree-l1"><a class="reference internal" href="options.html">Drone States</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Utility functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#pyardrone.utils.repack_to_int"><code class="docutils literal notranslate"><span class="pre">repack_to_int()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="#pyardrone.utils.bits"><code class="docutils literal notranslate"><span class="pre">bits()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="#pyardrone.utils.noop"><code class="docutils literal notranslate"><span class="pre">noop()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="#pyardrone.utils.every"><code class="docutils literal notranslate"><span class="pre">every()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="#pyardrone.utils.get_free_udp_port"><code class="docutils literal notranslate"><span class="pre">get_free_udp_port()</span></code></a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="options.html" title="previous chapter">Drone States</a></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/utils.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2015, afg984.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.1.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+      |
+      <a href="_sources/utils.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>High Level API &#8212; pyardrone 0.6.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=039e1c02" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=09aae1b8"></script>
+    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/sphinx_highlight.js?v=4825356b"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="ATCommands" href="at.html" />
+    <link rel="prev" title="Getting Started" href="intro.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="high-level-api">
+<span id="ardrone"></span><h1>High Level API<a class="headerlink" href="#high-level-api" title="Permalink to this heading">¶</a></h1>
+<section id="module-pyardrone">
+<span id="the-ardrone-object"></span><h2>The ARDrone Object<a class="headerlink" href="#module-pyardrone" title="Permalink to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="pyardrone.ARDrone">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyardrone.</span></span><span class="sig-name descname"><span class="pre">ARDrone</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">host</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'192.168.1.1'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">at_port</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5556</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">navdata_port</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5554</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">video_port</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5555</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">watchdog_interval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bind</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">connect</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyardrone.html#ARDrone"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyardrone.ARDrone" title="Permalink to this definition">¶</a></dt>
+<dd><p>The class representing a Parrot AR.Drone</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>host</strong> – address of the drone</p></li>
+<li><p><strong>at_port</strong> – AT command port</p></li>
+<li><p><strong>navdata_port</strong> – NavData port</p></li>
+<li><p><strong>video_port</strong> – Video port</p></li>
+<li><p><strong>control_port</strong> – Control port</p></li>
+<li><p><strong>watchdog_interval</strong> – seconds between each
+<a class="reference internal" href="at.html#pyardrone.at.COMWDG" title="pyardrone.at.COMWDG"><code class="xref py py-class docutils literal notranslate"><span class="pre">COMWDG</span></code></a>
+sent in background</p></li>
+<li><p><strong>bind</strong> – whether to <a class="reference external" href="https://docs.python.org/3/library/socket.html#socket.socket.bind" title="(in Python v3.11)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">bind()</span></code></a>
+the sockets; this option exists for testing</p></li>
+<li><p><strong>connect</strong> – connect to the drone at init</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="pyardrone.ARDrone.takeoff">
+<span class="sig-name descname"><span class="pre">takeoff</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pyardrone.ARDrone.takeoff" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sends the takeoff command.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyardrone.ARDrone.land">
+<span class="sig-name descname"><span class="pre">land</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pyardrone.ARDrone.land" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sends the land command.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyardrone.ARDrone.hover">
+<span class="sig-name descname"><span class="pre">hover</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pyardrone.ARDrone.hover" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sends the hover command.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyardrone.ARDrone.move">
+<span class="sig-name descname"><span class="pre">move</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">forward</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backward</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">left</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">right</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">up</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">down</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cw</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ccw</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyardrone.ARDrone.move" title="Permalink to this definition">¶</a></dt>
+<dd><p>Moves the drone.</p>
+<p>To move the drone forward at 0.8x speed:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">drone</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="n">forward</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>To move the drone right at 0.5x speed and upward at full speed:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">drone</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="n">right</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">up</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>To rotate clockwise at 0.7x speed:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">drone</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="n">cw</span><span class="o">=</span><span class="mf">0.7</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>forward</strong> – speed for moving forward</p></li>
+<li><p><strong>backward</strong> – speed for moving backward</p></li>
+<li><p><strong>left</strong> – speed for moving left</p></li>
+<li><p><strong>right</strong> – speed for moving right</p></li>
+<li><p><strong>up</strong> – speed for moving up</p></li>
+<li><p><strong>down</strong> – speed for moving down</p></li>
+<li><p><strong>cw</strong> – speed for rotating clockwise</p></li>
+<li><p><strong>ccw</strong> – speed for rotating counter-clockwise</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.ARDrone.navdata_ready">
+<span class="sig-name descname"><span class="pre">navdata_ready</span></span><a class="headerlink" href="#pyardrone.ARDrone.navdata_ready" title="Permalink to this definition">¶</a></dt>
+<dd><p>A <a class="reference external" href="https://docs.python.org/3/library/threading.html#threading.Event" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">threading.Event</span></code></a> indicating whether
+<a class="reference internal" href="#pyardrone.ARDrone.navdata" title="pyardrone.ARDrone.navdata"><code class="xref py py-attr docutils literal notranslate"><span class="pre">navdata</span></code></a> and <a class="reference internal" href="#pyardrone.ARDrone.state" title="pyardrone.ARDrone.state"><code class="xref py py-attr docutils literal notranslate"><span class="pre">state</span></code></a>
+is ready.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">drone</span><span class="o">.</span><span class="n">navdata_ready</span><span class="o">.</span><span class="n">is_set</span><span class="p">()</span> <span class="c1"># bool: whether navdata is ready</span>
+<span class="n">drone</span><span class="o">.</span><span class="n">navdata_ready</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>   <span class="c1"># wait until navdata is ready</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.ARDrone.navdata">
+<span class="sig-name descname"><span class="pre">navdata</span></span><a class="headerlink" href="#pyardrone.ARDrone.navdata" title="Permalink to this definition">¶</a></dt>
+<dd><p>Latest <a class="reference internal" href="navdata.html#pyardrone.navdata.NavData" title="pyardrone.navdata.NavData"><code class="xref py py-class docutils literal notranslate"><span class="pre">NavData</span></code></a> from drone.</p>
+<p>This is an attribute which gets updated each time the drone sends
+navdata back to the computer.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="navdata.html#pyardrone.navdata.NavData" title="pyardrone.navdata.NavData"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyardrone.navdata.NavData</span></code></a></p>
+</div>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.ARDrone.state">
+<span class="sig-name descname"><span class="pre">state</span></span><a class="headerlink" href="#pyardrone.ARDrone.state" title="Permalink to this definition">¶</a></dt>
+<dd><p>The latest state from <a class="reference internal" href="navdata.html#pyardrone.navdata.NavData" title="pyardrone.navdata.NavData"><code class="xref py py-class docutils literal notranslate"><span class="pre">NavData</span></code></a>.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">drone</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">fly_mask</span>
+<span class="go">True  # drone is flying</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">drone</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">video</span>
+<span class="go">True  # video is enabled</span>
+</pre></div>
+</div>
+<p>See <a class="reference internal" href="options.html#pyardrone.navdata.states.DroneState" title="pyardrone.navdata.states.DroneState"><code class="xref py py-class docutils literal notranslate"><span class="pre">DroneState</span></code></a>
+for the full list of states.</p>
+<p>Latest <a class="reference internal" href="options.html#pyardrone.navdata.states.DroneState" title="pyardrone.navdata.states.DroneState"><code class="xref py py-class docutils literal notranslate"><span class="pre">DroneState</span></code></a> from drone.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyardrone.ARDrone.send">
+<span class="sig-name descname"><span class="pre">send</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">command</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyardrone.ARDrone.send" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>command</strong> (<a class="reference internal" href="at.html#pyardrone.at.base.ATCommand" title="pyardrone.at.base.ATCommand"><em>ATCommand</em></a>) – command to send</p>
+</dd>
+</dl>
+<p>Sends the command to the drone,
+with an internal increasing sequence number.
+this method is thread-safe.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="video-support">
+<h2>Video Support<a class="headerlink" href="#video-support" title="Permalink to this heading">¶</a></h2>
+<p>The following functions are available to the <a class="reference internal" href="#pyardrone.ARDrone" title="pyardrone.ARDrone"><code class="xref py py-class docutils literal notranslate"><span class="pre">ARDrone</span></code></a> class
+if opencv 3.0 (cv2) is installed.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="pyardrone.video.VideoMixin">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyardrone.video.</span></span><span class="sig-name descname"><span class="pre">VideoMixin</span></span><a class="reference internal" href="_modules/pyardrone/video.html#VideoMixin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyardrone.video.VideoMixin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mixin of ARDrone that provides video functionality</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="pyardrone.video.VideoMixin.frame">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">frame</span></span><a class="headerlink" href="#pyardrone.video.VideoMixin.frame" title="Permalink to this definition">¶</a></dt>
+<dd><p>The latest frame from ARDrone, in opencv’s format.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyardrone.video.VideoMixin.video_ready">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">video_ready</span></span><a class="headerlink" href="#pyardrone.video.VideoMixin.video_ready" title="Permalink to this definition">¶</a></dt>
+<dd><p>A <a class="reference external" href="https://docs.python.org/3/library/threading.html#threading.Event" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">threading.Event</span></code></a> object indicating whether video is ready.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="index.html">Table of Contents</a></h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Getting Started</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">High Level API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyardrone">The ARDrone Object</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pyardrone.ARDrone"><code class="docutils literal notranslate"><span class="pre">ARDrone</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#video-support">Video Support</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pyardrone.video.VideoMixin"><code class="docutils literal notranslate"><span class="pre">VideoMixin</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="at.html">ATCommands</a></li>
+<li class="toctree-l1"><a class="reference internal" href="navdata.html">NavData</a></li>
+<li class="toctree-l1"><a class="reference internal" href="options.html">Drone States</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">Utility functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html#pyardrone.utils.repack_to_int"><code class="docutils literal notranslate"><span class="pre">repack_to_int()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html#pyardrone.utils.bits"><code class="docutils literal notranslate"><span class="pre">bits()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html#pyardrone.utils.noop"><code class="docutils literal notranslate"><span class="pre">noop()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html#pyardrone.utils.every"><code class="docutils literal notranslate"><span class="pre">every()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html#pyardrone.utils.get_free_udp_port"><code class="docutils literal notranslate"><span class="pre">get_free_udp_port()</span></code></a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="intro.html" title="previous chapter">Getting Started</a></li>
+      <li>Next: <a href="at.html" title="next chapter">ATCommands</a></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/ardrone.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2015, afg984.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.1.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+      |
+      <a href="_sources/ardrone.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

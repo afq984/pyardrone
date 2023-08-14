@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>pyardrone.at.base &#8212; pyardrone 0.6.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/alabaster.css?v=039e1c02" />
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js?v=09aae1b8"></script>
+    <script src="../../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=4825356b"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for pyardrone.at.base</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">collections</span>
+<span class="kn">from</span> <span class="nn">pyardrone.at.parameters</span> <span class="kn">import</span> <span class="n">Parameter</span>
+
+
+<span class="k">class</span> <span class="nc">ATCommandMeta</span><span class="p">(</span><span class="nb">type</span><span class="p">):</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="fm">__prepare__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">namespace</span><span class="p">):</span>
+        <span class="n">parameters</span> <span class="o">=</span> <span class="n">namespace</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s1">&#39;_parameters&#39;</span><span class="p">,</span> <span class="nb">list</span><span class="p">())</span>
+
+        <span class="n">param_index</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">namespace</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">Parameter</span><span class="p">):</span>
+                <span class="n">value</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="n">key</span>
+                <span class="n">value</span><span class="o">.</span><span class="n">_index</span> <span class="o">=</span> <span class="n">param_index</span>
+                <span class="n">parameters</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+                <span class="n">param_index</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="n">bases</span> <span class="o">+=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_get_superclass_injections</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">parameters</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="nb">type</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="n">namespace</span><span class="p">))</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_get_superclass_injections</span><span class="p">(</span><span class="n">class_name</span><span class="p">,</span> <span class="n">parameters</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">class_name</span> <span class="o">==</span> <span class="s1">&#39;ATCommand&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">()</span>
+        <span class="k">if</span> <span class="n">parameters</span><span class="p">:</span>
+            <span class="n">param_names</span><span class="p">,</span> <span class="n">defaults</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="p">(</span>
+                <span class="p">(</span><span class="n">param</span><span class="o">.</span><span class="n">_name</span><span class="p">,</span> <span class="n">param</span><span class="o">.</span><span class="n">_default</span><span class="p">)</span> <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">parameters</span>
+            <span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">param_names</span> <span class="o">=</span> <span class="n">defaults</span> <span class="o">=</span> <span class="p">()</span>
+
+        <span class="n">middleclass</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">namedtuple</span><span class="p">(</span>
+            <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">Namespace&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">class_name</span><span class="p">),</span>
+            <span class="n">param_names</span>
+        <span class="p">)</span>
+        <span class="n">middleclass</span><span class="o">.</span><span class="fm">__new__</span><span class="o">.</span><span class="vm">__defaults__</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">defaults</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">middleclass</span><span class="p">,)</span>
+
+
+<div class="viewcode-block" id="ATCommand"><a class="viewcode-back" href="../../../at.html#pyardrone.at.base.ATCommand">[docs]</a><span class="k">class</span> <span class="nc">ATCommand</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">ATCommandMeta</span><span class="p">):</span>
+
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Base class of all ATCommands</span>
+
+<span class="sd">    .. data:: _parameters</span>
+
+<span class="sd">        A list of :py:class:`~pyardrone.at.parameters.Parameter`\ s of the</span>
+<span class="sd">        command.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">param</span><span class="p">,</span> <span class="n">arg</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">,</span> <span class="bp">self</span><span class="p">):</span>
+            <span class="n">param</span><span class="o">.</span><span class="n">_check</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Two commands are considered equal if they have the same arguments and</span>
+<span class="sd">        they are of the same class</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">type</span><span class="p">(</span><span class="n">other</span><span class="p">))</span> <span class="ow">and</span> <span class="nb">tuple</span><span class="o">.</span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__ne__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">return</span> <span class="ow">not</span> <span class="bp">self</span> <span class="o">==</span> <span class="n">other</span>
+
+<div class="viewcode-block" id="ATCommand._pack"><a class="viewcode-back" href="../../../at.html#pyardrone.at.base.ATCommand._pack">[docs]</a>    <span class="k">def</span> <span class="nf">_pack</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seq</span><span class="o">=</span><span class="s1">&#39;SEQUNSET&#39;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Packs the command into *bytes*</span>
+
+<span class="sd">        :param seq: sequence number</span>
+<span class="sd">        :rtype: bytes</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="k">return</span> <span class="s1">&#39;AT*</span><span class="si">{clsname}</span><span class="s1">=</span><span class="si">{seq}{argl_wc}</span><span class="se">\r</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">clsname</span><span class="o">=</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
+            <span class="n">seq</span><span class="o">=</span><span class="n">seq</span><span class="p">,</span>
+            <span class="n">argl_wc</span><span class="o">=</span><span class="sa">b</span><span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_iter_packed_with_comma</span><span class="p">())</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span></div>
+
+    <span class="k">def</span> <span class="nf">_iter_packed_with_comma</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">param</span><span class="p">,</span> <span class="n">arg</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">,</span> <span class="bp">self</span><span class="p">):</span>
+            <span class="k">yield</span> <span class="sa">b</span><span class="s1">&#39;,&#39;</span>
+            <span class="k">yield</span> <span class="n">param</span><span class="o">.</span><span class="n">_pack</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="../../../index.html">Table of Contents</a></h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ardrone.html">High Level API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../at.html">ATCommands</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../navdata.html">NavData</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../options.html">Drone States</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../utils.html">Utility functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../utils.html#pyardrone.utils.repack_to_int"><code class="docutils literal notranslate"><span class="pre">repack_to_int()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../utils.html#pyardrone.utils.bits"><code class="docutils literal notranslate"><span class="pre">bits()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../utils.html#pyardrone.utils.noop"><code class="docutils literal notranslate"><span class="pre">noop()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../utils.html#pyardrone.utils.every"><code class="docutils literal notranslate"><span class="pre">every()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../utils.html#pyardrone.utils.get_free_udp_port"><code class="docutils literal notranslate"><span class="pre">get_free_udp_port()</span></code></a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  <li><a href="../../pyardrone.html">pyardrone</a><ul>
+  <li><a href="../at.html">pyardrone.at</a><ul>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2015, afg984.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.1.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

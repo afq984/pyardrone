@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Drone States &#8212; pyardrone 0.6.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=039e1c02" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=09aae1b8"></script>
+    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/sphinx_highlight.js?v=4825356b"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Utility functions" href="utils.html" />
+    <link rel="prev" title="NavData" href="navdata.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="module-pyardrone.navdata.states">
+<span id="drone-states"></span><h1>Drone States<a class="headerlink" href="#module-pyardrone.navdata.states" title="Permalink to this heading">¶</a></h1>
+<p>The ARDrone SDK 2.0.1 defines the following drone states in
+<code class="docutils literal notranslate"><span class="pre">ARDroneLib/Soft/Common/config.h</span></code></p>
+<p>These states are presented as <a class="reference internal" href="#pyardrone.navdata.states.DroneState" title="pyardrone.navdata.states.DroneState"><code class="xref py py-class docutils literal notranslate"><span class="pre">DroneState</span></code></a> attributes in the library.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="pyardrone.navdata.states.DroneState">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyardrone.navdata.states.</span></span><span class="sig-name descname"><span class="pre">DroneState</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyardrone/navdata/states.html#DroneState"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyardrone.navdata.states.DroneState" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.states.DroneState.fly_mask">
+<span class="sig-name descname"><span class="pre">fly_mask</span></span><a class="headerlink" href="#pyardrone.navdata.states.DroneState.fly_mask" title="Permalink to this definition">¶</a></dt>
+<dd><p>bit 0.  FLY MASK : (0) ardrone is landed, (1) ardrone is flying</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.states.DroneState.video_mask">
+<span class="sig-name descname"><span class="pre">video_mask</span></span><a class="headerlink" href="#pyardrone.navdata.states.DroneState.video_mask" title="Permalink to this definition">¶</a></dt>
+<dd><p>bit 1.  VIDEO MASK : (0) video disable, (1) video enable</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.states.DroneState.vision_mask">
+<span class="sig-name descname"><span class="pre">vision_mask</span></span><a class="headerlink" href="#pyardrone.navdata.states.DroneState.vision_mask" title="Permalink to this definition">¶</a></dt>
+<dd><p>bit 2.  VISION MASK : (0) vision disable, (1) vision enable</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.states.DroneState.control_mask">
+<span class="sig-name descname"><span class="pre">control_mask</span></span><a class="headerlink" href="#pyardrone.navdata.states.DroneState.control_mask" title="Permalink to this definition">¶</a></dt>
+<dd><p>bit 3.  CONTROL ALGO : (0) euler angles control, (1) angular speed control</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.states.DroneState.altitude_mask">
+<span class="sig-name descname"><span class="pre">altitude_mask</span></span><a class="headerlink" href="#pyardrone.navdata.states.DroneState.altitude_mask" title="Permalink to this definition">¶</a></dt>
+<dd><p>bit 4.  ALTITUDE CONTROL ALGO : (0) altitude control inactive (1) altitude control active</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.states.DroneState.user_feedback_start">
+<span class="sig-name descname"><span class="pre">user_feedback_start</span></span><a class="headerlink" href="#pyardrone.navdata.states.DroneState.user_feedback_start" title="Permalink to this definition">¶</a></dt>
+<dd><p>bit 5.  USER feedback : Start button state</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.states.DroneState.command_mask">
+<span class="sig-name descname"><span class="pre">command_mask</span></span><a class="headerlink" href="#pyardrone.navdata.states.DroneState.command_mask" title="Permalink to this definition">¶</a></dt>
+<dd><p>bit 6.  Control command ACK : (0) None, (1) one received</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.states.DroneState.camera_mask">
+<span class="sig-name descname"><span class="pre">camera_mask</span></span><a class="headerlink" href="#pyardrone.navdata.states.DroneState.camera_mask" title="Permalink to this definition">¶</a></dt>
+<dd><p>bit 7.  CAMERA MASK : (0) camera not ready, (1) Camera ready</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.states.DroneState.travelling_mask">
+<span class="sig-name descname"><span class="pre">travelling_mask</span></span><a class="headerlink" href="#pyardrone.navdata.states.DroneState.travelling_mask" title="Permalink to this definition">¶</a></dt>
+<dd><p>bit 8.  Travelling mask : (0) disable, (1) enable</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.states.DroneState.usb_mask">
+<span class="sig-name descname"><span class="pre">usb_mask</span></span><a class="headerlink" href="#pyardrone.navdata.states.DroneState.usb_mask" title="Permalink to this definition">¶</a></dt>
+<dd><p>bit 9.  USB key : (0) usb key not ready, (1) usb key ready</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.states.DroneState.navdata_demo_mask">
+<span class="sig-name descname"><span class="pre">navdata_demo_mask</span></span><a class="headerlink" href="#pyardrone.navdata.states.DroneState.navdata_demo_mask" title="Permalink to this definition">¶</a></dt>
+<dd><p>bit 10.  Navdata demo : (0) All navdata, (1) only navdata demo</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.states.DroneState.navdata_bootstrap">
+<span class="sig-name descname"><span class="pre">navdata_bootstrap</span></span><a class="headerlink" href="#pyardrone.navdata.states.DroneState.navdata_bootstrap" title="Permalink to this definition">¶</a></dt>
+<dd><p>bit 11.  Navdata bootstrap : (0) options sent in all or demo mode, (1) no navdata options sent</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.states.DroneState.motors_mask">
+<span class="sig-name descname"><span class="pre">motors_mask</span></span><a class="headerlink" href="#pyardrone.navdata.states.DroneState.motors_mask" title="Permalink to this definition">¶</a></dt>
+<dd><p>bit 12.  Motors status : (0) Ok, (1) Motors problem</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.states.DroneState.com_lost_mask">
+<span class="sig-name descname"><span class="pre">com_lost_mask</span></span><a class="headerlink" href="#pyardrone.navdata.states.DroneState.com_lost_mask" title="Permalink to this definition">¶</a></dt>
+<dd><p>bit 13.  Communication Lost : (1) com problem, (0) Com is ok</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.states.DroneState.software_fault">
+<span class="sig-name descname"><span class="pre">software_fault</span></span><a class="headerlink" href="#pyardrone.navdata.states.DroneState.software_fault" title="Permalink to this definition">¶</a></dt>
+<dd><p>bit 14.  Software fault detected - user should land as quick as possible (1)</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.states.DroneState.vbat_low">
+<span class="sig-name descname"><span class="pre">vbat_low</span></span><a class="headerlink" href="#pyardrone.navdata.states.DroneState.vbat_low" title="Permalink to this definition">¶</a></dt>
+<dd><p>bit 15.  VBat low : (1) too low, (0) Ok</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.states.DroneState.user_el">
+<span class="sig-name descname"><span class="pre">user_el</span></span><a class="headerlink" href="#pyardrone.navdata.states.DroneState.user_el" title="Permalink to this definition">¶</a></dt>
+<dd><p>bit 16.  User Emergency Landing : (1) User EL is ON, (0) User EL is OFF</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.states.DroneState.timer_elapsed">
+<span class="sig-name descname"><span class="pre">timer_elapsed</span></span><a class="headerlink" href="#pyardrone.navdata.states.DroneState.timer_elapsed" title="Permalink to this definition">¶</a></dt>
+<dd><p>bit 17.  Timer elapsed : (1) elapsed, (0) not elapsed</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.states.DroneState.magneto_needs_calib">
+<span class="sig-name descname"><span class="pre">magneto_needs_calib</span></span><a class="headerlink" href="#pyardrone.navdata.states.DroneState.magneto_needs_calib" title="Permalink to this definition">¶</a></dt>
+<dd><p>bit 18.  Magnetometer calibration state : (0) Ok, no calibration needed, (1) not ok, calibration needed</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.states.DroneState.angles_out_of_range">
+<span class="sig-name descname"><span class="pre">angles_out_of_range</span></span><a class="headerlink" href="#pyardrone.navdata.states.DroneState.angles_out_of_range" title="Permalink to this definition">¶</a></dt>
+<dd><p>bit 19.  Angles : (0) Ok, (1) out of range</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.states.DroneState.wind_mask">
+<span class="sig-name descname"><span class="pre">wind_mask</span></span><a class="headerlink" href="#pyardrone.navdata.states.DroneState.wind_mask" title="Permalink to this definition">¶</a></dt>
+<dd><p>bit 20.  WIND MASK: (0) ok, (1) Too much wind</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.states.DroneState.ultrasound_mask">
+<span class="sig-name descname"><span class="pre">ultrasound_mask</span></span><a class="headerlink" href="#pyardrone.navdata.states.DroneState.ultrasound_mask" title="Permalink to this definition">¶</a></dt>
+<dd><p>bit 21.  Ultrasonic sensor : (0) Ok, (1) deaf</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.states.DroneState.cutout_mask">
+<span class="sig-name descname"><span class="pre">cutout_mask</span></span><a class="headerlink" href="#pyardrone.navdata.states.DroneState.cutout_mask" title="Permalink to this definition">¶</a></dt>
+<dd><p>bit 22.  Cutout system detection : (0) Not detected, (1) detected</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.states.DroneState.pic_version_mask">
+<span class="sig-name descname"><span class="pre">pic_version_mask</span></span><a class="headerlink" href="#pyardrone.navdata.states.DroneState.pic_version_mask" title="Permalink to this definition">¶</a></dt>
+<dd><p>bit 23.  PIC Version number OK : (0) a bad version number, (1) version number is OK</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.states.DroneState.atcodec_thread_on">
+<span class="sig-name descname"><span class="pre">atcodec_thread_on</span></span><a class="headerlink" href="#pyardrone.navdata.states.DroneState.atcodec_thread_on" title="Permalink to this definition">¶</a></dt>
+<dd><p>bit 24.  ATCodec thread ON : (0) thread OFF (1) thread ON</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.states.DroneState.navdata_thread_on">
+<span class="sig-name descname"><span class="pre">navdata_thread_on</span></span><a class="headerlink" href="#pyardrone.navdata.states.DroneState.navdata_thread_on" title="Permalink to this definition">¶</a></dt>
+<dd><p>bit 25.  Navdata thread ON : (0) thread OFF (1) thread ON</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.states.DroneState.video_thread_on">
+<span class="sig-name descname"><span class="pre">video_thread_on</span></span><a class="headerlink" href="#pyardrone.navdata.states.DroneState.video_thread_on" title="Permalink to this definition">¶</a></dt>
+<dd><p>bit 26.  Video thread ON : (0) thread OFF (1) thread ON</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.states.DroneState.acq_thread_on">
+<span class="sig-name descname"><span class="pre">acq_thread_on</span></span><a class="headerlink" href="#pyardrone.navdata.states.DroneState.acq_thread_on" title="Permalink to this definition">¶</a></dt>
+<dd><p>bit 27.  Acquisition thread ON : (0) thread OFF (1) thread ON</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.states.DroneState.ctrl_watchdog_mask">
+<span class="sig-name descname"><span class="pre">ctrl_watchdog_mask</span></span><a class="headerlink" href="#pyardrone.navdata.states.DroneState.ctrl_watchdog_mask" title="Permalink to this definition">¶</a></dt>
+<dd><p>bit 28.  CTRL watchdog : (1) delay in control execution (&gt; 5ms), (0) control is well scheduled</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.states.DroneState.adc_watchdog_mask">
+<span class="sig-name descname"><span class="pre">adc_watchdog_mask</span></span><a class="headerlink" href="#pyardrone.navdata.states.DroneState.adc_watchdog_mask" title="Permalink to this definition">¶</a></dt>
+<dd><p>bit 29.  ADC Watchdog : (1) delay in uart2 dsr (&gt; 5ms), (0) uart2 is good</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.states.DroneState.com_watchdog_mask">
+<span class="sig-name descname"><span class="pre">com_watchdog_mask</span></span><a class="headerlink" href="#pyardrone.navdata.states.DroneState.com_watchdog_mask" title="Permalink to this definition">¶</a></dt>
+<dd><p>bit 30.  Communication Watchdog : (1) com problem, (0) Com is ok</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.states.DroneState.emergency_mask">
+<span class="sig-name descname"><span class="pre">emergency_mask</span></span><a class="headerlink" href="#pyardrone.navdata.states.DroneState.emergency_mask" title="Permalink to this definition">¶</a></dt>
+<dd><p>bit 31.  Emergency landing : (0) no emergency, (1) emergency</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="index.html">Table of Contents</a></h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ardrone.html">High Level API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="at.html">ATCommands</a></li>
+<li class="toctree-l1"><a class="reference internal" href="navdata.html">NavData</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Drone States</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#pyardrone.navdata.states.DroneState"><code class="docutils literal notranslate"><span class="pre">DroneState</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pyardrone.navdata.states.DroneState.fly_mask"><code class="docutils literal notranslate"><span class="pre">DroneState.fly_mask</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyardrone.navdata.states.DroneState.video_mask"><code class="docutils literal notranslate"><span class="pre">DroneState.video_mask</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyardrone.navdata.states.DroneState.vision_mask"><code class="docutils literal notranslate"><span class="pre">DroneState.vision_mask</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyardrone.navdata.states.DroneState.control_mask"><code class="docutils literal notranslate"><span class="pre">DroneState.control_mask</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyardrone.navdata.states.DroneState.altitude_mask"><code class="docutils literal notranslate"><span class="pre">DroneState.altitude_mask</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyardrone.navdata.states.DroneState.user_feedback_start"><code class="docutils literal notranslate"><span class="pre">DroneState.user_feedback_start</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyardrone.navdata.states.DroneState.command_mask"><code class="docutils literal notranslate"><span class="pre">DroneState.command_mask</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyardrone.navdata.states.DroneState.camera_mask"><code class="docutils literal notranslate"><span class="pre">DroneState.camera_mask</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyardrone.navdata.states.DroneState.travelling_mask"><code class="docutils literal notranslate"><span class="pre">DroneState.travelling_mask</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyardrone.navdata.states.DroneState.usb_mask"><code class="docutils literal notranslate"><span class="pre">DroneState.usb_mask</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyardrone.navdata.states.DroneState.navdata_demo_mask"><code class="docutils literal notranslate"><span class="pre">DroneState.navdata_demo_mask</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyardrone.navdata.states.DroneState.navdata_bootstrap"><code class="docutils literal notranslate"><span class="pre">DroneState.navdata_bootstrap</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyardrone.navdata.states.DroneState.motors_mask"><code class="docutils literal notranslate"><span class="pre">DroneState.motors_mask</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyardrone.navdata.states.DroneState.com_lost_mask"><code class="docutils literal notranslate"><span class="pre">DroneState.com_lost_mask</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyardrone.navdata.states.DroneState.software_fault"><code class="docutils literal notranslate"><span class="pre">DroneState.software_fault</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyardrone.navdata.states.DroneState.vbat_low"><code class="docutils literal notranslate"><span class="pre">DroneState.vbat_low</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyardrone.navdata.states.DroneState.user_el"><code class="docutils literal notranslate"><span class="pre">DroneState.user_el</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyardrone.navdata.states.DroneState.timer_elapsed"><code class="docutils literal notranslate"><span class="pre">DroneState.timer_elapsed</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyardrone.navdata.states.DroneState.magneto_needs_calib"><code class="docutils literal notranslate"><span class="pre">DroneState.magneto_needs_calib</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyardrone.navdata.states.DroneState.angles_out_of_range"><code class="docutils literal notranslate"><span class="pre">DroneState.angles_out_of_range</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyardrone.navdata.states.DroneState.wind_mask"><code class="docutils literal notranslate"><span class="pre">DroneState.wind_mask</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyardrone.navdata.states.DroneState.ultrasound_mask"><code class="docutils literal notranslate"><span class="pre">DroneState.ultrasound_mask</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyardrone.navdata.states.DroneState.cutout_mask"><code class="docutils literal notranslate"><span class="pre">DroneState.cutout_mask</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyardrone.navdata.states.DroneState.pic_version_mask"><code class="docutils literal notranslate"><span class="pre">DroneState.pic_version_mask</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyardrone.navdata.states.DroneState.atcodec_thread_on"><code class="docutils literal notranslate"><span class="pre">DroneState.atcodec_thread_on</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyardrone.navdata.states.DroneState.navdata_thread_on"><code class="docutils literal notranslate"><span class="pre">DroneState.navdata_thread_on</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyardrone.navdata.states.DroneState.video_thread_on"><code class="docutils literal notranslate"><span class="pre">DroneState.video_thread_on</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyardrone.navdata.states.DroneState.acq_thread_on"><code class="docutils literal notranslate"><span class="pre">DroneState.acq_thread_on</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyardrone.navdata.states.DroneState.ctrl_watchdog_mask"><code class="docutils literal notranslate"><span class="pre">DroneState.ctrl_watchdog_mask</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyardrone.navdata.states.DroneState.adc_watchdog_mask"><code class="docutils literal notranslate"><span class="pre">DroneState.adc_watchdog_mask</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyardrone.navdata.states.DroneState.com_watchdog_mask"><code class="docutils literal notranslate"><span class="pre">DroneState.com_watchdog_mask</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyardrone.navdata.states.DroneState.emergency_mask"><code class="docutils literal notranslate"><span class="pre">DroneState.emergency_mask</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">Utility functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html#pyardrone.utils.repack_to_int"><code class="docutils literal notranslate"><span class="pre">repack_to_int()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html#pyardrone.utils.bits"><code class="docutils literal notranslate"><span class="pre">bits()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html#pyardrone.utils.noop"><code class="docutils literal notranslate"><span class="pre">noop()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html#pyardrone.utils.every"><code class="docutils literal notranslate"><span class="pre">every()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html#pyardrone.utils.get_free_udp_port"><code class="docutils literal notranslate"><span class="pre">get_free_udp_port()</span></code></a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="navdata.html" title="previous chapter">NavData</a></li>
+      <li>Next: <a href="utils.html" title="next chapter">Utility functions</a></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/options.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2015, afg984.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.1.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+      |
+      <a href="_sources/options.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

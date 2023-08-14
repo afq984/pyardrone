@@ -1,0 +1,1848 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>NavData &#8212; pyardrone 0.6.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=039e1c02" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=09aae1b8"></script>
+    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/sphinx_highlight.js?v=4825356b"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Drone States" href="options.html" />
+    <link rel="prev" title="ATCommands" href="at.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="navdata">
+<h1>NavData<a class="headerlink" href="#navdata" title="Permalink to this heading">¶</a></h1>
+<p>To access navdata:</p>
+<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pyardrone</span> <span class="kn">import</span> <span class="n">ARDrone</span><span class="p">,</span> <span class="n">at</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">drone</span> <span class="o">=</span> <span class="n">ARDrone</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">drone</span><span class="o">.</span><span class="n">navdata_ready</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>  <span class="c1"># wait for first navdata</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">drone</span><span class="o">.</span><span class="n">navdata</span>
+<span class="go">NavData(checksum=928, cks=Cks(value=928), metadata=Metadata(header=1432778632, state=1333790928, sequence_number=79367, vision_flag=1))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">drone</span><span class="o">.</span><span class="n">navdata</span><span class="o">.</span><span class="n">metadata</span>
+<span class="go">Metadata(header=1432778632, state=1333790928, sequence_number=79367, vision_flag=1)</span>
+</pre></div>
+</div>
+<p>For navdata demo data, according to the Developer Guide from parrot, you have to send an AT*CONFIG command,
+which is:</p>
+<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">drone</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">at</span><span class="o">.</span><span class="n">CONFIG</span><span class="p">(</span><span class="s1">&#39;general:navdata_demo&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>in pyardrone.</p>
+<p>And drone.navdata.demo will be available then.</p>
+<p>A higher level API for configuring ARDrone will be available in future versions, though.</p>
+<section id="module-pyardrone.navdata">
+<span id="the-navdata-class"></span><h2>The NavData Class<a class="headerlink" href="#module-pyardrone.navdata" title="Permalink to this heading">¶</a></h2>
+<dl class="py exception">
+<dt class="sig sig-object py" id="pyardrone.navdata.NavDataError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyardrone.navdata.</span></span><span class="sig-name descname"><span class="pre">NavDataError</span></span><a class="reference internal" href="_modules/pyardrone/navdata.html#NavDataError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyardrone.navdata.NavDataError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></a></p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="pyardrone.navdata.ChecksumError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyardrone.navdata.</span></span><span class="sig-name descname"><span class="pre">ChecksumError</span></span><a class="reference internal" href="_modules/pyardrone/navdata.html#ChecksumError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyardrone.navdata.ChecksumError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyardrone.navdata.NavDataError" title="pyardrone.navdata.NavDataError"><code class="xref py py-class docutils literal notranslate"><span class="pre">NavDataError</span></code></a></p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="pyardrone.navdata.IncorrectChecksum">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyardrone.navdata.</span></span><span class="sig-name descname"><span class="pre">IncorrectChecksum</span></span><a class="reference internal" href="_modules/pyardrone/navdata.html#IncorrectChecksum"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyardrone.navdata.IncorrectChecksum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyardrone.navdata.ChecksumError" title="pyardrone.navdata.ChecksumError"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChecksumError</span></code></a></p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="pyardrone.navdata.ChecksumNotPresent">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyardrone.navdata.</span></span><span class="sig-name descname"><span class="pre">ChecksumNotPresent</span></span><a class="reference internal" href="_modules/pyardrone/navdata.html#ChecksumNotPresent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyardrone.navdata.ChecksumNotPresent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyardrone.navdata.ChecksumError" title="pyardrone.navdata.ChecksumError"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChecksumError</span></code></a></p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="pyardrone.navdata.InvalidSize">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyardrone.navdata.</span></span><span class="sig-name descname"><span class="pre">InvalidSize</span></span><a class="reference internal" href="_modules/pyardrone/navdata.html#InvalidSize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyardrone.navdata.InvalidSize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyardrone.navdata.NavDataError" title="pyardrone.navdata.NavDataError"><code class="xref py py-class docutils literal notranslate"><span class="pre">NavDataError</span></code></a></p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyardrone.navdata.NavData">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyardrone.navdata.</span></span><span class="sig-name descname"><span class="pre">NavData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">buffer</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyardrone/navdata.html#NavData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyardrone.navdata.NavData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/types.html#types.SimpleNamespace" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">SimpleNamespace</span></code></a></p>
+<p>Container of navdata options.</p>
+<p>NavData of <a class="reference internal" href="ardrone.html#pyardrone.ARDrone" title="pyardrone.ARDrone"><code class="xref py py-class docutils literal notranslate"><span class="pre">ARDrone</span></code></a> is available after
+<a class="reference internal" href="ardrone.html#pyardrone.ARDrone.navdata_ready" title="pyardrone.ARDrone.navdata_ready"><code class="xref py py-attr docutils literal notranslate"><span class="pre">navdata_ready</span></code></a>.is_set() is <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p>
+<p>You can call <a class="reference internal" href="ardrone.html#pyardrone.ARDrone.navdata_ready" title="pyardrone.ARDrone.navdata_ready"><code class="xref py py-attr docutils literal notranslate"><span class="pre">navdata_ready</span></code></a>.wait() to wait for
+it.</p>
+<p>To fetch an option:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">drone</span><span class="o">.</span><span class="n">navdata</span><span class="o">.</span><span class="n">demo</span>
+<span class="go">Demo(altitude=0, ctrl_state=131072, detection_camera_rot=...)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+<section id="module-pyardrone.navdata.options">
+<span id="list-of-navdata-options"></span><h2>List of navdata Options<a class="headerlink" href="#module-pyardrone.navdata.options" title="Permalink to this heading">¶</a></h2>
+<p>This module corresponds to ARDroneLib/Soft/Common/navdata_common.h</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Metadata">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyardrone.navdata.options.</span></span><span class="sig-name descname"><span class="pre">Metadata</span></span><a class="reference internal" href="_modules/pyardrone/navdata/options.html#Metadata"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyardrone.navdata.options.Metadata" title="Permalink to this definition">¶</a></dt>
+<dd><p>Header of <a class="reference internal" href="#pyardrone.navdata.NavData" title="pyardrone.navdata.NavData"><code class="xref py py-class docutils literal notranslate"><span class="pre">NavData</span></code></a>.</p>
+<p>Available via <a class="reference internal" href="#pyardrone.navdata.NavData" title="pyardrone.navdata.NavData"><code class="xref py py-class docutils literal notranslate"><span class="pre">NavData</span></code></a>.metadata</p>
+<p>Corresponds to C struct <code class="docutils literal notranslate"><span class="pre">navdata_t</span></code>.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Metadata.header">
+<span class="sig-name descname"><span class="pre">header</span></span><a class="headerlink" href="#pyardrone.navdata.options.Metadata.header" title="Permalink to this definition">¶</a></dt>
+<dd><p>Should be 0x55667788</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Metadata.state">
+<span class="sig-name descname"><span class="pre">state</span></span><a class="headerlink" href="#pyardrone.navdata.options.Metadata.state" title="Permalink to this definition">¶</a></dt>
+<dd><p>raw drone state,
+see also: <a class="reference internal" href="options.html#pyardrone.navdata.states.DroneState" title="pyardrone.navdata.states.DroneState"><code class="xref py py-class docutils literal notranslate"><span class="pre">DroneState</span></code></a></p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Metadata.sequence_number">
+<span class="sig-name descname"><span class="pre">sequence_number</span></span><a class="headerlink" href="#pyardrone.navdata.options.Metadata.sequence_number" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Metadata.vision_flag">
+<span class="sig-name descname"><span class="pre">vision_flag</span></span><a class="headerlink" href="#pyardrone.navdata.options.Metadata.vision_flag" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.OptionHeader">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyardrone.navdata.options.</span></span><span class="sig-name descname"><span class="pre">OptionHeader</span></span><a class="reference internal" href="_modules/pyardrone/navdata/options.html#OptionHeader"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyardrone.navdata.options.OptionHeader" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.OptionHeader.tag">
+<span class="sig-name descname"><span class="pre">tag</span></span><a class="headerlink" href="#pyardrone.navdata.options.OptionHeader.tag" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.OptionHeader.size">
+<span class="sig-name descname"><span class="pre">size</span></span><a class="headerlink" href="#pyardrone.navdata.options.OptionHeader.size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Demo">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyardrone.navdata.options.</span></span><span class="sig-name descname"><span class="pre">Demo</span></span><a class="reference internal" href="_modules/pyardrone/navdata/options.html#Demo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyardrone.navdata.options.Demo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Minimal navigation data for all flights.</p>
+<p>Corresponds to C struct <code class="docutils literal notranslate"><span class="pre">navdata_demo_t</span></code>.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Demo.ctrl_state">
+<span class="sig-name descname"><span class="pre">ctrl_state</span></span><a class="headerlink" href="#pyardrone.navdata.options.Demo.ctrl_state" title="Permalink to this definition">¶</a></dt>
+<dd><p>Flying state (landed, flying, hovering, etc.)
+defined in CTRL_STATES enum.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Demo.vbat_flying_percentage">
+<span class="sig-name descname"><span class="pre">vbat_flying_percentage</span></span><a class="headerlink" href="#pyardrone.navdata.options.Demo.vbat_flying_percentage" title="Permalink to this definition">¶</a></dt>
+<dd><p>battery voltage filtered (mV)</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Demo.theta">
+<span class="sig-name descname"><span class="pre">theta</span></span><a class="headerlink" href="#pyardrone.navdata.options.Demo.theta" title="Permalink to this definition">¶</a></dt>
+<dd><p>UAV’s pitch in milli-degrees</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Demo.phi">
+<span class="sig-name descname"><span class="pre">phi</span></span><a class="headerlink" href="#pyardrone.navdata.options.Demo.phi" title="Permalink to this definition">¶</a></dt>
+<dd><p>UAV’s roll  in milli-degrees</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Demo.psi">
+<span class="sig-name descname"><span class="pre">psi</span></span><a class="headerlink" href="#pyardrone.navdata.options.Demo.psi" title="Permalink to this definition">¶</a></dt>
+<dd><p>UAV’s yaw   in milli-degrees</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Demo.altitude">
+<span class="sig-name descname"><span class="pre">altitude</span></span><a class="headerlink" href="#pyardrone.navdata.options.Demo.altitude" title="Permalink to this definition">¶</a></dt>
+<dd><p>UAV’s altitude in centimeters</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Demo.vx">
+<span class="sig-name descname"><span class="pre">vx</span></span><a class="headerlink" href="#pyardrone.navdata.options.Demo.vx" title="Permalink to this definition">¶</a></dt>
+<dd><p>UAV’s estimated linear velocity</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Demo.vy">
+<span class="sig-name descname"><span class="pre">vy</span></span><a class="headerlink" href="#pyardrone.navdata.options.Demo.vy" title="Permalink to this definition">¶</a></dt>
+<dd><p>UAV’s estimated linear velocity</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Demo.vz">
+<span class="sig-name descname"><span class="pre">vz</span></span><a class="headerlink" href="#pyardrone.navdata.options.Demo.vz" title="Permalink to this definition">¶</a></dt>
+<dd><p>UAV’s estimated linear velocity</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Demo.num_frames">
+<span class="sig-name descname"><span class="pre">num_frames</span></span><a class="headerlink" href="#pyardrone.navdata.options.Demo.num_frames" title="Permalink to this definition">¶</a></dt>
+<dd><p>streamed frame index   Not used -&gt; To integrate in video stage.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Demo.detection_camera_rot">
+<span class="sig-name descname"><span class="pre">detection_camera_rot</span></span><a class="headerlink" href="#pyardrone.navdata.options.Demo.detection_camera_rot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deprecated ! Don’t use !</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Demo.detection_camera_trans">
+<span class="sig-name descname"><span class="pre">detection_camera_trans</span></span><a class="headerlink" href="#pyardrone.navdata.options.Demo.detection_camera_trans" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deprecated ! Don’t use !</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Demo.detection_tag_index">
+<span class="sig-name descname"><span class="pre">detection_tag_index</span></span><a class="headerlink" href="#pyardrone.navdata.options.Demo.detection_tag_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deprecated ! Don’t use !</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Demo.detection_camera_type">
+<span class="sig-name descname"><span class="pre">detection_camera_type</span></span><a class="headerlink" href="#pyardrone.navdata.options.Demo.detection_camera_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type of tag searched in detection</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Demo.drone_camera_rot">
+<span class="sig-name descname"><span class="pre">drone_camera_rot</span></span><a class="headerlink" href="#pyardrone.navdata.options.Demo.drone_camera_rot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deprecated ! Don’t use !</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Demo.drone_camera_trans">
+<span class="sig-name descname"><span class="pre">drone_camera_trans</span></span><a class="headerlink" href="#pyardrone.navdata.options.Demo.drone_camera_trans" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deprecated ! Don’t use !</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Time">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyardrone.navdata.options.</span></span><span class="sig-name descname"><span class="pre">Time</span></span><a class="reference internal" href="_modules/pyardrone/navdata/options.html#Time"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyardrone.navdata.options.Time" title="Permalink to this definition">¶</a></dt>
+<dd><p>Timestamp</p>
+<p>Corresponds to C struct <code class="docutils literal notranslate"><span class="pre">navdata_time_t</span></code>.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Time.time">
+<span class="sig-name descname"><span class="pre">time</span></span><a class="headerlink" href="#pyardrone.navdata.options.Time.time" title="Permalink to this definition">¶</a></dt>
+<dd><p>32 bit value where the 11 most significant bits represents the seconds,
+and the 21 least significant bits are the microseconds.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.RawMeasures">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyardrone.navdata.options.</span></span><span class="sig-name descname"><span class="pre">RawMeasures</span></span><a class="reference internal" href="_modules/pyardrone/navdata/options.html#RawMeasures"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyardrone.navdata.options.RawMeasures" title="Permalink to this definition">¶</a></dt>
+<dd><p>Raw sensors measurements</p>
+<p>Corresponds to C struct <code class="docutils literal notranslate"><span class="pre">navdata_raw_measures_t</span></code>.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.RawMeasures.raw_accs">
+<span class="sig-name descname"><span class="pre">raw_accs</span></span><a class="headerlink" href="#pyardrone.navdata.options.RawMeasures.raw_accs" title="Permalink to this definition">¶</a></dt>
+<dd><p>filtered accelerometers</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.RawMeasures.raw_gyros">
+<span class="sig-name descname"><span class="pre">raw_gyros</span></span><a class="headerlink" href="#pyardrone.navdata.options.RawMeasures.raw_gyros" title="Permalink to this definition">¶</a></dt>
+<dd><p>filtered gyrometers</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.RawMeasures.raw_gyros_110">
+<span class="sig-name descname"><span class="pre">raw_gyros_110</span></span><a class="headerlink" href="#pyardrone.navdata.options.RawMeasures.raw_gyros_110" title="Permalink to this definition">¶</a></dt>
+<dd><p>gyrometers  x/y 110 deg/s</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.RawMeasures.vbat_raw">
+<span class="sig-name descname"><span class="pre">vbat_raw</span></span><a class="headerlink" href="#pyardrone.navdata.options.RawMeasures.vbat_raw" title="Permalink to this definition">¶</a></dt>
+<dd><p>battery voltage raw (mV)</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.RawMeasures.us_debut_echo">
+<span class="sig-name descname"><span class="pre">us_debut_echo</span></span><a class="headerlink" href="#pyardrone.navdata.options.RawMeasures.us_debut_echo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.RawMeasures.us_fin_echo">
+<span class="sig-name descname"><span class="pre">us_fin_echo</span></span><a class="headerlink" href="#pyardrone.navdata.options.RawMeasures.us_fin_echo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.RawMeasures.us_association_echo">
+<span class="sig-name descname"><span class="pre">us_association_echo</span></span><a class="headerlink" href="#pyardrone.navdata.options.RawMeasures.us_association_echo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.RawMeasures.us_distance_echo">
+<span class="sig-name descname"><span class="pre">us_distance_echo</span></span><a class="headerlink" href="#pyardrone.navdata.options.RawMeasures.us_distance_echo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.RawMeasures.us_courbe_temps">
+<span class="sig-name descname"><span class="pre">us_courbe_temps</span></span><a class="headerlink" href="#pyardrone.navdata.options.RawMeasures.us_courbe_temps" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.RawMeasures.us_courbe_valeur">
+<span class="sig-name descname"><span class="pre">us_courbe_valeur</span></span><a class="headerlink" href="#pyardrone.navdata.options.RawMeasures.us_courbe_valeur" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.RawMeasures.us_courbe_ref">
+<span class="sig-name descname"><span class="pre">us_courbe_ref</span></span><a class="headerlink" href="#pyardrone.navdata.options.RawMeasures.us_courbe_ref" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.RawMeasures.flag_echo_ini">
+<span class="sig-name descname"><span class="pre">flag_echo_ini</span></span><a class="headerlink" href="#pyardrone.navdata.options.RawMeasures.flag_echo_ini" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.RawMeasures.nb_echo">
+<span class="sig-name descname"><span class="pre">nb_echo</span></span><a class="headerlink" href="#pyardrone.navdata.options.RawMeasures.nb_echo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.RawMeasures.sum_echo">
+<span class="sig-name descname"><span class="pre">sum_echo</span></span><a class="headerlink" href="#pyardrone.navdata.options.RawMeasures.sum_echo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.RawMeasures.alt_temp_raw">
+<span class="sig-name descname"><span class="pre">alt_temp_raw</span></span><a class="headerlink" href="#pyardrone.navdata.options.RawMeasures.alt_temp_raw" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.RawMeasures.gradient">
+<span class="sig-name descname"><span class="pre">gradient</span></span><a class="headerlink" href="#pyardrone.navdata.options.RawMeasures.gradient" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.PressureRaw">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyardrone.navdata.options.</span></span><span class="sig-name descname"><span class="pre">PressureRaw</span></span><a class="reference internal" href="_modules/pyardrone/navdata/options.html#PressureRaw"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyardrone.navdata.options.PressureRaw" title="Permalink to this definition">¶</a></dt>
+<dd><p>Corresponds to C struct <code class="docutils literal notranslate"><span class="pre">navdata_pressure_raw_t</span></code>.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.PressureRaw.up">
+<span class="sig-name descname"><span class="pre">up</span></span><a class="headerlink" href="#pyardrone.navdata.options.PressureRaw.up" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.PressureRaw.ut">
+<span class="sig-name descname"><span class="pre">ut</span></span><a class="headerlink" href="#pyardrone.navdata.options.PressureRaw.ut" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.PressureRaw.Temperature_meas">
+<span class="sig-name descname"><span class="pre">Temperature_meas</span></span><a class="headerlink" href="#pyardrone.navdata.options.PressureRaw.Temperature_meas" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.PressureRaw.Pression_meas">
+<span class="sig-name descname"><span class="pre">Pression_meas</span></span><a class="headerlink" href="#pyardrone.navdata.options.PressureRaw.Pression_meas" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Magneto">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyardrone.navdata.options.</span></span><span class="sig-name descname"><span class="pre">Magneto</span></span><a class="reference internal" href="_modules/pyardrone/navdata/options.html#Magneto"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyardrone.navdata.options.Magneto" title="Permalink to this definition">¶</a></dt>
+<dd><p>Corresponds to C struct <code class="docutils literal notranslate"><span class="pre">navdata_magneto_t</span></code>.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Magneto.mx">
+<span class="sig-name descname"><span class="pre">mx</span></span><a class="headerlink" href="#pyardrone.navdata.options.Magneto.mx" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Magneto.my">
+<span class="sig-name descname"><span class="pre">my</span></span><a class="headerlink" href="#pyardrone.navdata.options.Magneto.my" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Magneto.mz">
+<span class="sig-name descname"><span class="pre">mz</span></span><a class="headerlink" href="#pyardrone.navdata.options.Magneto.mz" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Magneto.magneto_raw">
+<span class="sig-name descname"><span class="pre">magneto_raw</span></span><a class="headerlink" href="#pyardrone.navdata.options.Magneto.magneto_raw" title="Permalink to this definition">¶</a></dt>
+<dd><p>magneto in the body frame, in mG</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Magneto.magneto_rectified">
+<span class="sig-name descname"><span class="pre">magneto_rectified</span></span><a class="headerlink" href="#pyardrone.navdata.options.Magneto.magneto_rectified" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Magneto.magneto_offset">
+<span class="sig-name descname"><span class="pre">magneto_offset</span></span><a class="headerlink" href="#pyardrone.navdata.options.Magneto.magneto_offset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Magneto.heading_unwrapped">
+<span class="sig-name descname"><span class="pre">heading_unwrapped</span></span><a class="headerlink" href="#pyardrone.navdata.options.Magneto.heading_unwrapped" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Magneto.heading_gyro_unwrapped">
+<span class="sig-name descname"><span class="pre">heading_gyro_unwrapped</span></span><a class="headerlink" href="#pyardrone.navdata.options.Magneto.heading_gyro_unwrapped" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Magneto.heading_fusion_unwrapped">
+<span class="sig-name descname"><span class="pre">heading_fusion_unwrapped</span></span><a class="headerlink" href="#pyardrone.navdata.options.Magneto.heading_fusion_unwrapped" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Magneto.magneto_calibration_ok">
+<span class="sig-name descname"><span class="pre">magneto_calibration_ok</span></span><a class="headerlink" href="#pyardrone.navdata.options.Magneto.magneto_calibration_ok" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Magneto.magneto_state">
+<span class="sig-name descname"><span class="pre">magneto_state</span></span><a class="headerlink" href="#pyardrone.navdata.options.Magneto.magneto_state" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Magneto.magneto_radius">
+<span class="sig-name descname"><span class="pre">magneto_radius</span></span><a class="headerlink" href="#pyardrone.navdata.options.Magneto.magneto_radius" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Magneto.error_mean">
+<span class="sig-name descname"><span class="pre">error_mean</span></span><a class="headerlink" href="#pyardrone.navdata.options.Magneto.error_mean" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Magneto.error_var">
+<span class="sig-name descname"><span class="pre">error_var</span></span><a class="headerlink" href="#pyardrone.navdata.options.Magneto.error_var" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.WindSpeed">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyardrone.navdata.options.</span></span><span class="sig-name descname"><span class="pre">WindSpeed</span></span><a class="reference internal" href="_modules/pyardrone/navdata/options.html#WindSpeed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyardrone.navdata.options.WindSpeed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Corresponds to C struct <code class="docutils literal notranslate"><span class="pre">navdata_wind_speed_t</span></code>.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.WindSpeed.wind_speed">
+<span class="sig-name descname"><span class="pre">wind_speed</span></span><a class="headerlink" href="#pyardrone.navdata.options.WindSpeed.wind_speed" title="Permalink to this definition">¶</a></dt>
+<dd><p>estimated wind speed [m/s]</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.WindSpeed.wind_angle">
+<span class="sig-name descname"><span class="pre">wind_angle</span></span><a class="headerlink" href="#pyardrone.navdata.options.WindSpeed.wind_angle" title="Permalink to this definition">¶</a></dt>
+<dd><p>estimated wind direction in North-East frame [rad] e.g.
+if wind_angle is pi/4, wind is from South-West to North-East</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.WindSpeed.wind_compensation_theta">
+<span class="sig-name descname"><span class="pre">wind_compensation_theta</span></span><a class="headerlink" href="#pyardrone.navdata.options.WindSpeed.wind_compensation_theta" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.WindSpeed.wind_compensation_phi">
+<span class="sig-name descname"><span class="pre">wind_compensation_phi</span></span><a class="headerlink" href="#pyardrone.navdata.options.WindSpeed.wind_compensation_phi" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.WindSpeed.state_x1">
+<span class="sig-name descname"><span class="pre">state_x1</span></span><a class="headerlink" href="#pyardrone.navdata.options.WindSpeed.state_x1" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.WindSpeed.state_x2">
+<span class="sig-name descname"><span class="pre">state_x2</span></span><a class="headerlink" href="#pyardrone.navdata.options.WindSpeed.state_x2" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.WindSpeed.state_x3">
+<span class="sig-name descname"><span class="pre">state_x3</span></span><a class="headerlink" href="#pyardrone.navdata.options.WindSpeed.state_x3" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.WindSpeed.state_x4">
+<span class="sig-name descname"><span class="pre">state_x4</span></span><a class="headerlink" href="#pyardrone.navdata.options.WindSpeed.state_x4" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.WindSpeed.state_x5">
+<span class="sig-name descname"><span class="pre">state_x5</span></span><a class="headerlink" href="#pyardrone.navdata.options.WindSpeed.state_x5" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.WindSpeed.state_x6">
+<span class="sig-name descname"><span class="pre">state_x6</span></span><a class="headerlink" href="#pyardrone.navdata.options.WindSpeed.state_x6" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.WindSpeed.magneto_debug1">
+<span class="sig-name descname"><span class="pre">magneto_debug1</span></span><a class="headerlink" href="#pyardrone.navdata.options.WindSpeed.magneto_debug1" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.WindSpeed.magneto_debug2">
+<span class="sig-name descname"><span class="pre">magneto_debug2</span></span><a class="headerlink" href="#pyardrone.navdata.options.WindSpeed.magneto_debug2" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.WindSpeed.magneto_debug3">
+<span class="sig-name descname"><span class="pre">magneto_debug3</span></span><a class="headerlink" href="#pyardrone.navdata.options.WindSpeed.magneto_debug3" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.KalmanPressure">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyardrone.navdata.options.</span></span><span class="sig-name descname"><span class="pre">KalmanPressure</span></span><a class="reference internal" href="_modules/pyardrone/navdata/options.html#KalmanPressure"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyardrone.navdata.options.KalmanPressure" title="Permalink to this definition">¶</a></dt>
+<dd><p>Corresponds to C struct <code class="docutils literal notranslate"><span class="pre">navdata_kalman_pressure_t</span></code>.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.KalmanPressure.offset_pressure">
+<span class="sig-name descname"><span class="pre">offset_pressure</span></span><a class="headerlink" href="#pyardrone.navdata.options.KalmanPressure.offset_pressure" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.KalmanPressure.est_z">
+<span class="sig-name descname"><span class="pre">est_z</span></span><a class="headerlink" href="#pyardrone.navdata.options.KalmanPressure.est_z" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.KalmanPressure.est_zdot">
+<span class="sig-name descname"><span class="pre">est_zdot</span></span><a class="headerlink" href="#pyardrone.navdata.options.KalmanPressure.est_zdot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.KalmanPressure.est_bias_PWM">
+<span class="sig-name descname"><span class="pre">est_bias_PWM</span></span><a class="headerlink" href="#pyardrone.navdata.options.KalmanPressure.est_bias_PWM" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.KalmanPressure.est_biais_pression">
+<span class="sig-name descname"><span class="pre">est_biais_pression</span></span><a class="headerlink" href="#pyardrone.navdata.options.KalmanPressure.est_biais_pression" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.KalmanPressure.offset_US">
+<span class="sig-name descname"><span class="pre">offset_US</span></span><a class="headerlink" href="#pyardrone.navdata.options.KalmanPressure.offset_US" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.KalmanPressure.prediction_US">
+<span class="sig-name descname"><span class="pre">prediction_US</span></span><a class="headerlink" href="#pyardrone.navdata.options.KalmanPressure.prediction_US" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.KalmanPressure.cov_alt">
+<span class="sig-name descname"><span class="pre">cov_alt</span></span><a class="headerlink" href="#pyardrone.navdata.options.KalmanPressure.cov_alt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.KalmanPressure.cov_PWM">
+<span class="sig-name descname"><span class="pre">cov_PWM</span></span><a class="headerlink" href="#pyardrone.navdata.options.KalmanPressure.cov_PWM" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.KalmanPressure.cov_vitesse">
+<span class="sig-name descname"><span class="pre">cov_vitesse</span></span><a class="headerlink" href="#pyardrone.navdata.options.KalmanPressure.cov_vitesse" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.KalmanPressure.bool_effet_sol">
+<span class="sig-name descname"><span class="pre">bool_effet_sol</span></span><a class="headerlink" href="#pyardrone.navdata.options.KalmanPressure.bool_effet_sol" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.KalmanPressure.somme_inno">
+<span class="sig-name descname"><span class="pre">somme_inno</span></span><a class="headerlink" href="#pyardrone.navdata.options.KalmanPressure.somme_inno" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.KalmanPressure.flag_rejet_US">
+<span class="sig-name descname"><span class="pre">flag_rejet_US</span></span><a class="headerlink" href="#pyardrone.navdata.options.KalmanPressure.flag_rejet_US" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.KalmanPressure.u_multisinus">
+<span class="sig-name descname"><span class="pre">u_multisinus</span></span><a class="headerlink" href="#pyardrone.navdata.options.KalmanPressure.u_multisinus" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.KalmanPressure.gaz_altitude">
+<span class="sig-name descname"><span class="pre">gaz_altitude</span></span><a class="headerlink" href="#pyardrone.navdata.options.KalmanPressure.gaz_altitude" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.KalmanPressure.Flag_multisinus">
+<span class="sig-name descname"><span class="pre">Flag_multisinus</span></span><a class="headerlink" href="#pyardrone.navdata.options.KalmanPressure.Flag_multisinus" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.KalmanPressure.Flag_multisinus_debut">
+<span class="sig-name descname"><span class="pre">Flag_multisinus_debut</span></span><a class="headerlink" href="#pyardrone.navdata.options.KalmanPressure.Flag_multisinus_debut" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Zimmu3000">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyardrone.navdata.options.</span></span><span class="sig-name descname"><span class="pre">Zimmu3000</span></span><a class="reference internal" href="_modules/pyardrone/navdata/options.html#Zimmu3000"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyardrone.navdata.options.Zimmu3000" title="Permalink to this definition">¶</a></dt>
+<dd><p>Corresponds to C struct <code class="docutils literal notranslate"><span class="pre">navdata_zimmu_3000_t</span></code>.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Zimmu3000.vzimmuLSB">
+<span class="sig-name descname"><span class="pre">vzimmuLSB</span></span><a class="headerlink" href="#pyardrone.navdata.options.Zimmu3000.vzimmuLSB" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Zimmu3000.vzfind">
+<span class="sig-name descname"><span class="pre">vzfind</span></span><a class="headerlink" href="#pyardrone.navdata.options.Zimmu3000.vzfind" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.PhysMeasures">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyardrone.navdata.options.</span></span><span class="sig-name descname"><span class="pre">PhysMeasures</span></span><a class="reference internal" href="_modules/pyardrone/navdata/options.html#PhysMeasures"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyardrone.navdata.options.PhysMeasures" title="Permalink to this definition">¶</a></dt>
+<dd><p>Corresponds to C struct <code class="docutils literal notranslate"><span class="pre">navdata_phys_measures_t</span></code>.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.PhysMeasures.accs_temp">
+<span class="sig-name descname"><span class="pre">accs_temp</span></span><a class="headerlink" href="#pyardrone.navdata.options.PhysMeasures.accs_temp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.PhysMeasures.gyro_temp">
+<span class="sig-name descname"><span class="pre">gyro_temp</span></span><a class="headerlink" href="#pyardrone.navdata.options.PhysMeasures.gyro_temp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.PhysMeasures.phys_accs">
+<span class="sig-name descname"><span class="pre">phys_accs</span></span><a class="headerlink" href="#pyardrone.navdata.options.PhysMeasures.phys_accs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.PhysMeasures.phys_gyros">
+<span class="sig-name descname"><span class="pre">phys_gyros</span></span><a class="headerlink" href="#pyardrone.navdata.options.PhysMeasures.phys_gyros" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.PhysMeasures.alim3V3">
+<span class="sig-name descname"><span class="pre">alim3V3</span></span><a class="headerlink" href="#pyardrone.navdata.options.PhysMeasures.alim3V3" title="Permalink to this definition">¶</a></dt>
+<dd><p>3.3volt alim [LSB]</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.PhysMeasures.vrefEpson">
+<span class="sig-name descname"><span class="pre">vrefEpson</span></span><a class="headerlink" href="#pyardrone.navdata.options.PhysMeasures.vrefEpson" title="Permalink to this definition">¶</a></dt>
+<dd><p>ref volt Epson gyro [LSB]</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.PhysMeasures.vrefIDG">
+<span class="sig-name descname"><span class="pre">vrefIDG</span></span><a class="headerlink" href="#pyardrone.navdata.options.PhysMeasures.vrefIDG" title="Permalink to this definition">¶</a></dt>
+<dd><p>ref volt IDG gyro [LSB]</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.GyrosOffsets">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyardrone.navdata.options.</span></span><span class="sig-name descname"><span class="pre">GyrosOffsets</span></span><a class="reference internal" href="_modules/pyardrone/navdata/options.html#GyrosOffsets"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyardrone.navdata.options.GyrosOffsets" title="Permalink to this definition">¶</a></dt>
+<dd><p>Corresponds to C struct <code class="docutils literal notranslate"><span class="pre">navdata_gyros_offsets_t</span></code>.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.GyrosOffsets.offset_g">
+<span class="sig-name descname"><span class="pre">offset_g</span></span><a class="headerlink" href="#pyardrone.navdata.options.GyrosOffsets.offset_g" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.EulerAngles">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyardrone.navdata.options.</span></span><span class="sig-name descname"><span class="pre">EulerAngles</span></span><a class="reference internal" href="_modules/pyardrone/navdata/options.html#EulerAngles"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyardrone.navdata.options.EulerAngles" title="Permalink to this definition">¶</a></dt>
+<dd><p>Corresponds to C struct <code class="docutils literal notranslate"><span class="pre">navdata_euler_angles_t</span></code>.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.EulerAngles.theta_a">
+<span class="sig-name descname"><span class="pre">theta_a</span></span><a class="headerlink" href="#pyardrone.navdata.options.EulerAngles.theta_a" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.EulerAngles.phi_a">
+<span class="sig-name descname"><span class="pre">phi_a</span></span><a class="headerlink" href="#pyardrone.navdata.options.EulerAngles.phi_a" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.References">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyardrone.navdata.options.</span></span><span class="sig-name descname"><span class="pre">References</span></span><a class="reference internal" href="_modules/pyardrone/navdata/options.html#References"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyardrone.navdata.options.References" title="Permalink to this definition">¶</a></dt>
+<dd><p>Corresponds to C struct <code class="docutils literal notranslate"><span class="pre">navdata_references_t</span></code>.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.References.ref_theta">
+<span class="sig-name descname"><span class="pre">ref_theta</span></span><a class="headerlink" href="#pyardrone.navdata.options.References.ref_theta" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.References.ref_phi">
+<span class="sig-name descname"><span class="pre">ref_phi</span></span><a class="headerlink" href="#pyardrone.navdata.options.References.ref_phi" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.References.ref_theta_I">
+<span class="sig-name descname"><span class="pre">ref_theta_I</span></span><a class="headerlink" href="#pyardrone.navdata.options.References.ref_theta_I" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.References.ref_phi_I">
+<span class="sig-name descname"><span class="pre">ref_phi_I</span></span><a class="headerlink" href="#pyardrone.navdata.options.References.ref_phi_I" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.References.ref_pitch">
+<span class="sig-name descname"><span class="pre">ref_pitch</span></span><a class="headerlink" href="#pyardrone.navdata.options.References.ref_pitch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.References.ref_roll">
+<span class="sig-name descname"><span class="pre">ref_roll</span></span><a class="headerlink" href="#pyardrone.navdata.options.References.ref_roll" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.References.ref_yaw">
+<span class="sig-name descname"><span class="pre">ref_yaw</span></span><a class="headerlink" href="#pyardrone.navdata.options.References.ref_yaw" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.References.ref_psi">
+<span class="sig-name descname"><span class="pre">ref_psi</span></span><a class="headerlink" href="#pyardrone.navdata.options.References.ref_psi" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.References.vx_ref">
+<span class="sig-name descname"><span class="pre">vx_ref</span></span><a class="headerlink" href="#pyardrone.navdata.options.References.vx_ref" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.References.vy_ref">
+<span class="sig-name descname"><span class="pre">vy_ref</span></span><a class="headerlink" href="#pyardrone.navdata.options.References.vy_ref" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.References.theta_mod">
+<span class="sig-name descname"><span class="pre">theta_mod</span></span><a class="headerlink" href="#pyardrone.navdata.options.References.theta_mod" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.References.phi_mod">
+<span class="sig-name descname"><span class="pre">phi_mod</span></span><a class="headerlink" href="#pyardrone.navdata.options.References.phi_mod" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.References.k_v_x">
+<span class="sig-name descname"><span class="pre">k_v_x</span></span><a class="headerlink" href="#pyardrone.navdata.options.References.k_v_x" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.References.k_v_y">
+<span class="sig-name descname"><span class="pre">k_v_y</span></span><a class="headerlink" href="#pyardrone.navdata.options.References.k_v_y" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.References.k_mode">
+<span class="sig-name descname"><span class="pre">k_mode</span></span><a class="headerlink" href="#pyardrone.navdata.options.References.k_mode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.References.ui_time">
+<span class="sig-name descname"><span class="pre">ui_time</span></span><a class="headerlink" href="#pyardrone.navdata.options.References.ui_time" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.References.ui_theta">
+<span class="sig-name descname"><span class="pre">ui_theta</span></span><a class="headerlink" href="#pyardrone.navdata.options.References.ui_theta" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.References.ui_phi">
+<span class="sig-name descname"><span class="pre">ui_phi</span></span><a class="headerlink" href="#pyardrone.navdata.options.References.ui_phi" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.References.ui_psi">
+<span class="sig-name descname"><span class="pre">ui_psi</span></span><a class="headerlink" href="#pyardrone.navdata.options.References.ui_psi" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.References.ui_psi_accuracy">
+<span class="sig-name descname"><span class="pre">ui_psi_accuracy</span></span><a class="headerlink" href="#pyardrone.navdata.options.References.ui_psi_accuracy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.References.ui_seq">
+<span class="sig-name descname"><span class="pre">ui_seq</span></span><a class="headerlink" href="#pyardrone.navdata.options.References.ui_seq" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Trims">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyardrone.navdata.options.</span></span><span class="sig-name descname"><span class="pre">Trims</span></span><a class="reference internal" href="_modules/pyardrone/navdata/options.html#Trims"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyardrone.navdata.options.Trims" title="Permalink to this definition">¶</a></dt>
+<dd><p>Corresponds to C struct <code class="docutils literal notranslate"><span class="pre">navdata_trims_t</span></code>.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Trims.angular_rates_trim_r">
+<span class="sig-name descname"><span class="pre">angular_rates_trim_r</span></span><a class="headerlink" href="#pyardrone.navdata.options.Trims.angular_rates_trim_r" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Trims.euler_angles_trim_theta">
+<span class="sig-name descname"><span class="pre">euler_angles_trim_theta</span></span><a class="headerlink" href="#pyardrone.navdata.options.Trims.euler_angles_trim_theta" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Trims.euler_angles_trim_phi">
+<span class="sig-name descname"><span class="pre">euler_angles_trim_phi</span></span><a class="headerlink" href="#pyardrone.navdata.options.Trims.euler_angles_trim_phi" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.RcReferences">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyardrone.navdata.options.</span></span><span class="sig-name descname"><span class="pre">RcReferences</span></span><a class="reference internal" href="_modules/pyardrone/navdata/options.html#RcReferences"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyardrone.navdata.options.RcReferences" title="Permalink to this definition">¶</a></dt>
+<dd><p>Corresponds to C struct <code class="docutils literal notranslate"><span class="pre">navdata_rc_references_t</span></code>.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.RcReferences.rc_ref_pitch">
+<span class="sig-name descname"><span class="pre">rc_ref_pitch</span></span><a class="headerlink" href="#pyardrone.navdata.options.RcReferences.rc_ref_pitch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.RcReferences.rc_ref_roll">
+<span class="sig-name descname"><span class="pre">rc_ref_roll</span></span><a class="headerlink" href="#pyardrone.navdata.options.RcReferences.rc_ref_roll" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.RcReferences.rc_ref_yaw">
+<span class="sig-name descname"><span class="pre">rc_ref_yaw</span></span><a class="headerlink" href="#pyardrone.navdata.options.RcReferences.rc_ref_yaw" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.RcReferences.rc_ref_gaz">
+<span class="sig-name descname"><span class="pre">rc_ref_gaz</span></span><a class="headerlink" href="#pyardrone.navdata.options.RcReferences.rc_ref_gaz" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.RcReferences.rc_ref_ag">
+<span class="sig-name descname"><span class="pre">rc_ref_ag</span></span><a class="headerlink" href="#pyardrone.navdata.options.RcReferences.rc_ref_ag" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Pwm">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyardrone.navdata.options.</span></span><span class="sig-name descname"><span class="pre">Pwm</span></span><a class="reference internal" href="_modules/pyardrone/navdata/options.html#Pwm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyardrone.navdata.options.Pwm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Corresponds to C struct <code class="docutils literal notranslate"><span class="pre">navdata_pwm_t</span></code>.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Pwm.motor1">
+<span class="sig-name descname"><span class="pre">motor1</span></span><a class="headerlink" href="#pyardrone.navdata.options.Pwm.motor1" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Pwm.motor2">
+<span class="sig-name descname"><span class="pre">motor2</span></span><a class="headerlink" href="#pyardrone.navdata.options.Pwm.motor2" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Pwm.motor3">
+<span class="sig-name descname"><span class="pre">motor3</span></span><a class="headerlink" href="#pyardrone.navdata.options.Pwm.motor3" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Pwm.motor4">
+<span class="sig-name descname"><span class="pre">motor4</span></span><a class="headerlink" href="#pyardrone.navdata.options.Pwm.motor4" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Pwm.sat_motor1">
+<span class="sig-name descname"><span class="pre">sat_motor1</span></span><a class="headerlink" href="#pyardrone.navdata.options.Pwm.sat_motor1" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Pwm.sat_motor2">
+<span class="sig-name descname"><span class="pre">sat_motor2</span></span><a class="headerlink" href="#pyardrone.navdata.options.Pwm.sat_motor2" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Pwm.sat_motor3">
+<span class="sig-name descname"><span class="pre">sat_motor3</span></span><a class="headerlink" href="#pyardrone.navdata.options.Pwm.sat_motor3" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Pwm.sat_motor4">
+<span class="sig-name descname"><span class="pre">sat_motor4</span></span><a class="headerlink" href="#pyardrone.navdata.options.Pwm.sat_motor4" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Pwm.gaz_feed_forward">
+<span class="sig-name descname"><span class="pre">gaz_feed_forward</span></span><a class="headerlink" href="#pyardrone.navdata.options.Pwm.gaz_feed_forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Pwm.gaz_altitude">
+<span class="sig-name descname"><span class="pre">gaz_altitude</span></span><a class="headerlink" href="#pyardrone.navdata.options.Pwm.gaz_altitude" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Pwm.altitude_integral">
+<span class="sig-name descname"><span class="pre">altitude_integral</span></span><a class="headerlink" href="#pyardrone.navdata.options.Pwm.altitude_integral" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Pwm.vz_ref">
+<span class="sig-name descname"><span class="pre">vz_ref</span></span><a class="headerlink" href="#pyardrone.navdata.options.Pwm.vz_ref" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Pwm.u_pitch">
+<span class="sig-name descname"><span class="pre">u_pitch</span></span><a class="headerlink" href="#pyardrone.navdata.options.Pwm.u_pitch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Pwm.u_roll">
+<span class="sig-name descname"><span class="pre">u_roll</span></span><a class="headerlink" href="#pyardrone.navdata.options.Pwm.u_roll" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Pwm.u_yaw">
+<span class="sig-name descname"><span class="pre">u_yaw</span></span><a class="headerlink" href="#pyardrone.navdata.options.Pwm.u_yaw" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Pwm.yaw_u_I">
+<span class="sig-name descname"><span class="pre">yaw_u_I</span></span><a class="headerlink" href="#pyardrone.navdata.options.Pwm.yaw_u_I" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Pwm.u_pitch_planif">
+<span class="sig-name descname"><span class="pre">u_pitch_planif</span></span><a class="headerlink" href="#pyardrone.navdata.options.Pwm.u_pitch_planif" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Pwm.u_roll_planif">
+<span class="sig-name descname"><span class="pre">u_roll_planif</span></span><a class="headerlink" href="#pyardrone.navdata.options.Pwm.u_roll_planif" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Pwm.u_yaw_planif">
+<span class="sig-name descname"><span class="pre">u_yaw_planif</span></span><a class="headerlink" href="#pyardrone.navdata.options.Pwm.u_yaw_planif" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Pwm.u_gaz_planif">
+<span class="sig-name descname"><span class="pre">u_gaz_planif</span></span><a class="headerlink" href="#pyardrone.navdata.options.Pwm.u_gaz_planif" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Pwm.current_motor1">
+<span class="sig-name descname"><span class="pre">current_motor1</span></span><a class="headerlink" href="#pyardrone.navdata.options.Pwm.current_motor1" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Pwm.current_motor2">
+<span class="sig-name descname"><span class="pre">current_motor2</span></span><a class="headerlink" href="#pyardrone.navdata.options.Pwm.current_motor2" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Pwm.current_motor3">
+<span class="sig-name descname"><span class="pre">current_motor3</span></span><a class="headerlink" href="#pyardrone.navdata.options.Pwm.current_motor3" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Pwm.current_motor4">
+<span class="sig-name descname"><span class="pre">current_motor4</span></span><a class="headerlink" href="#pyardrone.navdata.options.Pwm.current_motor4" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Pwm.altitude_prop">
+<span class="sig-name descname"><span class="pre">altitude_prop</span></span><a class="headerlink" href="#pyardrone.navdata.options.Pwm.altitude_prop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Pwm.altitude_der">
+<span class="sig-name descname"><span class="pre">altitude_der</span></span><a class="headerlink" href="#pyardrone.navdata.options.Pwm.altitude_der" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Altitude">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyardrone.navdata.options.</span></span><span class="sig-name descname"><span class="pre">Altitude</span></span><a class="reference internal" href="_modules/pyardrone/navdata/options.html#Altitude"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyardrone.navdata.options.Altitude" title="Permalink to this definition">¶</a></dt>
+<dd><p>Corresponds to C struct <code class="docutils literal notranslate"><span class="pre">navdata_altitude_t</span></code>.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Altitude.altitude_vision">
+<span class="sig-name descname"><span class="pre">altitude_vision</span></span><a class="headerlink" href="#pyardrone.navdata.options.Altitude.altitude_vision" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Altitude.altitude_vz">
+<span class="sig-name descname"><span class="pre">altitude_vz</span></span><a class="headerlink" href="#pyardrone.navdata.options.Altitude.altitude_vz" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Altitude.altitude_ref">
+<span class="sig-name descname"><span class="pre">altitude_ref</span></span><a class="headerlink" href="#pyardrone.navdata.options.Altitude.altitude_ref" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Altitude.altitude_raw">
+<span class="sig-name descname"><span class="pre">altitude_raw</span></span><a class="headerlink" href="#pyardrone.navdata.options.Altitude.altitude_raw" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Altitude.obs_accZ">
+<span class="sig-name descname"><span class="pre">obs_accZ</span></span><a class="headerlink" href="#pyardrone.navdata.options.Altitude.obs_accZ" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Altitude.obs_alt">
+<span class="sig-name descname"><span class="pre">obs_alt</span></span><a class="headerlink" href="#pyardrone.navdata.options.Altitude.obs_alt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Altitude.obs_x">
+<span class="sig-name descname"><span class="pre">obs_x</span></span><a class="headerlink" href="#pyardrone.navdata.options.Altitude.obs_x" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Altitude.obs_state">
+<span class="sig-name descname"><span class="pre">obs_state</span></span><a class="headerlink" href="#pyardrone.navdata.options.Altitude.obs_state" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Altitude.est_vb">
+<span class="sig-name descname"><span class="pre">est_vb</span></span><a class="headerlink" href="#pyardrone.navdata.options.Altitude.est_vb" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Altitude.est_state">
+<span class="sig-name descname"><span class="pre">est_state</span></span><a class="headerlink" href="#pyardrone.navdata.options.Altitude.est_state" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.VisionRaw">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyardrone.navdata.options.</span></span><span class="sig-name descname"><span class="pre">VisionRaw</span></span><a class="reference internal" href="_modules/pyardrone/navdata/options.html#VisionRaw"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyardrone.navdata.options.VisionRaw" title="Permalink to this definition">¶</a></dt>
+<dd><p>Corresponds to C struct <code class="docutils literal notranslate"><span class="pre">navdata_vision_raw_t</span></code>.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.VisionRaw.vision_tx_raw">
+<span class="sig-name descname"><span class="pre">vision_tx_raw</span></span><a class="headerlink" href="#pyardrone.navdata.options.VisionRaw.vision_tx_raw" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.VisionRaw.vision_ty_raw">
+<span class="sig-name descname"><span class="pre">vision_ty_raw</span></span><a class="headerlink" href="#pyardrone.navdata.options.VisionRaw.vision_ty_raw" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.VisionRaw.vision_tz_raw">
+<span class="sig-name descname"><span class="pre">vision_tz_raw</span></span><a class="headerlink" href="#pyardrone.navdata.options.VisionRaw.vision_tz_raw" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Vision">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyardrone.navdata.options.</span></span><span class="sig-name descname"><span class="pre">Vision</span></span><a class="reference internal" href="_modules/pyardrone/navdata/options.html#Vision"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyardrone.navdata.options.Vision" title="Permalink to this definition">¶</a></dt>
+<dd><p>Corresponds to C struct <code class="docutils literal notranslate"><span class="pre">navdata_vision_t</span></code>.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Vision.vision_state">
+<span class="sig-name descname"><span class="pre">vision_state</span></span><a class="headerlink" href="#pyardrone.navdata.options.Vision.vision_state" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Vision.vision_misc">
+<span class="sig-name descname"><span class="pre">vision_misc</span></span><a class="headerlink" href="#pyardrone.navdata.options.Vision.vision_misc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Vision.vision_phi_trim">
+<span class="sig-name descname"><span class="pre">vision_phi_trim</span></span><a class="headerlink" href="#pyardrone.navdata.options.Vision.vision_phi_trim" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Vision.vision_phi_ref_prop">
+<span class="sig-name descname"><span class="pre">vision_phi_ref_prop</span></span><a class="headerlink" href="#pyardrone.navdata.options.Vision.vision_phi_ref_prop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Vision.vision_theta_trim">
+<span class="sig-name descname"><span class="pre">vision_theta_trim</span></span><a class="headerlink" href="#pyardrone.navdata.options.Vision.vision_theta_trim" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Vision.vision_theta_ref_prop">
+<span class="sig-name descname"><span class="pre">vision_theta_ref_prop</span></span><a class="headerlink" href="#pyardrone.navdata.options.Vision.vision_theta_ref_prop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Vision.new_raw_picture">
+<span class="sig-name descname"><span class="pre">new_raw_picture</span></span><a class="headerlink" href="#pyardrone.navdata.options.Vision.new_raw_picture" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Vision.theta_capture">
+<span class="sig-name descname"><span class="pre">theta_capture</span></span><a class="headerlink" href="#pyardrone.navdata.options.Vision.theta_capture" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Vision.phi_capture">
+<span class="sig-name descname"><span class="pre">phi_capture</span></span><a class="headerlink" href="#pyardrone.navdata.options.Vision.phi_capture" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Vision.psi_capture">
+<span class="sig-name descname"><span class="pre">psi_capture</span></span><a class="headerlink" href="#pyardrone.navdata.options.Vision.psi_capture" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Vision.altitude_capture">
+<span class="sig-name descname"><span class="pre">altitude_capture</span></span><a class="headerlink" href="#pyardrone.navdata.options.Vision.altitude_capture" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Vision.time_capture">
+<span class="sig-name descname"><span class="pre">time_capture</span></span><a class="headerlink" href="#pyardrone.navdata.options.Vision.time_capture" title="Permalink to this definition">¶</a></dt>
+<dd><p>time in TSECDEC format (see config.h)</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Vision.body_v">
+<span class="sig-name descname"><span class="pre">body_v</span></span><a class="headerlink" href="#pyardrone.navdata.options.Vision.body_v" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Vision.delta_phi">
+<span class="sig-name descname"><span class="pre">delta_phi</span></span><a class="headerlink" href="#pyardrone.navdata.options.Vision.delta_phi" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Vision.delta_theta">
+<span class="sig-name descname"><span class="pre">delta_theta</span></span><a class="headerlink" href="#pyardrone.navdata.options.Vision.delta_theta" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Vision.delta_psi">
+<span class="sig-name descname"><span class="pre">delta_psi</span></span><a class="headerlink" href="#pyardrone.navdata.options.Vision.delta_psi" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Vision.gold_defined">
+<span class="sig-name descname"><span class="pre">gold_defined</span></span><a class="headerlink" href="#pyardrone.navdata.options.Vision.gold_defined" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Vision.gold_reset">
+<span class="sig-name descname"><span class="pre">gold_reset</span></span><a class="headerlink" href="#pyardrone.navdata.options.Vision.gold_reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Vision.gold_x">
+<span class="sig-name descname"><span class="pre">gold_x</span></span><a class="headerlink" href="#pyardrone.navdata.options.Vision.gold_x" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Vision.gold_y">
+<span class="sig-name descname"><span class="pre">gold_y</span></span><a class="headerlink" href="#pyardrone.navdata.options.Vision.gold_y" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.VisionPerf">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyardrone.navdata.options.</span></span><span class="sig-name descname"><span class="pre">VisionPerf</span></span><a class="reference internal" href="_modules/pyardrone/navdata/options.html#VisionPerf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyardrone.navdata.options.VisionPerf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Corresponds to C struct <code class="docutils literal notranslate"><span class="pre">navdata_vision_perf_t</span></code>.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.VisionPerf.time_szo">
+<span class="sig-name descname"><span class="pre">time_szo</span></span><a class="headerlink" href="#pyardrone.navdata.options.VisionPerf.time_szo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.VisionPerf.time_corners">
+<span class="sig-name descname"><span class="pre">time_corners</span></span><a class="headerlink" href="#pyardrone.navdata.options.VisionPerf.time_corners" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.VisionPerf.time_compute">
+<span class="sig-name descname"><span class="pre">time_compute</span></span><a class="headerlink" href="#pyardrone.navdata.options.VisionPerf.time_compute" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.VisionPerf.time_tracking">
+<span class="sig-name descname"><span class="pre">time_tracking</span></span><a class="headerlink" href="#pyardrone.navdata.options.VisionPerf.time_tracking" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.VisionPerf.time_trans">
+<span class="sig-name descname"><span class="pre">time_trans</span></span><a class="headerlink" href="#pyardrone.navdata.options.VisionPerf.time_trans" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.VisionPerf.time_update">
+<span class="sig-name descname"><span class="pre">time_update</span></span><a class="headerlink" href="#pyardrone.navdata.options.VisionPerf.time_update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.VisionPerf.time_custom">
+<span class="sig-name descname"><span class="pre">time_custom</span></span><a class="headerlink" href="#pyardrone.navdata.options.VisionPerf.time_custom" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.TrackersSend">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyardrone.navdata.options.</span></span><span class="sig-name descname"><span class="pre">TrackersSend</span></span><a class="reference internal" href="_modules/pyardrone/navdata/options.html#TrackersSend"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyardrone.navdata.options.TrackersSend" title="Permalink to this definition">¶</a></dt>
+<dd><p>Corresponds to C struct <code class="docutils literal notranslate"><span class="pre">navdata_trackers_send_t</span></code>.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.TrackersSend.locked">
+<span class="sig-name descname"><span class="pre">locked</span></span><a class="headerlink" href="#pyardrone.navdata.options.TrackersSend.locked" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.TrackersSend.point">
+<span class="sig-name descname"><span class="pre">point</span></span><a class="headerlink" href="#pyardrone.navdata.options.TrackersSend.point" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.VisionDetect">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyardrone.navdata.options.</span></span><span class="sig-name descname"><span class="pre">VisionDetect</span></span><a class="reference internal" href="_modules/pyardrone/navdata/options.html#VisionDetect"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyardrone.navdata.options.VisionDetect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Corresponds to C struct <code class="docutils literal notranslate"><span class="pre">navdata_vision_detect_t</span></code>.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.VisionDetect.nb_detected">
+<span class="sig-name descname"><span class="pre">nb_detected</span></span><a class="headerlink" href="#pyardrone.navdata.options.VisionDetect.nb_detected" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.VisionDetect.type">
+<span class="sig-name descname"><span class="pre">type</span></span><a class="headerlink" href="#pyardrone.navdata.options.VisionDetect.type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.VisionDetect.xc">
+<span class="sig-name descname"><span class="pre">xc</span></span><a class="headerlink" href="#pyardrone.navdata.options.VisionDetect.xc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.VisionDetect.yc">
+<span class="sig-name descname"><span class="pre">yc</span></span><a class="headerlink" href="#pyardrone.navdata.options.VisionDetect.yc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.VisionDetect.width">
+<span class="sig-name descname"><span class="pre">width</span></span><a class="headerlink" href="#pyardrone.navdata.options.VisionDetect.width" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.VisionDetect.height">
+<span class="sig-name descname"><span class="pre">height</span></span><a class="headerlink" href="#pyardrone.navdata.options.VisionDetect.height" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.VisionDetect.dist">
+<span class="sig-name descname"><span class="pre">dist</span></span><a class="headerlink" href="#pyardrone.navdata.options.VisionDetect.dist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.VisionDetect.orientation_angle">
+<span class="sig-name descname"><span class="pre">orientation_angle</span></span><a class="headerlink" href="#pyardrone.navdata.options.VisionDetect.orientation_angle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.VisionDetect.rotation">
+<span class="sig-name descname"><span class="pre">rotation</span></span><a class="headerlink" href="#pyardrone.navdata.options.VisionDetect.rotation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.VisionDetect.translation">
+<span class="sig-name descname"><span class="pre">translation</span></span><a class="headerlink" href="#pyardrone.navdata.options.VisionDetect.translation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.VisionDetect.camera_source">
+<span class="sig-name descname"><span class="pre">camera_source</span></span><a class="headerlink" href="#pyardrone.navdata.options.VisionDetect.camera_source" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.VisionOf">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyardrone.navdata.options.</span></span><span class="sig-name descname"><span class="pre">VisionOf</span></span><a class="reference internal" href="_modules/pyardrone/navdata/options.html#VisionOf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyardrone.navdata.options.VisionOf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Corresponds to C struct <code class="docutils literal notranslate"><span class="pre">navdata_vision_of_t</span></code>.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.VisionOf.of_dx">
+<span class="sig-name descname"><span class="pre">of_dx</span></span><a class="headerlink" href="#pyardrone.navdata.options.VisionOf.of_dx" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.VisionOf.of_dy">
+<span class="sig-name descname"><span class="pre">of_dy</span></span><a class="headerlink" href="#pyardrone.navdata.options.VisionOf.of_dy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Watchdog">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyardrone.navdata.options.</span></span><span class="sig-name descname"><span class="pre">Watchdog</span></span><a class="reference internal" href="_modules/pyardrone/navdata/options.html#Watchdog"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyardrone.navdata.options.Watchdog" title="Permalink to this definition">¶</a></dt>
+<dd><p>Corresponds to C struct <code class="docutils literal notranslate"><span class="pre">navdata_watchdog_t</span></code>.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Watchdog.watchdog">
+<span class="sig-name descname"><span class="pre">watchdog</span></span><a class="headerlink" href="#pyardrone.navdata.options.Watchdog.watchdog" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.AdcDataFrame">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyardrone.navdata.options.</span></span><span class="sig-name descname"><span class="pre">AdcDataFrame</span></span><a class="reference internal" href="_modules/pyardrone/navdata/options.html#AdcDataFrame"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyardrone.navdata.options.AdcDataFrame" title="Permalink to this definition">¶</a></dt>
+<dd><p>Corresponds to C struct <code class="docutils literal notranslate"><span class="pre">navdata_adc_data_frame_t</span></code>.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.AdcDataFrame.version">
+<span class="sig-name descname"><span class="pre">version</span></span><a class="headerlink" href="#pyardrone.navdata.options.AdcDataFrame.version" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.AdcDataFrame.data_frame">
+<span class="sig-name descname"><span class="pre">data_frame</span></span><a class="headerlink" href="#pyardrone.navdata.options.AdcDataFrame.data_frame" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.VideoStream">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyardrone.navdata.options.</span></span><span class="sig-name descname"><span class="pre">VideoStream</span></span><a class="reference internal" href="_modules/pyardrone/navdata/options.html#VideoStream"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyardrone.navdata.options.VideoStream" title="Permalink to this definition">¶</a></dt>
+<dd><p>Corresponds to C struct <code class="docutils literal notranslate"><span class="pre">navdata_video_stream_t</span></code>.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.VideoStream.quant">
+<span class="sig-name descname"><span class="pre">quant</span></span><a class="headerlink" href="#pyardrone.navdata.options.VideoStream.quant" title="Permalink to this definition">¶</a></dt>
+<dd><p>quantizer reference used to encode frame [1:31]</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.VideoStream.frame_size">
+<span class="sig-name descname"><span class="pre">frame_size</span></span><a class="headerlink" href="#pyardrone.navdata.options.VideoStream.frame_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>frame size (bytes)</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.VideoStream.frame_number">
+<span class="sig-name descname"><span class="pre">frame_number</span></span><a class="headerlink" href="#pyardrone.navdata.options.VideoStream.frame_number" title="Permalink to this definition">¶</a></dt>
+<dd><p>frame index</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.VideoStream.atcmd_ref_seq">
+<span class="sig-name descname"><span class="pre">atcmd_ref_seq</span></span><a class="headerlink" href="#pyardrone.navdata.options.VideoStream.atcmd_ref_seq" title="Permalink to this definition">¶</a></dt>
+<dd><p>atmcd ref sequence number</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.VideoStream.atcmd_mean_ref_gap">
+<span class="sig-name descname"><span class="pre">atcmd_mean_ref_gap</span></span><a class="headerlink" href="#pyardrone.navdata.options.VideoStream.atcmd_mean_ref_gap" title="Permalink to this definition">¶</a></dt>
+<dd><p>mean time between two consecutive atcmd_ref (ms)</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.VideoStream.atcmd_var_ref_gap">
+<span class="sig-name descname"><span class="pre">atcmd_var_ref_gap</span></span><a class="headerlink" href="#pyardrone.navdata.options.VideoStream.atcmd_var_ref_gap" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.VideoStream.atcmd_ref_quality">
+<span class="sig-name descname"><span class="pre">atcmd_ref_quality</span></span><a class="headerlink" href="#pyardrone.navdata.options.VideoStream.atcmd_ref_quality" title="Permalink to this definition">¶</a></dt>
+<dd><p>estimator of atcmd link quality</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.VideoStream.out_bitrate">
+<span class="sig-name descname"><span class="pre">out_bitrate</span></span><a class="headerlink" href="#pyardrone.navdata.options.VideoStream.out_bitrate" title="Permalink to this definition">¶</a></dt>
+<dd><p>measured out throughput from the video tcp socket</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.VideoStream.desired_bitrate">
+<span class="sig-name descname"><span class="pre">desired_bitrate</span></span><a class="headerlink" href="#pyardrone.navdata.options.VideoStream.desired_bitrate" title="Permalink to this definition">¶</a></dt>
+<dd><p>last frame size generated by the video encoder</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.VideoStream.data1">
+<span class="sig-name descname"><span class="pre">data1</span></span><a class="headerlink" href="#pyardrone.navdata.options.VideoStream.data1" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.VideoStream.data2">
+<span class="sig-name descname"><span class="pre">data2</span></span><a class="headerlink" href="#pyardrone.navdata.options.VideoStream.data2" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.VideoStream.data3">
+<span class="sig-name descname"><span class="pre">data3</span></span><a class="headerlink" href="#pyardrone.navdata.options.VideoStream.data3" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.VideoStream.data4">
+<span class="sig-name descname"><span class="pre">data4</span></span><a class="headerlink" href="#pyardrone.navdata.options.VideoStream.data4" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.VideoStream.data5">
+<span class="sig-name descname"><span class="pre">data5</span></span><a class="headerlink" href="#pyardrone.navdata.options.VideoStream.data5" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.VideoStream.tcp_queue_level">
+<span class="sig-name descname"><span class="pre">tcp_queue_level</span></span><a class="headerlink" href="#pyardrone.navdata.options.VideoStream.tcp_queue_level" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.VideoStream.fifo_queue_level">
+<span class="sig-name descname"><span class="pre">fifo_queue_level</span></span><a class="headerlink" href="#pyardrone.navdata.options.VideoStream.fifo_queue_level" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.HdvideoStream">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyardrone.navdata.options.</span></span><span class="sig-name descname"><span class="pre">HdvideoStream</span></span><a class="reference internal" href="_modules/pyardrone/navdata/options.html#HdvideoStream"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyardrone.navdata.options.HdvideoStream" title="Permalink to this definition">¶</a></dt>
+<dd><p>Corresponds to C struct <code class="docutils literal notranslate"><span class="pre">navdata_hdvideo_stream_t</span></code>.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.HdvideoStream.hdvideo_state">
+<span class="sig-name descname"><span class="pre">hdvideo_state</span></span><a class="headerlink" href="#pyardrone.navdata.options.HdvideoStream.hdvideo_state" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.HdvideoStream.storage_fifo_nb_packets">
+<span class="sig-name descname"><span class="pre">storage_fifo_nb_packets</span></span><a class="headerlink" href="#pyardrone.navdata.options.HdvideoStream.storage_fifo_nb_packets" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.HdvideoStream.storage_fifo_size">
+<span class="sig-name descname"><span class="pre">storage_fifo_size</span></span><a class="headerlink" href="#pyardrone.navdata.options.HdvideoStream.storage_fifo_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.HdvideoStream.usbkey_size">
+<span class="sig-name descname"><span class="pre">usbkey_size</span></span><a class="headerlink" href="#pyardrone.navdata.options.HdvideoStream.usbkey_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>USB key in kbytes - 0 if no key present</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.HdvideoStream.usbkey_freespace">
+<span class="sig-name descname"><span class="pre">usbkey_freespace</span></span><a class="headerlink" href="#pyardrone.navdata.options.HdvideoStream.usbkey_freespace" title="Permalink to this definition">¶</a></dt>
+<dd><p>USB key free space in kbytes - 0 if no key present</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.HdvideoStream.frame_number">
+<span class="sig-name descname"><span class="pre">frame_number</span></span><a class="headerlink" href="#pyardrone.navdata.options.HdvideoStream.frame_number" title="Permalink to this definition">¶</a></dt>
+<dd><p>‘frame_number’ PaVE field of the frame starting to be encoded for the
+HD stream</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.HdvideoStream.usbkey_remaining_time">
+<span class="sig-name descname"><span class="pre">usbkey_remaining_time</span></span><a class="headerlink" href="#pyardrone.navdata.options.HdvideoStream.usbkey_remaining_time" title="Permalink to this definition">¶</a></dt>
+<dd><p>time in seconds</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Games">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyardrone.navdata.options.</span></span><span class="sig-name descname"><span class="pre">Games</span></span><a class="reference internal" href="_modules/pyardrone/navdata/options.html#Games"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyardrone.navdata.options.Games" title="Permalink to this definition">¶</a></dt>
+<dd><p>Corresponds to C struct <code class="docutils literal notranslate"><span class="pre">navdata_games_t</span></code>.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Games.double_tap_counter">
+<span class="sig-name descname"><span class="pre">double_tap_counter</span></span><a class="headerlink" href="#pyardrone.navdata.options.Games.double_tap_counter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Games.finish_line_counter">
+<span class="sig-name descname"><span class="pre">finish_line_counter</span></span><a class="headerlink" href="#pyardrone.navdata.options.Games.finish_line_counter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Wifi">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyardrone.navdata.options.</span></span><span class="sig-name descname"><span class="pre">Wifi</span></span><a class="reference internal" href="_modules/pyardrone/navdata/options.html#Wifi"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyardrone.navdata.options.Wifi" title="Permalink to this definition">¶</a></dt>
+<dd><p>Corresponds to C struct <code class="docutils literal notranslate"><span class="pre">navdata_wifi_t</span></code>.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Wifi.link_quality">
+<span class="sig-name descname"><span class="pre">link_quality</span></span><a class="headerlink" href="#pyardrone.navdata.options.Wifi.link_quality" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structure/Union member</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Cks">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyardrone.navdata.options.</span></span><span class="sig-name descname"><span class="pre">Cks</span></span><a class="reference internal" href="_modules/pyardrone/navdata/options.html#Cks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyardrone.navdata.options.Cks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Corresponds to C struct <code class="docutils literal notranslate"><span class="pre">navdata_cks_t</span></code>.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyardrone.navdata.options.Cks.value">
+<span class="sig-name descname"><span class="pre">value</span></span><a class="headerlink" href="#pyardrone.navdata.options.Cks.value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Value of the checksum</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="index.html">Table of Contents</a></h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ardrone.html">High Level API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="at.html">ATCommands</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">NavData</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyardrone.navdata">The NavData Class</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pyardrone.navdata.NavDataError"><code class="docutils literal notranslate"><span class="pre">NavDataError</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyardrone.navdata.ChecksumError"><code class="docutils literal notranslate"><span class="pre">ChecksumError</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyardrone.navdata.IncorrectChecksum"><code class="docutils literal notranslate"><span class="pre">IncorrectChecksum</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyardrone.navdata.ChecksumNotPresent"><code class="docutils literal notranslate"><span class="pre">ChecksumNotPresent</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyardrone.navdata.InvalidSize"><code class="docutils literal notranslate"><span class="pre">InvalidSize</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyardrone.navdata.NavData"><code class="docutils literal notranslate"><span class="pre">NavData</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyardrone.navdata.options">List of navdata Options</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pyardrone.navdata.options.Metadata"><code class="docutils literal notranslate"><span class="pre">Metadata</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyardrone.navdata.options.OptionHeader"><code class="docutils literal notranslate"><span class="pre">OptionHeader</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyardrone.navdata.options.Demo"><code class="docutils literal notranslate"><span class="pre">Demo</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyardrone.navdata.options.Time"><code class="docutils literal notranslate"><span class="pre">Time</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyardrone.navdata.options.RawMeasures"><code class="docutils literal notranslate"><span class="pre">RawMeasures</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyardrone.navdata.options.PressureRaw"><code class="docutils literal notranslate"><span class="pre">PressureRaw</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyardrone.navdata.options.Magneto"><code class="docutils literal notranslate"><span class="pre">Magneto</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyardrone.navdata.options.WindSpeed"><code class="docutils literal notranslate"><span class="pre">WindSpeed</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyardrone.navdata.options.KalmanPressure"><code class="docutils literal notranslate"><span class="pre">KalmanPressure</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyardrone.navdata.options.Zimmu3000"><code class="docutils literal notranslate"><span class="pre">Zimmu3000</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyardrone.navdata.options.PhysMeasures"><code class="docutils literal notranslate"><span class="pre">PhysMeasures</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyardrone.navdata.options.GyrosOffsets"><code class="docutils literal notranslate"><span class="pre">GyrosOffsets</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyardrone.navdata.options.EulerAngles"><code class="docutils literal notranslate"><span class="pre">EulerAngles</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyardrone.navdata.options.References"><code class="docutils literal notranslate"><span class="pre">References</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyardrone.navdata.options.Trims"><code class="docutils literal notranslate"><span class="pre">Trims</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyardrone.navdata.options.RcReferences"><code class="docutils literal notranslate"><span class="pre">RcReferences</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyardrone.navdata.options.Pwm"><code class="docutils literal notranslate"><span class="pre">Pwm</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyardrone.navdata.options.Altitude"><code class="docutils literal notranslate"><span class="pre">Altitude</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyardrone.navdata.options.VisionRaw"><code class="docutils literal notranslate"><span class="pre">VisionRaw</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyardrone.navdata.options.Vision"><code class="docutils literal notranslate"><span class="pre">Vision</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyardrone.navdata.options.VisionPerf"><code class="docutils literal notranslate"><span class="pre">VisionPerf</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyardrone.navdata.options.TrackersSend"><code class="docutils literal notranslate"><span class="pre">TrackersSend</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyardrone.navdata.options.VisionDetect"><code class="docutils literal notranslate"><span class="pre">VisionDetect</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyardrone.navdata.options.VisionOf"><code class="docutils literal notranslate"><span class="pre">VisionOf</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyardrone.navdata.options.Watchdog"><code class="docutils literal notranslate"><span class="pre">Watchdog</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyardrone.navdata.options.AdcDataFrame"><code class="docutils literal notranslate"><span class="pre">AdcDataFrame</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyardrone.navdata.options.VideoStream"><code class="docutils literal notranslate"><span class="pre">VideoStream</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyardrone.navdata.options.HdvideoStream"><code class="docutils literal notranslate"><span class="pre">HdvideoStream</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyardrone.navdata.options.Games"><code class="docutils literal notranslate"><span class="pre">Games</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyardrone.navdata.options.Wifi"><code class="docutils literal notranslate"><span class="pre">Wifi</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyardrone.navdata.options.Cks"><code class="docutils literal notranslate"><span class="pre">Cks</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="options.html">Drone States</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">Utility functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html#pyardrone.utils.repack_to_int"><code class="docutils literal notranslate"><span class="pre">repack_to_int()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html#pyardrone.utils.bits"><code class="docutils literal notranslate"><span class="pre">bits()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html#pyardrone.utils.noop"><code class="docutils literal notranslate"><span class="pre">noop()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html#pyardrone.utils.every"><code class="docutils literal notranslate"><span class="pre">every()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html#pyardrone.utils.get_free_udp_port"><code class="docutils literal notranslate"><span class="pre">get_free_udp_port()</span></code></a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="at.html" title="previous chapter">ATCommands</a></li>
+      <li>Next: <a href="options.html" title="next chapter">Drone States</a></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/navdata.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2015, afg984.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.1.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+      |
+      <a href="_sources/navdata.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
