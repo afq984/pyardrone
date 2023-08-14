@@ -3,7 +3,7 @@ Getting Started
 
 ~ `Github <https://github.com/afg984/pyardrone>`_ ~
 `PyPI <https://pypi.python.org/pypi/pyardrone>`_ ~
-`Online Docs <http://pyardrone.readthedocs.org>`_ ~
+`Online Docs <https://afq984.github.io/pyardrone/>`_ ~
 
 Requirements
 ------------
